@@ -22,7 +22,7 @@ class ChiliPepper(Ingredient):
 
 
 class Carrot(Ingredient):
-    name = "Kartotten"
+    name = "Karotten"
 
 
 class Onion(Ingredient):
