@@ -1,25 +1,24 @@
 from abc import ABC
-from units import unit
+from units import unit, scaled_unit
 from hotshopper.errors import UnsupportedUnitError
 
 piece = unit("St.")
 gram = unit("g")
-kilogram = unit("kg")
+kilogram = scaled_unit("kg", "gram", 1000)
 
 
 class Ingredient(ABC):
-    amount_weight = None
-    amount_piece = None
     name = ""
 
     def __init__(self, unit: unit, amount: int):
         self.unit = unit
         if unit not in (piece, gram, kilogram):
             raise UnsupportedUnitError("This unit is not supported")
-        if unit == piece:
-            self.amount_piece = unit(amount)
-        else:
-            self.amount_weight = unit(amount)
+        self.amount = unit(amount)
+
+
+class ChiliPepper(Ingredient):
+    name = "Chilischote"
 
 
 class Carrot(Ingredient):
@@ -30,17 +29,17 @@ class Onion(Ingredient):
     name = "Zwiebeln"
 
 
-class Potato(Ingredient):
+class _Potato(Ingredient):
     pass
 
 
-class LowStarchPotatoe(Potato):
+class LowStarchPotatoe(_Potato):
     name = "Kartoffeln festk."
 
 
-class StarchyPotato(Potato):
+class StarchyPotato(_Potato):
     name = "Kartoffeln mehlig"
 
 
-class PrimarilyWaxyPotato(Potato):
+class PrimarilyWaxyPotato(_Potato):
     name = "Kartoffeln vorw. festk."

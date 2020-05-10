@@ -1,15 +1,18 @@
-import pytest
-from hotshopper.hotshopper import ShoppingList
+from hotshopper.hotshopper import FoodPlan
 from hotshopper.ingredients import Carrot
-from hotshopper.recipes import PotatoSoup
+from hotshopper.recipes import PotatoSoup, ParsleyRootCurry
 
 
 def test_add_recipe_to_shopping_list():
-    shopping_list = ShoppingList()
-    recipe = PotatoSoup()
+    food_plan = FoodPlan()
+    food_plan.add_recipe(PotatoSoup())
+    assert(any(isinstance(x, Carrot) for x in food_plan.shopping_list))
+    food_plan.shopping_list.print_ingredients()
 
-    shopping_list.add_recipe(recipe)
-    assert(any(isinstance(x, Carrot) for x in shopping_list.items))
-    for recipe in shopping_list.recipes:
-        recipe.print_ingredients()
 
+def test_two_combined_quantities_on_shopping_list():
+    food_plan = FoodPlan()
+    food_plan.add_recipe(ParsleyRootCurry())
+    food_plan.add_recipe(PotatoSoup())
+    food_plan.shopping_list.print_ingredients()
+    assert True

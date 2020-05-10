@@ -1,38 +1,52 @@
 """Main module."""
 from hotshopper.recipes import Recipe
-from hotshopper.ingredients import Ingredient, gram, kilogram, piece
+from hotshopper.ingredients import kilogram, piece
 
 
 def main():
     pass
 
 
-class ShoppingList:
+class ShoppingList(list):
     recipes = []
     items = []
 
+    def __contains__(self, type):
+        for ingredient in self:
+            if isinstance(ingredient, type):
+                return True
+            return False
+
+    def add(self, ingredient):
+        for existing_ingredient in self:
+            if isinstance(ingredient, type(existing_ingredient)):
+                existing_ingredient.amount += ingredient.amount
+                return True
+        self.append(ingredient)
+
+    def print_ingredients(self):
+
+        print("\n")
+
+        for ingredient in self:
+            if ingredient.unit == kilogram:
+                print(f"{ingredient.amount} {ingredient.name}")
+            if ingredient.unit == piece:
+                print(f"{ingredient.amount.num} {ingredient.name}")
+            else:
+                print(f"{int(ingredient.amount.num)} "
+                        f"{ingredient.amount.unit} "
+                        f"{ingredient.name}")
+
+
+class FoodPlan:
+
+    def __init__(self):
+        self.recipes = []
+        self.shopping_list = ShoppingList()
+
     def add_recipe(self, recipe: Recipe):
+        self.recipes.append(recipe)
 
         for ingredient in recipe.ingredients:
-            self.recipes.append(recipe)
-            self._add_ingredient(ingredient)
-
-    def _add_ingredient(self, ingredient):
-        # Note: when adding units, the first unit is used for the result
-        item = self.get_item(ingredient)
-        if item:
-            if isinstance(ingredient.unit, piece):
-                item.amount_piece += ingredient.amount_piece
-            elif isinstance(ingredient.unit, (gram, kilogram)):
-                item.amount_weigth += ingredient.amount_weight
-        else:
-            self.items.append(ingredient)
-
-    def get_item(self, ingredient: Ingredient):
-
-        for item in self.items:
-            if type(item) == type(ingredient):
-                return item
-
-
-
+            self.shopping_list.add(ingredient)
