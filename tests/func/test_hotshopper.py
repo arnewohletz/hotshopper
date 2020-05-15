@@ -1,4 +1,4 @@
-from hotshopper.hotshopper import FoodPlan
+from hotshopper.foodplan import FoodPlan
 from hotshopper.ingredients import Carrot
 from hotshopper.recipes import PotatoSoup, ParsleyRootCurry
 

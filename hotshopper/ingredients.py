@@ -18,7 +18,7 @@ class Ingredient(ABC):
 
 
 class ChiliPepper(Ingredient):
-    name = "Chilischote"
+    name = "Chilischote(n)"
 
 
 class Carrot(Ingredient):
@@ -26,7 +26,7 @@ class Carrot(Ingredient):
 
 
 class Onion(Ingredient):
-    name = "Zwiebeln"
+    name = "Zwiebel(n)"
 
 
 class _Potato(Ingredient):

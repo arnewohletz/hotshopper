@@ -1,52 +1,59 @@
 """Main module."""
-from hotshopper.recipes import Recipe
-from hotshopper.ingredients import kilogram, piece
+import tkinter as tk
+from tkinter.ttk import Style
+import hotshopper.recipes as rc
+
+
+class RecipeCheckbutton:
+
+    def __init__(self, parent, recipe):
+        selected = tk.BooleanVar()
+        self.button = tk.Checkbutton(parent,
+                                     text=recipe.name,
+                                     variable=selected,
+                                     onvalue=True,
+                                     offvalue=False,
+                                     command=lambda: recipe.set_selected(
+                                         selected),
+                                     bg="#444",
+                                     fg="white")
+
+    def get(self):
+        return self.button
+
+
+class RecipeSelection(tk.Frame):
+
+    def __init__(self, parent):
+
+        tk.Frame.__init__(self, parent)
+        self.parent = parent
+        Style().configure("Hotshopper", background="#444")
+
+        all_recipes = []
+        recipes = rc.Recipe.__subclasses__()
+        selected_recipes = {}
+
+        current_row = 1
+
+        for i in range(len(recipes)):
+            all_recipes.append(recipes[i]())
+
+        for recipe in all_recipes:
+            checkbutton = RecipeCheckbutton(self.parent, recipe)
+            checkbutton.get().grid(row=current_row, sticky="w")
+            current_row += 1
+
+        tk.Button(self.parent,
+                  text="Zutaten auflisten",
+                  fg="black",
+                  highlightbackground='#AAA',
+                  command="calculate").grid(row=current_row + 1)
 
 
 def main():
-    pass
-
-
-class ShoppingList(list):
-    recipes = []
-    items = []
-
-    def __contains__(self, type):
-        for ingredient in self:
-            if isinstance(ingredient, type):
-                return True
-            return False
-
-    def add(self, ingredient):
-        for existing_ingredient in self:
-            if isinstance(ingredient, type(existing_ingredient)):
-                existing_ingredient.amount += ingredient.amount
-                return True
-        self.append(ingredient)
-
-    def print_ingredients(self):
-
-        print("\n")
-
-        for ingredient in self:
-            if ingredient.unit == kilogram:
-                print(f"{ingredient.amount} {ingredient.name}")
-            if ingredient.unit == piece:
-                print(f"{ingredient.amount.num} {ingredient.name}")
-            else:
-                print(f"{int(ingredient.amount.num)} "
-                        f"{ingredient.amount.unit} "
-                        f"{ingredient.name}")
-
-
-class FoodPlan:
-
-    def __init__(self):
-        self.recipes = []
-        self.shopping_list = ShoppingList()
-
-    def add_recipe(self, recipe: Recipe):
-        self.recipes.append(recipe)
-
-        for ingredient in recipe.ingredients:
-            self.shopping_list.add(ingredient)
+    root = tk.Tk()
+    root.title("Hotshopper")
+    root.configure(background="#444")
+    RecipeSelection(root)
+    root.mainloop()
