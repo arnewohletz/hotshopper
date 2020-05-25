@@ -16,3 +16,11 @@ def test_two_combined_quantities_on_shopping_list():
     food_plan.add_recipe(PotatoSoup())
     food_plan.shopping_list.print_ingredients()
     assert True
+
+
+def test_remove_recipe_from_shopping_list():
+    food_plan = FoodPlan()
+    food_plan.add_recipe(ParsleyRootCurry())
+    food_plan.add_recipe(PotatoSoup())
+    food_plan.remove_recipe(PotatoSoup())
+    assert(food_plan.shopping_list.items, ParsleyRootCurry().ingredients)
