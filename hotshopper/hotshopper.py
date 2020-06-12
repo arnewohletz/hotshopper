@@ -10,18 +10,19 @@ import hotshopper.recipes as rc
 
 class Controller:
 
-    def __init__(self, view: View):
+    def __init__(self, view):
         self.foodplan = FoodPlan()
         self.recipes = []
         # self.model = model
         self.view = view
-        self.recipe_selection = RecipeSelection(self.view, self)
-        self.shopping_list = ShoppingList(self.view, self)
+        self.view.initialize(self.get_recipes(), self.foodplan)
+        # self.recipe_selection = RecipeSelection(self.view, self)
+        self.shopping_list = ShoppingList(self.view, self.get_ingredients())
 
     def get_recipes(self):
-        for recipe in Recipe.__subclasses__():
-            self.recipes.append(recipe())
-        return self.recipes
+        # for recipe in Recipe.__subclasses__():
+        #     self.recipes.append(recipe())
+        return [recipe for recipe in Recipe.__subclasses__()]
 
     def get_ingredients(self):
         # self.recipes = []
@@ -39,10 +40,13 @@ class Controller:
         if self.shopping_list is not None:
             # self.shopping_list.grid_forget()
             # self.shopping_list.destroy()
-            self.shopping_list = ShoppingList(self.view, self)
+            self.shopping_list = ShoppingList(self.view, self.get_ingredients)
         # self.view.switch_frame(ShoppingList)
-        self.shopping_list.display()
+        # self.shopping_list.display()
         # (self.foodplan.get_shopping_list(), self))
+
+    # def update_shopping_list(self):
+    #     self.frm_shopping_list = ShoppingList(self, self.foodplan)
 
 
 # class RecipeCheckbutton:
@@ -105,8 +109,8 @@ def main():
     # root.title("Hotshopper")
     # root.configure(background="#444")
     view = View()
-    controller = Controller(view)
-    view.intialize(controller)
+    Controller(view)
+    # view.initialize()
     # TODO: View must not receive Controller instance
     # controller methods should be passed to View some other way
     # Also google again how to solve this

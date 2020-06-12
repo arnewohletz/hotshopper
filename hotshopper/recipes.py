@@ -7,7 +7,7 @@ from hotshopper.ingredients import gram, piece
 from hotshopper.ingredients import *
 
 
-class Recipe(ABC):
+class Recipe:
     name = ""
     ingredients = []
     selected = False
