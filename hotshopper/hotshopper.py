@@ -20,9 +20,8 @@ class Controller:
         self.shopping_list = ShoppingList(self.view, self.get_ingredients())
 
     def get_recipes(self):
-        # for recipe in Recipe.__subclasses__():
-        #     self.recipes.append(recipe())
-        return [recipe for recipe in Recipe.__subclasses__()]
+        recipes = [recipe for recipe in Recipe.__subclasses__()]
+        return sorted(recipes, key=lambda recipe: recipe.name)
 
     def get_ingredients(self):
         # self.recipes = []

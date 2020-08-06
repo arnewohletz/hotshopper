@@ -111,7 +111,13 @@ class ShoppingList(tk.Frame):
         current_row = 0
         for ingredient in self.ingredients:
             var = tk.StringVar()
-            var.set(f"{ingredient.amount} {ingredient.name}")
+            if ingredient.amount.num > 0.0 and ingredient.amount_piece.num == 0:
+                var.set(f"{ingredient.amount} {ingredient.name}")
+            elif ingredient.amount.num == 0.0 and ingredient.amount_piece.num >= 0:
+                var.set(f"{ingredient.amount_piece} {ingredient.name}")
+            else:
+                var.set(f"{ingredient.amount} + {ingredient.amount_piece} "
+                        f"{ingredient.name}")
             label = tk.Label(self.master,
                              textvariable=var)
             label.configure(state="disabled", background="#444")

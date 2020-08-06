@@ -13,15 +13,22 @@ class ShoppingList(list):
     def add(self, ingredient):
         for existing_ingredient in self:
             if isinstance(ingredient, type(existing_ingredient)):
-                existing_ingredient.amount += ingredient.amount
+                if ingredient.unit.specifier == piece.specifier:
+                    ingredient.amount_piece += existing_ingredient.amount_piece
+                else:
+                    existing_ingredient.amount += ingredient.amount
                 return True
         self.append(ingredient)
 
     def substract(self, ingredient):
         for existing_ingredient in self:
             if isinstance(ingredient, type(existing_ingredient)):
-                existing_ingredient.amount += ingredient.amount
-                if existing_ingredient.amount == 0:
+                if ingredient.unit.specifier == piece.specifier:
+                    ingredient.amount_piece -= existing_ingredient.amount_piece
+                else:
+                    existing_ingredient.amount -= ingredient.amount
+                if existing_ingredient.amount <= 0 \
+                        & existing_ingredient.amount_piece <= 0:
                     self.remove(ingredient)
 
     # def get_ingredients(self):

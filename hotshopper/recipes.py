@@ -20,17 +20,10 @@ class Recipe:
             self.selected = False
             print(self.name + " is deselected")
 
-    # def get_ingredients(self, recipes: list):
-    #     for recipe in recipes:
-    #         if recipe.selected:
-    #             recipe.ingredients
-    #         else:
-    #             pass
-
 
 class PotatoSoup(Recipe):
     name = "Kartoffelsuppe (S.77)"
-    ingredients = [Carrot(gram, 500),
+    ingredients = [Carrot(kilogram, 0.5),
                    Onion(piece, 1),
                    StarchyPotato(gram, 750),
                    HamCubes(gram, 125),
@@ -41,7 +34,7 @@ class PotatoSoup(Recipe):
 
 
 class ParsleyRootCurry(Recipe):
-    name = "Petersilienwurzelcurry (S.89)"
+    name = "Petersilienwurzelcurry (S.89, Sep - Mai)"
     ingredients = [LowStarchPotatoe(gram, 750),
                    ChiliPepper(piece, 1),
                    Carrot(gram, 250),
@@ -68,7 +61,7 @@ class SwedeStew(Recipe):
 
 class SalsaNoodles(Recipe):
     name = "Salsanudeln mit Tomatensalat (S.90)"
-    ingredients = [Spaghetti(gram, 400),
+    ingredients = [SpaghettiNoodles(gram, 400),
                    Lemon(piece, 1),
                    ParsleyFrozen(piece, 1),
                    DillFrozen(piece, 1),
@@ -112,10 +105,10 @@ class Pichelsteiner(Recipe):
 
 
 class ChicoryWithHam(Recipe):
-    name = "Chicorée mit Schinken (S.121)"
+    name = "Chicorée mit Schinken (S.121, Okt-Apr)"
     ingredients = [Chicory(piece, 4),
                    Orange(piece, 2),
-                   Gouda(gram, 100),
+                   GoudaSlices(gram, 100),
                    HamSlices(piece, 8),
                    CreamCheese(gram, 200),
                    PrimarilyWaxyPotato(gram, 1000)
@@ -124,9 +117,9 @@ class ChicoryWithHam(Recipe):
 
 class PepperSalad(Recipe):
     name = "Paprikasalat (S.63 EX)"
-    ingredients = [Cabanossi(gram, 150),
-                   PepperRed(piece, 5),
-                   Zucchini(piece, 1),
+    ingredients = [Cabanossi(gram, 250),
+                   PepperRed(piece, 6),
+                   Zucchini(piece, 2),
                    Buckwheat(gram, 50),
                    ]
 
@@ -352,77 +345,140 @@ class FishSticks(Recipe):
 
 class BakedPotato(Recipe):
     name = "Ofenkartoffeln"
-    ingredients = []
+    ingredients = [
+        StarchyPotato(gram, 1500),
+        SourCream(piece, 2),
+        EightHerbsFrozen(piece, 0.5)
+    ]
 
 
 class PotatoePancakes(Recipe):
     name = "Kartoffelpuffer"
-    ingredients = []
+    ingredients = [
+        PotatoePancankesFrozen(piece, 1),
+        ApplePuree(piece, 1)
+    ]
 
 
 class SandwichMaker(Recipe):
     name = "Sandwich-Maker"
-    ingredients = []
+    ingredients = [
+        ToastbreadSandwich(piece, 1),
+        Tomato(piece, 3),
+        Salami(piece, 2),
+        GoudaSlices(gram, 250)
+    ]
 
 
 class Lasagne(Recipe):
     name = "Lasagne"
-    ingredients = []
+    ingredients = [
+        MaggiFixLasagna(piece, 2),
+        CremeFraiche(piece, 1),
+        GroundMeat(gram, 250),
+        GratinCheese(piece, 1)
+    ]
 
 
 class CroquettesWithVegetables(Recipe):
     name = "Kroketten mit Gemüse"
-    ingredients = []
+    ingredients = [
+        CroquettesFrozen(piece, 1),
+        PeasFrozen(piece, 1),
+        CauliflowerWithCreamFrozen(piece, 1)
+    ]
 
 
 class PepperCreamSchnitzel(Recipe):
     name = "Paprikarahmschnitzel"
-    ingredients = []
+    ingredients = [
+        MaggiFixPepperCreamSchnitzel(piece, 2),
+        PepperRed(piece, 2),
+        Cream(piece, 2),
+        TurkeySchnitzel(piece, 2),
+        FriesFrozen(piece, 1)
+    ]
 
 
 class Barbecue(Recipe):
     name = "Grillen"
-    ingredients = []
+    ingredients = [
+        Lettuce(piece, 1),
+        Tomato(piece, 2),
+        PepperRed(piece, 1),
+        Cucumber(piece, 1),
+        Onion(piece, 2),
+        SaladSauce(piece, 1),
+        Champignon(piece, 6),
+        Zucchini(piece, 1),
+        BarbecueMeat(piece, 1)
+    ]
 
 
 class Tortellini(Recipe):
     name = "Tortellini"
-    ingredients = []
+    ingredients = [
+        TortelliniDried(piece, 2),
+        TomatoSauce(piece, 2),
+        Onion(piece, 2),
+        ParmesanCheese(piece, 1)
+    ]
 
 
 class Waffles(Recipe):
     name = "Waffeln"
-    ingredients = []
+    ingredients = [
+        WheatFlour(gram, 300),
+        BakingPowder(gram, 10),
+        CaneSugar(gram, 75),
+        Egg(piece, 2),
+        Milk(gram, 500)
+    ]
 
 
 class ToastHawaii(Recipe):
     name = "Toast Hawaii"
-    ingredients = []
+    ingredients = [
+        ToastbreadWheatSlice(piece, 10),
+        SandwichCheese(piece, 10),
+        PineapplesSlicesPickled(piece, 10),
+        HamCooked(piece, 1)
+    ]
 
 
 class CheeseNoodles(Recipe):
     name = "Käsespätzle"
-    ingredients = []
+    ingredients = [
+        SpaetzleNoodles(piece, 1),
+        SpaetzleCheese(piece, 1),
+        Onion(piece, 4)
+    ]
 
 
 class SpaghettiWithTomatosauce(Recipe):
     name = "Spaghetti (mit Tomatensauce)"
-    ingredients = []
+    ingredients = [
+        SpaghettiNoodles(gram, 500),
+        TomatoSauce(piece, 2),
+        Onion(piece, 2),
+        ParmesanCheese(piece, 1)
+    ]
 
 
 class SpaghettiAglioOlio(Recipe):
     name = "Spaghetti Aglio Olio"
-    ingredients = [Spaghetti(gram, 400),
-                   Garlic(piece, 5),
-                   Lemon(piece, 1)
-                   ]
+    ingredients = [
+        SpaghettiNoodles(gram, 400),
+        Garlic(piece, 5),
+        Lemon(piece, 1)
+    ]
 
-
+# TODO: Einheit kontrollieren (->Fehler)
 class PepperStew(Recipe):
     name = "Paprikapfanne"
-    ingredients = [PepperRed(piece, 3),
-                   PepperYellow(piece, 3),
-                   Tomato(piece, 4),
-                   Onion(gram, 500),
-
-                   ]
+    ingredients = [
+        PepperRed(piece, 3),
+        PepperYellow(piece, 3),
+        Tomato(piece, 4),
+        Onion(gram, 500)
+    ]

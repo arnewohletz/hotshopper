@@ -10,11 +10,16 @@ kilogram = scaled_unit("kg", "gram", 1000)
 class Ingredient(ABC):
     name = ""
 
-    def __init__(self, unit: unit, amount: int):
+    def __init__(self, unit: unit, amount: float):
+        self.amount_piece = piece(0)
+        self.amount = gram(0)
         self.unit = unit
         if unit not in (piece, gram, kilogram):
             raise UnsupportedUnitError("This unit is not supported")
-        self.amount = unit(amount)
+        if unit == piece:
+            self.amount_piece = unit(amount)
+        else:
+            self.amount = unit(amount)
 
 
 class AgaveSyrup(Ingredient):
@@ -23,6 +28,10 @@ class AgaveSyrup(Ingredient):
 
 class Ajvar(Ingredient):
     name = "Ajvar"
+
+
+class ApplePuree(Ingredient):
+    name = "Apfelmus"
 
 
 class Asparagus(Ingredient):
@@ -35,6 +44,14 @@ class Avocado(Ingredient):
 
 class Baguette(Ingredient):
     name = "Baguette"
+
+
+class BakingPowder(Ingredient):
+    name = "Backpulver"
+
+
+class BarbecueMeat(Ingredient):
+    name = "Grillfleisch (selbst aussuchen)"
 
 
 class BasilFrozen(Ingredient):
@@ -77,6 +94,10 @@ class CauliflowerFrozen(Ingredient):
     name = "TK-Blumenkohl"
 
 
+class CauliflowerWithCreamFrozen(Ingredient):
+    name = "TK-Rahmblumenkohl"
+
+
 class Champignon(Ingredient):
     name = "Champignon(s)"
 
@@ -92,6 +113,9 @@ class Chicory(Ingredient):
 class CeleryRoot(Ingredient):
     name = "Knollensellerie"
 
+
+class CheeseSlices(Ingredient):
+    name = "Schablettenkäse"
 
 class CherryTomato(Ingredient):
     name = "Kirschtomaten"
@@ -113,6 +137,10 @@ class CremeFraiche(Ingredient):
     name = "Crème Fraîche"
 
 
+class CroquettesFrozen(Ingredient):
+    name = "TK-Kroketten"
+
+
 class CoconutMilk(Ingredient):
     name = "Kokosmilch"
 
@@ -125,12 +153,24 @@ class DillFrozen(Ingredient):
     name = "TK-Dill"
 
 
+class EightHerbsFrozen(Ingredient):
+    name = "TK-8-Kräuter"
+
+
+class Egg(Ingredient):
+    name = "Ei(er)"
+
+
 class FetaCheese(Ingredient):
     name = "Fetakäse"
 
 
 class Fishsticks(Ingredient):
     name = "Fischstäbchen"
+
+
+class FriesFrozen(Ingredient):
+    name = "Pommes frittes"
 
 
 class Garlic(Ingredient):
@@ -153,8 +193,12 @@ class Gorgonzola(Ingredient):
     name = "Gorgonzola"
 
 
-class Gouda(Ingredient):
-    name = "Gouda"
+class GoudaSlices(Ingredient):
+    name = "Gouda (in Scheiben)"
+
+
+class GratinCheese(Ingredient):
+    name = "Gratinkäse"
 
 
 class GreenCurryPaste(Ingredient):
@@ -213,6 +257,14 @@ class Macaroni(Ingredient):
     name = "Makkaroni (kurz)"
 
 
+class MaggiFixLasagna(Ingredient):
+    name = "MaggiFix für Lasagne"
+
+
+class MaggiFixPepperCreamSchnitzel(Ingredient):
+    name = "MaggiFix für Paprikarahmschnitzel"
+
+
 class Mascarpone(Ingredient):
     name = "Mascarpone"
 
@@ -243,6 +295,10 @@ class OnionRed(Ingredient):
 
 class Orange(Ingredient):
     name = "Orange(n)"
+
+
+class ParmesanCheese(Ingredient):
+    name = "Parmesankäse"
 
 
 class ParsleyFrozen(Ingredient):
@@ -285,6 +341,10 @@ class Pickles(Ingredient):
     name = "Saure Gurken"
 
 
+class PineapplesSlicesPickled(Ingredient):
+    name = "Ananasscheiben (in Dose)"
+
+
 class Pistachios(Ingredient):
     name = "Pistazien"
 
@@ -295,6 +355,10 @@ class PitaBread(Ingredient):
 
 class PorkCuts(Ingredient):
     name = "Schweinegschnetzeltes"
+
+
+class PotatoePancankesFrozen(Ingredient):
+    name = "TK-Kartoffelpuffer"
 
 
 class RicePudding(Ingredient):
@@ -309,6 +373,14 @@ class SaladSauce(Ingredient):
     name = "Salatsauce"
 
 
+class Salami(Ingredient):
+    name = "Salami-Pack"
+
+
+class SandwichCheese(Ingredient):
+    name = "Schablettenkäse"
+
+
 class SausageStripes(Ingredient):
     name = "Streifen f. Wurstsalat"
 
@@ -321,6 +393,10 @@ class Smetana(Ingredient):
     name = "Schmand"
 
 
+class SourCream(Ingredient):
+    name = "Sauerrahm (pur)"
+
+
 class Sourcrout(Ingredient):
     name = "Sauerkraut"
 
@@ -329,7 +405,15 @@ class SoySauce(Ingredient):
     name = "Sojasauce (hell)"
 
 
-class Spaghetti(Ingredient):
+class SpaetzleCheese(Ingredient):
+    name = "Spätzlekäse"
+
+
+class SpaetzleNoodles(Ingredient):
+    name = "Spätzle"
+
+
+class SpaghettiNoodles(Ingredient):
     name = "Spaghetti"
 
 
@@ -353,6 +437,14 @@ class Tagliatelle(Ingredient):
     name = "Bandnudeln"
 
 
+class ToastbreadSandwich(Ingredient):
+    name = "Toastbrot (Sandwich)"
+
+
+class ToastbreadWheatSlice(Ingredient):
+    name = "Toastbrot (Scheiben)"
+
+
 class ToastbreadWholemeal(Ingredient):
     name = "Toastbrot (Vollkorn)"
 
@@ -373,12 +465,24 @@ class TomatoSauce(Ingredient):
     name = "Dosentomaten (stückig/passiert)"
 
 
+class TortelliniDried(Ingredient):
+    name = "Tortellini (getrocknet)"
+
+
 class Tortilla(Ingredient):
     name = "Tortillafladen"
 
 
+class TurkeySchnitzel(Ingredient):
+    name = "Putenschnitzel"
+
+
 class Tzatziki(Ingredient):
     name = "Tzatziki"
+
+
+class WheatFlour(Ingredient):
+    name = "Weizenmehl"
 
 
 class Wiener(Ingredient):
