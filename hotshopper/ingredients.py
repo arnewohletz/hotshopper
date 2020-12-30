@@ -4,7 +4,7 @@ from hotshopper.errors import UnsupportedUnitError
 
 piece = unit("St.")
 gram = unit("g")
-kilogram = scaled_unit("kg", "gram", 1000)
+kilogram = scaled_unit("kg", "g", 1000)
 
 
 class Ingredient(ABC):
@@ -116,6 +116,7 @@ class CeleryRoot(Ingredient):
 
 class CheeseSlices(Ingredient):
     name = "Schablettenkäse"
+
 
 class CherryTomato(Ingredient):
     name = "Kirschtomaten"

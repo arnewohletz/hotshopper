@@ -1,5 +1,5 @@
 from hotshopper.recipes import Recipe
-from hotshopper.ingredients import kilogram, piece
+from hotshopper.ingredients import piece
 
 
 class ShoppingList(list):
@@ -14,7 +14,7 @@ class ShoppingList(list):
         for existing_ingredient in self:
             if isinstance(ingredient, type(existing_ingredient)):
                 if ingredient.unit.specifier == piece.specifier:
-                    ingredient.amount_piece += existing_ingredient.amount_piece
+                    existing_ingredient.amount_piece += ingredient.amount_piece
                 else:
                     existing_ingredient.amount += ingredient.amount
                 return True
@@ -24,28 +24,12 @@ class ShoppingList(list):
         for existing_ingredient in self:
             if isinstance(ingredient, type(existing_ingredient)):
                 if ingredient.unit.specifier == piece.specifier:
-                    ingredient.amount_piece -= existing_ingredient.amount_piece
+                    existing_ingredient.amount_piece -= ingredient.amount_piece
                 else:
                     existing_ingredient.amount -= ingredient.amount
                 if existing_ingredient.amount <= 0 \
                         & existing_ingredient.amount_piece <= 0:
                     self.remove(ingredient)
-
-    # def get_ingredients(self):
-    #     return self
-    #     # TODO: change to return list of ingredients (view handles display)
-    #
-    #     print("\n")
-    #
-    #     for ingredient in self:
-    #         if ingredient.unit == kilogram:
-    #             print(f"{ingredient.amount} {ingredient.name}")
-    #         if ingredient.unit == piece:
-    #             print(f"{int(ingredient.amount.num)} {ingredient.name}")
-    #         else:
-    #             print(f"{int(ingredient.amount.num)} "
-    #                     f"{ingredient.amount.unit} "
-    #                     f"{ingredient.name}")
 
 
 class FoodPlan:

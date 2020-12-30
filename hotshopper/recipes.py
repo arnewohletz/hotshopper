@@ -1,9 +1,5 @@
 import tkinter as tk
 
-from abc import ABC, ABCMeta
-
-from hotshopper.ingredients import Carrot, Onion, LowStarchPotatoe, ChiliPepper
-from hotshopper.ingredients import gram, piece
 from hotshopper.ingredients import *
 
 
@@ -110,7 +106,7 @@ class ChicoryWithHam(Recipe):
                    Orange(piece, 2),
                    GoudaSlices(gram, 100),
                    HamSlices(piece, 8),
-                   CreamCheese(gram, 200),
+                   CreamCheese(piece, 1),
                    PrimarilyWaxyPotato(gram, 1000)
                    ]
 
@@ -312,7 +308,7 @@ class ChiliMascarponeNoodles(Recipe):
 class SchupfnudelnWithVegetables(Recipe):
     name = "Gemüseschupfnudeln"
     ingredients = [Schupfnudeln(gram, 1000),
-                   VegetablesFrozen(piece, 2)
+                   VegetablesFrozen(piece, 1)
                    ]
 
 

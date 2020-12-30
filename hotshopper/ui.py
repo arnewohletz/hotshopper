@@ -1,7 +1,4 @@
 import tkinter as tk
-from tkinter.ttk import Style
-
-from hotshopper.ingredients import kilogram, piece
 
 
 class View(tk.Tk):
@@ -13,33 +10,29 @@ class View(tk.Tk):
         self.frm_recipes = None
         self.frm_shopping_list = None
         self.foodplan = None
+        self.frames = []
 
     def initialize(self, recipes, foodplan):
         self.foodplan = foodplan
-        self.frm_recipes = RecipeSelection(self, recipes, foodplan)
-        self.frm_recipes.grid(column=0, row=0)
+        frm_recipes = RecipeSelection(self, recipes, foodplan)
+        frm_recipes.grid(column=0, row=0)
+        self.frames.append(frm_recipes)
 
-        #TODO:
-        # Have to move logic to Controller here
-        # Have to differentiate between frame recipeSelection & shopping list
+    def add_frame(self, frame):
+        self.frames.append(frame)
+        return frame
 
-        # self.switch_frame(RecipeSelection(self, recipes, foodplan))
+    def update_frame(self, frame):
 
-        # def update_frame(self, new_frame):
+        for f in self.frames:
+            if isinstance(f, type(frame)):
+                f.grid_forget()
+                self.frames.remove(f)
+                f.destroy()
+                return frame
 
-    #     if type(new_frame) in self._frames:
-    #         pass
-
-    def switch_frame(self, frame_class):
-        new_frame = frame_class
-        if type(self._frame) == type(frame_class):
-            # self.grid_forget()
-            # self.pack_forget()
-            for widget in self._frame.winfo_children():
-                widget.destroy()
-            self._frame.grid_forget()
-        self._frame = new_frame
-        self._frame.grid()
+        self.add_frame(frame)
+        return frame
 
 
 class RecipeCheckbutton:
@@ -55,7 +48,6 @@ class RecipeCheckbutton:
                                      command=self.set_selected,
                                      bg="#444",
                                      fg="white")
-        # self.button.pack()
 
     def set_selected(self):
         self.recipe.set_selected(self.recipe, self.selected)
@@ -71,13 +63,6 @@ class RecipeSelection(tk.Frame):
         self.master = master
         self.recipes = recipes
         self.foodplan = foodplan
-        # Style().configure("Hotshopper", background="#444")
-
-        # all_recipes = []
-        # self.recipes = controller.get_recipes()
-        # recipes = rc.Recipe.__subclasses__()
-        # selected_recipes = []
-        # food_plan = FoodPlan()
 
         current_row = 0
 
@@ -90,9 +75,7 @@ class RecipeSelection(tk.Frame):
                   text="Zutaten auflisten",
                   fg="black",
                   highlightbackground='#AAA',
-                  # command=lambda: master.switch_frame(
-                  #     ShoppingList(master, self.get_shopping_list())),
-                  command=lambda: master.switch_frame(
+                  command=lambda: master.update_frame(
                       ShoppingList(master, self.get_shopping_list()))
                   ).grid(row=current_row + 1)
 
@@ -124,39 +107,3 @@ class ShoppingList(tk.Frame):
             label.grid(column=1, row=current_row, sticky="w")
             current_row += 1
 
-    # def initialize(self):
-    #     current_row = 0
-    #     for ingredient in self.ingredients:
-    #         var = tk.StringVar()
-    #         var.set(f"{ingredient.amount} {ingredient.name}")
-    #         label = tk.Label(self.parent,
-    #                          textvariable=var)
-    #         label.configure(state="disabled", background="#444")
-    #         label.grid(column=1, row=current_row, sticky="w")
-    #         current_row += 1
-    #     return label
-
-    # def display(self):
-    # ingredients = self.controller.get_ingredients()
-
-    # TODO: Since UI is not working, printing in console
-    # for ingredient in ingredients:
-    #     if ingredient.unit == kilogram:
-    #         print(f"{ingredient.amount} {ingredient.name}")
-    #     if ingredient.unit == piece:
-    #         print(f"{int(ingredient.amount.num)} {ingredient.name}")
-    #     else:
-    #         print(f"{int(ingredient.amount.num)} "
-    #               f"{ingredient.amount.unit} "
-    #               f"{ingredient.name}")
-
-    # current_row = 0
-    # for ingredient in self.ingredients:
-    #     var = tk.StringVar()
-    #     var.set(f"{ingredient.amount} {ingredient.name}")
-    #     label = tk.Label(self.parent,
-    #                      textvariable=var)
-    #     label.configure(state="disabled", background="#444")
-    #     label.grid(column=1, row=current_row, sticky="w")
-    #     self.parent.update()
-    #     current_row += 1
