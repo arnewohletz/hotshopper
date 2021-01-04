@@ -5,16 +5,19 @@ from hotshopper.ingredients import *
 
 class Recipe:
     name = ""
+    week = -1
     ingredients = []
     selected = False
 
-    def set_selected(self, selected: tk.BooleanVar):
+    def set_selected(self, selected: tk.BooleanVar, week: int):
         if selected.get():
             self.selected = True
-            print(self.name + " is selected")
+            self.week = week
+            print(self.name + " is selected for week " + str(self.week))
         else:
             self.selected = False
-            print(self.name + " is deselected")
+            print(self.name + " is deselected from week " + str(self.week))
+            self.week = -1
 
 
 class PotatoSoup(Recipe):
