@@ -12,38 +12,19 @@ class View(tk.Tk):
         self.controller = None
         self.frm_recipes = None
         self.frm_shopping_lists = None
-        # self.foodplan = None
-        # self.frames = []
 
     def initialize(self, controller, recipes):
         self.controller = controller
-        # self.foodplan = foodplan
         self.frm_recipes = RecipeSelection(self, recipes)
-        self.frm_recipes.grid(sticky="nesw")
-        # self.frm_recipes.grid(column=0, row=0)
-        # self.frames.append(frm_recipes)
+        self.frm_recipes.grid(row=0, column=0, sticky="nw")
 
     def display_shopping_lists(self, shopping_lists):
         frm_shopping_lists = ShoppingListsFrame(self, shopping_lists)
-        frm_shopping_lists.grid(column=1, row=0)
+        frm_shopping_lists.grid(column=1, row=0, sticky="nw")
+        frm_shopping_lists.add_shopping_list_frames()
 
     def add_frame(self, frame, row, column):
         frame.grid(column=column, row=row, sticky="nw")
-
-    # def add_frame(self, frame):
-    #     self.frames.append(frame)
-    #     return frame
-
-    # def update_frame(self, frame):
-    #     for f in self.frames:
-    #         if isinstance(f, type(frame)):
-    #             f.grid_forget()
-    #             self.frames.remove(f)
-    #             f.destroy()
-    #             return frame
-    #
-    #     self.add_frame(frame)
-    #     return frame
 
 
 class RecipeCheckbutton:
@@ -71,9 +52,8 @@ class RecipeSelection(tk.Frame):
 
     def __init__(self, master, recipes):
         tk.Frame.__init__(self, master, bg="#444", padx=10)
-        # self.master = master
+        self.master = master
         self.recipes = recipes
-        # self.foodplan = foodplan
 
         # create and position frames
         self.frame_header = tk.Frame(self, bg="#444")
@@ -83,24 +63,23 @@ class RecipeSelection(tk.Frame):
                                         bg="#444",
                                         scrollregion=(0, 0, 0, 900))
         self.frame_buttons = tk.Frame(self, bg="#444")
-        self.frame_recipes = tk.Frame(self.canvas_recipes, bg="#444")
+        self.frame_recipes = tk.Frame(self.canvas_recipes, bg="#444", padx=3)
 
-        self.frame_header.grid(row=0, column=0, sticky="w", )
+        self.frame_header.grid(row=0, column=0, sticky="w")
         self.frame_canvas.grid(row=1, column=0, sticky="w")
         self.canvas_recipes.grid(row=0, column=0, sticky="ew")
         self.frame_buttons.grid(row=2, column=0, sticky="ew")
 
         # add content to frames
-        self.fill_header(self.frame_header)
-        self.fill_recipes(self.frame_recipes)
-        self.add_buttons(self.frame_buttons)
+        self.fill_header()
+        self.fill_recipes()
+        self.add_buttons()
 
         self.update_scroll_region()
 
         # add scrollbar for recipes
         self.vsb = ttk.Scrollbar(self.frame_canvas, orient="vertical",
-                                command=self.canvas_recipes.yview
-                                )
+                                 command=self.canvas_recipes.yview)
         self.vsb.grid(row=0, column=4, sticky="ns")
 
         self.canvas_recipes.create_window((0, 0), width=500,
@@ -109,12 +88,9 @@ class RecipeSelection(tk.Frame):
                                           )
         self.canvas_recipes.config(yscrollcommand=self.vsb.set)
 
-    # def get_shopping_lists(self):
-    #     self.foodplan.set_shopping_lists(self.recipes)
-    #     return self.foodplan.get_shopping_lists()
-
-    def fill_header(self, frame):
+    def fill_header(self):
         current_row = 0
+        frame = self.frame_header
 
         tk.Label(frame, text="Woche", bg="#444", fg="white").grid(
             row=current_row,
@@ -130,8 +106,9 @@ class RecipeSelection(tk.Frame):
         tk.Label(frame, text="3", bg="#444", fg="white", padx=5).grid(
             row=current_row, column=2, sticky="ew")
 
-    def fill_recipes(self, frame):
+    def fill_recipes(self):
         current_row = 0
+        frame = self.frame_recipes
 
         for recipe in self.recipes:
             checkbutton_week1 = RecipeCheckbutton(frame, recipe, 1)
@@ -144,18 +121,17 @@ class RecipeSelection(tk.Frame):
                 row=current_row, column=3, sticky="w")
             current_row += 1
 
-    def add_buttons(self, frame):
+    def add_buttons(self):
+        frame = self.frame_buttons
+
         tk.Button(frame,
-                  text="Zutaten auflisten",
+                  text="Einkaufsliste erstellen",
                   fg="black",
                   relief="raised",
                   padx=3, pady=3,
                   highlightbackground='#444',
                   command=lambda: self.master.controller.display_shopping_lists(
                       self.recipes),
-                  # command=lambda: master.add_frame(
-                  #     ShoppingLists(master, self.get_shopping_lists()), row=0,
-                  #     column=4)
                   ).grid(row=0, columnspan=4)
 
     def update_scroll_region(self):
@@ -171,27 +147,32 @@ class ShoppingListsFrame(tk.Frame):
         """
         tk.Frame.__init__(self, master, bg="#444")
         self.master = master
-        # self.ingredients = ingredients
+        self.shopping_lists = shopping_lists
 
+    def add_shopping_list_frames(self):
         current_row = 0
 
-        for shopping_list in shopping_lists:
+        for shopping_list in self.shopping_lists:
             frame = ShoppingListFrame(self, shopping_list)
-            frame.grid(column=1, row=current_row)
+            frame.grid(column=0, row=current_row, sticky="w")
             current_row += 1
+            frame.add_ingredients()
 
 
 class ShoppingListFrame(tk.Frame):
 
-    def __init__(self, master, ingredients):
+    def __init__(self, master, shopping_list):
         tk.Frame.__init__(self, master, bg="#444")
         self.master = master
-        self.ingredients = ingredients
+        self.shopping_list = shopping_list
 
+    def add_ingredients(self):
         current_row = 0
-        for ingredient in self.ingredients:
-            name = tk.Label(self.master, textvariable=ingredient.name)
-            name.grid(column=0, row=current_row)
+        tk.Label(self, text=self.shopping_list.get_name(), bg="#FFF").grid(
+            row=current_row, column=0, sticky="nw")
+        current_row += 1
+
+        for ingredient in self.shopping_list:
             var = tk.StringVar()
             if ingredient.amount.num > 0.0 and ingredient.amount_piece.num == 0:
                 var.set(f"{ingredient.amount} {ingredient.name}")
@@ -200,8 +181,9 @@ class ShoppingListFrame(tk.Frame):
             else:
                 var.set(f"{ingredient.amount} + {ingredient.amount_piece} "
                         f"{ingredient.name}")
-            label = tk.Label(self.master,
-                             textvariable=var)
-            label.configure(state="disabled", background="#444")
-            label.grid(column=1, row=current_row, sticky="w")
+            label = tk.Label(self,
+                             textvariable=var,
+                             state="disabled",
+                             bg="#444")
+            label.grid(column=0, row=current_row, sticky="nw")
             current_row += 1
