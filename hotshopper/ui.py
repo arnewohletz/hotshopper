@@ -8,7 +8,7 @@ class View(tk.Tk):
         super(View, self).__init__()
         self.title("Hotshopper")
         self.configure(background="#444")
-        self.geometry("1000x1000")
+        self.geometry("900x1000")
         self.controller = None
         self.frm_recipes = None
         self.frm_shopping_lists = None
@@ -19,9 +19,11 @@ class View(tk.Tk):
         self.frm_recipes.grid(row=0, column=0, sticky="nw")
 
     def display_shopping_lists(self, shopping_lists):
+        self.frm_shopping_lists = None
         frm_shopping_lists = ShoppingListsFrame(self, shopping_lists)
         frm_shopping_lists.grid(column=1, row=0, sticky="nw")
         frm_shopping_lists.add_shopping_list_frames()
+        frm_shopping_lists.update_scroll_region()
 
     def add_frame(self, frame, row, column):
         frame.grid(column=column, row=row, sticky="nw")
@@ -130,8 +132,7 @@ class RecipeSelection(tk.Frame):
                   relief="raised",
                   padx=3, pady=3,
                   highlightbackground='#444',
-                  command=lambda: self.master.controller.display_shopping_lists(
-                      self.recipes),
+                  command=lambda: self.master.controller.display_shopping_lists()
                   ).grid(row=0, columnspan=4)
 
     def update_scroll_region(self):
@@ -145,18 +146,41 @@ class ShoppingListsFrame(tk.Frame):
         """
         :param shopping_lists: A list of ShoppingList objects
         """
-        tk.Frame.__init__(self, master, bg="#444")
+        tk.Frame.__init__(self, master, bg="#444", )
         self.master = master
         self.shopping_lists = shopping_lists
+        self.canvas_shopping_lists = tk.Canvas(self,
+                                               width=300,
+                                               height=950,
+                                               bg="#444",
+                                               scrollregion=(0, 0, 0, 900)
+                                               )
+        self.frame_shopping_lists = tk.Frame(self.canvas_shopping_lists,
+                                             bg="#444")
+        self.canvas_shopping_lists.create_window((0, 0),
+                                                 width=300,
+                                                 window=self.frame_shopping_lists,
+                                                 anchor="nw"
+                                                 )
+        self.vsb = ttk.Scrollbar(self, orient="vertical",
+                                 command=self.canvas_shopping_lists.yview)
+        self.canvas_shopping_lists.grid(row=0, column=0, sticky="nw")
+        self.vsb.grid(row=0, column=1, sticky="ns")
+        self.canvas_shopping_lists.config(yscrollcommand=self.vsb.set)
 
     def add_shopping_list_frames(self):
         current_row = 0
 
         for shopping_list in self.shopping_lists:
-            frame = ShoppingListFrame(self, shopping_list)
+            frame = ShoppingListFrame(self.frame_shopping_lists, shopping_list)
             frame.grid(column=0, row=current_row, sticky="w")
             current_row += 1
             frame.add_ingredients()
+
+    def update_scroll_region(self):
+        self.canvas_shopping_lists.update_idletasks()
+        self.canvas_shopping_lists.config(
+            scrollregion=self.frame_shopping_lists.bbox())
 
 
 class ShoppingListFrame(tk.Frame):
