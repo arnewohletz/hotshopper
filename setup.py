@@ -10,7 +10,10 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = ['Click>=7.0', ]
+with open('requirements.txt') as requirements_file:
+    requirements = requirements_file.read().splitlines()
+
+# requirements = parse_requirements
 
 setup_requirements = ['pytest-runner', ]
 
@@ -34,7 +37,7 @@ setup(
     description="Hotshopper creates a shopping list out of recipes",
     entry_points={
         'console_scripts': [
-            'hotshopper=hotshopper.cli:main',
+            'hotshopper=hotshopper.hotshopper:main',
         ],
     },
     install_requires=requirements,
