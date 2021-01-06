@@ -59,11 +59,11 @@ class FoodPlan:
             if isinstance(ingredient.where, Supermarket):
                 self.shopping_list_supermarket.add(ingredient)
             elif isinstance(ingredient.where, Market):
-                if recipe.week == 1:
+                if 1 in recipe.weeks:
                     self.shopping_list_market_week1.add(ingredient)
-                elif recipe.week == 2:
+                if 2 in recipe.weeks:
                     self.shopping_list_market_week2.add(ingredient)
-                elif recipe.week == 3:
+                if 3 in recipe.weeks:
                     self.shopping_list_market_week3.add(ingredient)
 
     def __remove_recipe(self, recipe: Recipe):
@@ -73,11 +73,11 @@ class FoodPlan:
             if isinstance(ingredient.where, Supermarket):
                 self.shopping_list_supermarket.substract(ingredient)
             elif isinstance(ingredient.where, Market):
-                if recipe.week == 1:
+                if 1 in recipe.weeks:
                     self.shopping_list_market_week1.substract(ingredient)
-                elif recipe.week == 2:
+                if 2 in recipe.weeks:
                     self.shopping_list_market_week2.substract(ingredient)
-                elif recipe.week == 3:
+                if 3 in recipe.weeks:
                     self.shopping_list_market_week3.substract(ingredient)
 
     def set_shopping_lists(self, recipes: list):

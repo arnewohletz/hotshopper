@@ -5,19 +5,19 @@ from hotshopper.ingredients import *
 
 class Recipe:
     name = ""
-    week = -1
+    weeks = []
     ingredients = []
     selected = False
 
     def set_selected(self, selected: tk.BooleanVar, week: int):
         if selected.get():
             self.selected = True
-            self.week = week
-            print(self.name + " is selected for week " + str(self.week))
+            self.weeks.append(week)
+            print(self.name + " is selected for week " + str(week))
         else:
             self.selected = False
-            print(self.name + " is deselected from week " + str(self.week))
-            self.week = -1
+            print(self.name + " is deselected from week " + str(week))
+            self.weeks.remove(week)
 
 
 class PotatoSoup(Recipe):
@@ -472,7 +472,7 @@ class SpaghettiAglioOlio(Recipe):
         Lemon(piece, 1)
     ]
 
-# TODO: Einheit kontrollieren (->Fehler)
+
 class PepperStew(Recipe):
     name = "Paprikapfanne"
     ingredients = [

@@ -196,7 +196,7 @@ class CoconutMilk(Ingredient):
 
 class Cucumber(Ingredient):
     name = "Salatgurke"
-    where = SUPERMARKET
+    where = MARKET
 
 
 class DillFrozen(Ingredient):
