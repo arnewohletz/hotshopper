@@ -44,7 +44,7 @@ class RecipeCheckbutton:
                                      fg="white")
 
     def set_selected(self):
-        self.recipe.set_selected(self.recipe, self.selected, self.week)
+        self.recipe.set_selected(self.selected.get(), self.week)
 
     def get(self):
         return self.button
@@ -135,9 +135,14 @@ class RecipeSelection(tk.Frame):
                   command=lambda: self.master.controller.display_shopping_lists()
                   ).grid(row=0, columnspan=4)
 
+    def _on_mousewheel(self, event):
+        self.canvas_recipes.yview_scroll(int(-1 * event.delta),
+                                         "units")
+
     def update_scroll_region(self):
         self.canvas_recipes.update_idletasks()
         self.canvas_recipes.config(scrollregion=self.frame_recipes.bbox())
+        self.canvas_recipes.bind_all("<MouseWheel>", self._on_mousewheel)
 
 
 class ShoppingListsFrame(tk.Frame):
@@ -177,10 +182,16 @@ class ShoppingListsFrame(tk.Frame):
             current_row += 1
             frame.add_ingredients()
 
+    def _on_mousewheel(self, event):
+        self.canvas_shopping_lists.yview_scroll(int(-1 * event.delta),
+                                                "units")
+
     def update_scroll_region(self):
         self.canvas_shopping_lists.update_idletasks()
         self.canvas_shopping_lists.config(
             scrollregion=self.frame_shopping_lists.bbox())
+        self.canvas_shopping_lists.bind_all("<MouseWheel>",
+                                            self._on_mousewheel)
 
 
 class ShoppingListFrame(tk.Frame):

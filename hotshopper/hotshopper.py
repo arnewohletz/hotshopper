@@ -14,7 +14,7 @@ class Controller:
         self.view.initialize(self, self.get_recipes())
 
     def get_recipes(self):
-        self.recipes = [recipe for recipe in Recipe.__subclasses__()]
+        self.recipes = [recipe() for recipe in Recipe.__subclasses__()]
         return sorted(self.recipes, key=lambda recipe: recipe.name)
 
     def display_shopping_lists(self):

@@ -1,5 +1,7 @@
-from hotshopper.recipes import Recipe
+import copy
+
 from hotshopper.ingredients import piece, Supermarket, Market
+from hotshopper.recipes import Recipe
 
 
 class ShoppingList(list):
@@ -24,7 +26,9 @@ class ShoppingList(list):
                 else:
                     existing_ingredient.amount += ingredient.amount
                 return True
-        self.append(ingredient)
+        # Copy required since shopping list otherwise alters the ingredient
+        # amount in the recipe, when adding them (not nice, I know)
+        self.append(copy.deepcopy(ingredient))
 
     def substract(self, ingredient):
         for existing_ingredient in self:
@@ -57,7 +61,8 @@ class FoodPlan:
 
         for ingredient in recipe.ingredients:
             if isinstance(ingredient.where, Supermarket):
-                self.shopping_list_supermarket.add(ingredient)
+                for i in range(len(recipe.weeks)):
+                    self.shopping_list_supermarket.add(ingredient)
             elif isinstance(ingredient.where, Market):
                 if 1 in recipe.weeks:
                     self.shopping_list_market_week1.add(ingredient)
