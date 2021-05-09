@@ -32,6 +32,7 @@ class PotatoSoup(Recipe):
                             Leek(piece, 1),
                             CremeFraiche(gram, 100),
                             CardamomMilled(piece, 1),
+                            Wiener(piece, 2)
                             ]
 
 
@@ -162,7 +163,7 @@ class CoconutSoup(Recipe):
                             MungbeanSproute(gram, 150),
                             GreenCurryPaste(piece, 1),
                             CoconutMilk(piece, 1),
-                            GlassNoodles(gram, 100),
+                            GlassNoodles(piece, 1),
                             SoySauce(piece, 1)
                             ]
 

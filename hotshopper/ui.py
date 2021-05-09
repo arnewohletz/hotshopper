@@ -1,13 +1,15 @@
 import tkinter as tk
 from tkinter import ttk
 
+BACKGROUND_COLOR = "#444"
+
 
 class View(tk.Tk):
 
     def __init__(self):
         super(View, self).__init__()
         self.title("Hotshopper")
-        self.configure(background="#444")
+        self.configure(background=BACKGROUND_COLOR)
         self.geometry("900x1000")
         self.controller = None
         self.frm_recipes = None
@@ -40,7 +42,7 @@ class RecipeCheckbutton:
                                      onvalue=True,
                                      offvalue=False,
                                      command=self.set_selected,
-                                     bg="#444",
+                                     bg=BACKGROUND_COLOR,
                                      fg="white")
 
     def set_selected(self):
@@ -53,19 +55,20 @@ class RecipeCheckbutton:
 class RecipeSelection(tk.Frame):
 
     def __init__(self, master, recipes):
-        tk.Frame.__init__(self, master, bg="#444", padx=10)
+        tk.Frame.__init__(self, master, bg=BACKGROUND_COLOR, padx=10)
         self.master = master
         self.recipes = recipes
 
         # create and position frames
-        self.frame_header = tk.Frame(self, bg="#444")
-        self.frame_canvas = tk.Frame(self, bg="#444")
+        self.frame_header = tk.Frame(self, bg=BACKGROUND_COLOR)
+        self.frame_canvas = tk.Frame(self, bg=BACKGROUND_COLOR)
         self.canvas_recipes = tk.Canvas(self.frame_canvas, width=500,
                                         height=900,
-                                        bg="#444",
+                                        bg=BACKGROUND_COLOR,
                                         scrollregion=(0, 0, 0, 900))
-        self.frame_buttons = tk.Frame(self, bg="#444")
-        self.frame_recipes = tk.Frame(self.canvas_recipes, bg="#444", padx=3)
+        self.frame_buttons = tk.Frame(self, bg=BACKGROUND_COLOR)
+        self.frame_recipes = tk.Frame(self.canvas_recipes, bg=BACKGROUND_COLOR,
+                                      padx=3)
 
         self.frame_header.grid(row=0, column=0, sticky="w")
         self.frame_canvas.grid(row=1, column=0, sticky="w")
@@ -94,18 +97,21 @@ class RecipeSelection(tk.Frame):
         current_row = 0
         frame = self.frame_header
 
-        tk.Label(frame, text="Woche", bg="#444", fg="white").grid(
+        tk.Label(frame, text="Woche", bg=BACKGROUND_COLOR, fg="white").grid(
             row=current_row,
             column=0,
             columnspan=4,
             sticky="ew")
         current_row += 1
 
-        tk.Label(frame, text="1", bg="#444", fg="white", padx=5).grid(
+        tk.Label(frame, text="1", bg=BACKGROUND_COLOR, fg="white",
+                 padx=5).grid(
             row=current_row, column=0, sticky="ew")
-        tk.Label(frame, text="2", bg="#444", fg="white", padx=5).grid(
+        tk.Label(frame, text="2", bg=BACKGROUND_COLOR, fg="white",
+                 padx=5).grid(
             row=current_row, column=1, sticky="ew")
-        tk.Label(frame, text="3", bg="#444", fg="white", padx=5).grid(
+        tk.Label(frame, text="3", bg=BACKGROUND_COLOR, fg="white",
+                 padx=5).grid(
             row=current_row, column=2, sticky="ew")
 
     def fill_recipes(self):
@@ -119,7 +125,8 @@ class RecipeSelection(tk.Frame):
             checkbutton_week1.get().grid(row=current_row, column=0, sticky="w")
             checkbutton_week2.get().grid(row=current_row, column=1, sticky="w")
             checkbutton_week3.get().grid(row=current_row, column=2, sticky="w")
-            tk.Label(frame, text=recipe.name, bg="#444", fg="white").grid(
+            tk.Label(frame, text=recipe.name, bg=BACKGROUND_COLOR,
+                     fg="white").grid(
                 row=current_row, column=3, sticky="w")
             current_row += 1
 
@@ -151,17 +158,17 @@ class ShoppingListsFrame(tk.Frame):
         """
         :param shopping_lists: A list of ShoppingList objects
         """
-        tk.Frame.__init__(self, master, bg="#444", )
+        tk.Frame.__init__(self, master, bg=BACKGROUND_COLOR, )
         self.master = master
         self.shopping_lists = shopping_lists
         self.canvas_shopping_lists = tk.Canvas(self,
                                                width=300,
                                                height=950,
-                                               bg="#444",
+                                               bg=BACKGROUND_COLOR,
                                                scrollregion=(0, 0, 0, 900)
                                                )
         self.frame_shopping_lists = tk.Frame(self.canvas_shopping_lists,
-                                             bg="#444")
+                                             bg=BACKGROUND_COLOR)
         self.canvas_shopping_lists.create_window((0, 0),
                                                  width=300,
                                                  window=self.frame_shopping_lists,
@@ -197,7 +204,7 @@ class ShoppingListsFrame(tk.Frame):
 class ShoppingListFrame(tk.Frame):
 
     def __init__(self, master, shopping_list):
-        tk.Frame.__init__(self, master, bg="#444")
+        tk.Frame.__init__(self, master, bg=BACKGROUND_COLOR)
         self.master = master
         self.shopping_list = shopping_list
 
@@ -219,6 +226,6 @@ class ShoppingListFrame(tk.Frame):
             label = tk.Label(self,
                              textvariable=var,
                              state="disabled",
-                             bg="#444")
+                             bg=BACKGROUND_COLOR)
             label.grid(column=0, row=current_row, sticky="nw")
             current_row += 1

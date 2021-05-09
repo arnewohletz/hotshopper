@@ -61,7 +61,7 @@ class Asparagus(Ingredient):
 
 class Avocado(Ingredient):
     name = "Avocado"
-    where = SUPERMARKET
+    where = MARKET
 
 
 class Baguette(Ingredient):
@@ -621,7 +621,7 @@ class WheatFlour(Ingredient):
 
 class Wiener(Ingredient):
     name = "Saitenwürste"
-    where = SUPERMARKET
+    where = MARKET
 
 
 class VanillaSugar(Ingredient):
