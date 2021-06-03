@@ -5,7 +5,6 @@ from hotshopper.recipes import Recipe
 
 
 class ShoppingList(list):
-
     def __contains__(self, type):
         for ingredient in self:
             if isinstance(ingredient, type):
@@ -37,13 +36,15 @@ class ShoppingList(list):
                     existing_ingredient.amount_piece -= ingredient.amount_piece
                 else:
                     existing_ingredient.amount -= ingredient.amount
-                if existing_ingredient.amount <= 0 \
-                    & existing_ingredient.amount_piece <= 0:
+                if (
+                    existing_ingredient.amount
+                    <= 0 & existing_ingredient.amount_piece
+                    <= 0
+                ):
                     self.remove(ingredient)
 
 
 class FoodPlan:
-
     def __init__(self):
         self.recipes = []
         self.shopping_list_supermarket = ShoppingList()
@@ -91,7 +92,9 @@ class FoodPlan:
                 self.__add_recipe(recipe)
 
     def get_shopping_lists(self):
-        return [self.shopping_list_supermarket,
-                self.shopping_list_market_week1,
-                self.shopping_list_market_week2,
-                self.shopping_list_market_week3]
+        return [
+            self.shopping_list_supermarket,
+            self.shopping_list_market_week1,
+            self.shopping_list_market_week2,
+            self.shopping_list_market_week3,
+        ]

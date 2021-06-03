@@ -19,9 +19,13 @@ class Market(Location):
     pass
 
 
+SUPERMARKET = Supermarket()
+MARKET = Market()
+
+
 class Ingredient(ABC):
     name = ""
-    where = None
+    where = Location()
 
     def __init__(self, unit: unit, amount: float):
         self.amount_piece = piece(0)
@@ -33,10 +37,6 @@ class Ingredient(ABC):
             self.amount_piece = unit(amount)
         else:
             self.amount = unit(amount)
-
-
-SUPERMARKET = Supermarket()
-MARKET = Market()
 
 
 class AgaveSyrup(Ingredient):

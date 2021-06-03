@@ -6,7 +6,6 @@ from hotshopper.foodplan import FoodPlan
 
 
 class Controller:
-
     def __init__(self, view):
         self.foodplan = None
         self.recipes = []
