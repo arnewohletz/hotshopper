@@ -481,8 +481,8 @@ class BakedPotato(Recipe):
         super().__init__()
         self.name = "Ofenkartoffeln"
         self.ingredients = [
-            StarchyPotato(gram, 1500),
-            SourCream(piece, 2),
+            LowStarchPotatoe(gram, 1800),
+            SourCream(piece, 3),
             EightHerbsFrozen(piece, 0.5),
         ]
 
