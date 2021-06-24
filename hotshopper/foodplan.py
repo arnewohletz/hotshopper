@@ -93,7 +93,8 @@ class FoodPlan:
 
     def get_shopping_lists(self):
         return [
-            self.shopping_list_supermarket,
+            sorted(self.shopping_list_supermarket,
+                   key=lambda ingredient: ingredient.id),
             self.shopping_list_market_week1,
             self.shopping_list_market_week2,
             self.shopping_list_market_week3,
