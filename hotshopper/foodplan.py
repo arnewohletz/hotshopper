@@ -29,6 +29,9 @@ class ShoppingList(list):
         # amount in the recipe, when adding them (not nice, I know)
         self.append(copy.deepcopy(ingredient))
 
+    def sort_ingredients(self):
+        self.sort(key=lambda ingredient: ingredient.id)
+
     def substract(self, ingredient):
         for existing_ingredient in self:
             if isinstance(ingredient, type(existing_ingredient)):
@@ -92,9 +95,10 @@ class FoodPlan:
                 self.__add_recipe(recipe)
 
     def get_shopping_lists(self):
+        # Currently, sorting the ingredients is done here - not nice
+        self.shopping_list_supermarket.sort_ingredients()
         return [
-            sorted(self.shopping_list_supermarket,
-                   key=lambda ingredient: ingredient.id),
+            self.shopping_list_supermarket,
             self.shopping_list_market_week1,
             self.shopping_list_market_week2,
             self.shopping_list_market_week3,

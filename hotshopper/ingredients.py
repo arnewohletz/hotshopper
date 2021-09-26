@@ -28,7 +28,6 @@ class Ingredient(ABC):
     where = Location()
 
     def __init__(self, unit: unit, amount: float):
-        self.id = 0
         self.amount_piece = piece(0)
         self.amount = gram(0)
         self.unit = unit
@@ -38,9 +37,6 @@ class Ingredient(ABC):
             self.amount_piece = unit(amount)
         else:
             self.amount = unit(amount)
-
-    def get_id(self):
-        return self.id
 
 
 class AgaveSyrup(Ingredient):
@@ -94,6 +90,7 @@ class BarbecueMeat(Ingredient):
 class BasilFrozen(Ingredient):
     name = "TK-Basilikum"
     where = SUPERMARKET
+    id = 11104
 
 
 class BeefCuts(Ingredient):
