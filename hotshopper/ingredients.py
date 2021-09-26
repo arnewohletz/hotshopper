@@ -69,6 +69,11 @@ class Baguette(Ingredient):
     where = MARKET
 
 
+class BakedFishFrozen(Ingredient):
+    name = "TK-Backfisch"
+    where = SUPERMARKET
+
+
 class BakingPowder(Ingredient):
     name = "Backpulver"
     where = SUPERMARKET
@@ -96,6 +101,11 @@ class BroccoliFrozen(Ingredient):
 
 class Buckwheat(Ingredient):
     name = "Buchweizen"
+    where = SUPERMARKET
+
+
+class Butter(Ingredient):
+    name = "Butter"
     where = SUPERMARKET
 
 
@@ -461,6 +471,11 @@ class PorkCuts(Ingredient):
 
 class PotatoePancankesFrozen(Ingredient):
     name = "TK-Kartoffelpuffer"
+    where = SUPERMARKET
+
+
+class Remoulade(Ingredient):
+    name = "Remouladensauce"
     where = SUPERMARKET
 
 

@@ -1,8 +1,9 @@
-from hotshopper.ingredients import piece, gram, kilogram
 from hotshopper.ingredients import (AgaveSyrup, Ajvar, ApplePuree, Asparagus,
-                                    Avocado, Baguette, BakingPowder,
+                                    Avocado, Baguette, BakedFishFrozen,
+                                    BakingPowder,
                                     BarbecueMeat, BasilFrozen, BeefCuts,
-                                    BroccoliFrozen, Buckwheat, Cabanossi,
+                                    BroccoliFrozen, Buckwheat, Butter,
+                                    Cabanossi,
                                     CaneSugar, Caraway, CardamomMilled, Carrot,
                                     CauliflowerFrozen,
                                     CauliflowerWithCreamFrozen, CeleryRoot,
@@ -31,7 +32,8 @@ from hotshopper.ingredients import (AgaveSyrup, Ajvar, ApplePuree, Asparagus,
                                     PineapplesSlicesPickled, Pistachios,
                                     PitaBread, PorkCuts,
                                     PotatoePancankesFrozen,
-                                    PrimarilyWaxyPotato, RiceBasmati,
+                                    PrimarilyWaxyPotato, Remoulade,
+                                    RiceBasmati,
                                     RicePudding, SaladSauce, Salami,
                                     SandwichCheese, SausageStripes,
                                     Schupfnudeln, Smetana, SourCream,
@@ -45,6 +47,7 @@ from hotshopper.ingredients import (AgaveSyrup, Ajvar, ApplePuree, Asparagus,
                                     TortelliniDried, Tortilla, TurkeySchnitzel,
                                     Tzatziki, VanillaSugar, VegetablesFrozen,
                                     WheatFlour, Wiener, Zucchini)
+from hotshopper.ingredients import piece, gram, kilogram
 
 
 class Recipe:
@@ -481,7 +484,7 @@ class BakedPotato(Recipe):
         super().__init__()
         self.name = "Ofenkartoffeln"
         self.ingredients = [
-            StarchyPotato(gram, 1500),
+            LowStarchPotatoe(gram, 1500),
             SourCream(piece, 2),
             EightHerbsFrozen(piece, 0.5),
         ]
@@ -582,6 +585,7 @@ class Waffles(Recipe):
             CaneSugar(gram, 75),
             Egg(piece, 2),
             Milk(gram, 500),
+            Butter(gram, 100)
         ]
 
 
@@ -641,4 +645,16 @@ class PepperStew(Recipe):
             PepperYellow(piece, 3),
             Tomato(piece, 4),
             Onion(gram, 500),
+        ]
+
+
+class BakedFishAndVegetables(Recipe):
+    def __init__(self):
+        super().__init__()
+        self.name = "Backfisch mit Kartoffeln & Erbsen"
+        self.ingredients = [
+            BakedFishFrozen(piece, 1),
+            LowStarchPotatoe(gram, 800),
+            PeasFrozen(piece, 1),
+            Remoulade(piece, 1)
         ]
