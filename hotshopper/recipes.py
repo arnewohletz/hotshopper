@@ -1,6 +1,6 @@
 from hotshopper.ingredients import (AgaveSyrup, Ajvar, ApplePuree, Asparagus,
                                     Avocado, Baguette, BakedFishFrozen,
-                                    BakingPowder,
+                                    BakingPowder, Banana,
                                     BarbecueMeat, BasilFrozen, BeefCuts,
                                     BroccoliFrozen, Buckwheat, Butter,
                                     Cabanossi,
@@ -40,7 +40,7 @@ from hotshopper.ingredients import (AgaveSyrup, Ajvar, ApplePuree, Asparagus,
                                     Sourcrout, SoySauce, SpaetzleCheese,
                                     SpaetzleNoodles, SpaghettiNoodles,
                                     SpinachCreamed, Sprout, StarchyPotato,
-                                    SugarSnap, Swede, Tagliatelle,
+                                    Swede, Tagliatelle,
                                     ToastbreadSandwich, ToastbreadWheatSlice,
                                     ToastbreadWholemeal, Tomato, TomatoPaste,
                                     TomatoPickled, TomatoSauce,
@@ -207,7 +207,7 @@ class CoconutSoup(Recipe):
             Onion(piece, 1),
             Ginger(piece, 1),
             ChickenCuts(gram, 200),
-            SugarSnap(gram, 200),
+            Carrot(gram, 200),
             MungbeanSproute(gram, 150),
             GreenCurryPaste(piece, 1),
             CoconutMilk(piece, 1),
@@ -484,7 +484,7 @@ class BakedPotato(Recipe):
         super().__init__()
         self.name = "Ofenkartoffeln"
         self.ingredients = [
-            LowStarchPotatoe(gram, 1500),
+            LowStarchPotatoe(gram, 1800),
             SourCream(piece, 2),
             EightHerbsFrozen(piece, 0.5),
         ]
@@ -657,4 +657,28 @@ class BakedFishAndVegetables(Recipe):
             LowStarchPotatoe(gram, 800),
             PeasFrozen(piece, 1),
             Remoulade(piece, 1)
+        ]
+
+
+class Pancakes(Recipe):
+    def __init__(self):
+        super().__init__()
+        self.name = "Pfannkuchen (2 Pers)"
+        self.ingredients = [
+            WheatFlour(gram, 200),
+            Egg(piece, 4),
+            Milk(gram, 325),
+            ApplePuree(piece, 1),
+            Banana(piece, 2)
+        ]
+
+
+class PotatoSaladAndMaultaschen(Recipe):
+    def __init__(self):
+        super().__init__()
+        self.name = "Kartoffelsalat mit Maultaschen"
+        self.ingredients = [
+            LowStarchPotatoe(gram, 1200),
+            Maultaschen(piece, 2),
+            Onion(piece, 2)
         ]
