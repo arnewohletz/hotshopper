@@ -97,6 +97,9 @@ class FoodPlan:
     def get_shopping_lists(self):
         # Currently, sorting the ingredients is done here - not nice
         self.shopping_list_supermarket.sort_ingredients()
+        self.shopping_list_market_week1.sort_ingredients()
+        self.shopping_list_market_week2.sort_ingredients()
+        self.shopping_list_market_week3.sort_ingredients()
         return [
             self.shopping_list_supermarket,
             self.shopping_list_market_week1,

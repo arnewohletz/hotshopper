@@ -86,6 +86,15 @@ class BakingPowder(Ingredient):
     id = 4506
 
 
+class Banana(Ingredient):
+    name = "Banane"
+    where = MARKET
+    if where == MARKET:
+        id = 14160
+    else:
+        id = 2110
+
+
 class BarbecueMeat(Ingredient):
     name = "Grillfleisch (selbst aussuchen)"
     where = MARKET
@@ -693,7 +702,7 @@ class ToastbreadWholemeal(Ingredient):
 class Tomato(Ingredient):
     name = "Tomate(n)"
     where = MARKET
-    id = 2501
+    id = 14040
 
 
 class TomatoPaste(Ingredient):

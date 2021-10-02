@@ -1,6 +1,6 @@
 from hotshopper.ingredients import (AgaveSyrup, Ajvar, ApplePuree, Asparagus,
                                     Avocado, Baguette, BakedFishFrozen,
-                                    BakingPowder,
+                                    BakingPowder, Banana,
                                     BarbecueMeat, BasilFrozen, BeefCuts,
                                     BroccoliFrozen, Buckwheat, Butter,
                                     Cabanossi,
@@ -657,4 +657,28 @@ class BakedFishAndVegetables(Recipe):
             LowStarchPotatoe(gram, 800),
             PeasFrozen(piece, 1),
             Remoulade(piece, 1)
+        ]
+
+
+class Pancakes(Recipe):
+    def __init__(self):
+        super().__init__()
+        self.name = "Pfannkuchen (2 Pers)"
+        self.ingredients = [
+            WheatFlour(gram, 200),
+            Egg(piece, 4),
+            Milk(gram, 325),
+            ApplePuree(piece, 1),
+            Banana(piece, 2)
+        ]
+
+
+class PotatoSaladAndMaultaschen(Recipe):
+    def __init__(self):
+        super().__init__()
+        self.name = "Kartoffelsalat mit Maultaschen"
+        self.ingredients = [
+            LowStarchPotatoe(gram, 1200),
+            Maultaschen(piece, 2),
+            Onion(piece, 2)
         ]
