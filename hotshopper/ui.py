@@ -61,7 +61,7 @@ class RecipeSelection(tk.Frame):
         self.canvas_recipes = tk.Canvas(
             self.frame_canvas,
             width=500,
-            height=900,
+            height=750,
             bg=BACKGROUND_COLOR,
             scrollregion=(0, 0, 0, 900),
         )
