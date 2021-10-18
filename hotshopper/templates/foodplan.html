@@ -5,57 +5,115 @@
 <script type="text/javascript">
     recipes = "{{ recipes }}"
 </script>
-<div class="foodplan">
-    <h2>Foodplan</h2>
-    <form method="POST" action="/get_shopping_list">
-    <table id="foodplan_table">
-        <tr>
-            <input type="submit" value="Berechne" id="calc_button">
-        </tr>
-        <tr>
-            <th colspan="4">Essensplan</th>
-        </tr>
-        <tr>
-            <td colspan="3">Woche</td>
-        </tr>
-        <tr>
-            <td>1</td>
-            <td>2</td>
-            <td>3</td>
-        </tr>
-        <table id="recipe_selection">
-        {% for recipe in recipes %}
+<h2>Hotshopper</h2>
+<div class="content">
+    <form method="POST" action="/show_shopping_list">
+        <table class="food_plan">
             <tr>
-<!--                <td>-->
-<!--                    <input type="checkbox" id="{{recipe.__class__.__name__}}_1" onchange="set_selected(this)">-->
-<!--                </td>-->
-<!--                <td>-->
-<!--                    <input type="checkbox" id="{{recipe.__class__.__name__}}_2" onchange="set_selected(this)">-->
-<!--                </td>-->
-<!--                <td>-->
-<!--                    <input type="checkbox" id="{{recipe.__class__.__name__}}_3" onchange="set_selected(this)">-->
-<!--                </td>-->
+                <th colspan="4">Essensplan</th>
+                <th class="buttons">
+                    <input type="submit" value="Berechne" id="calc_button">
+                </th>
+            </tr>
+            <tbody class="header">
+                <tr>
+                    <td colspan="3">Woche</td>
+                    <td rowspan="2">
+
+                    </td>
+                </td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>2</td>
+                    <td>3</td>
+                </tr>
+            </tbody>
+            {% for recipe in recipes %}
+            <tr>
+                <!--                <td>-->
+                <!--                    <input type="checkbox" id="{{recipe.__class__.__name__}}_1" onchange="set_selected(this)">-->
+                <!--                </td>-->
+                <!--                <td>-->
+                <!--                    <input type="checkbox" id="{{recipe.__class__.__name__}}_2" onchange="set_selected(this)">-->
+                <!--                </td>-->
+                <!--                <td>-->
+                <!--                    <input type="checkbox" id="{{recipe.__class__.__name__}}_3" onchange="set_selected(this)">-->
+                <!--                </td>-->
                 <td>
-                    <input type="checkbox" id="{{recipe.__class__.__name__}}_1" onchange="set_selected(this)">
+                    <!--                    <input type="checkbox" id="{{recipe.__class__.__name__}}_1" onchange="set_selected(this)">-->
+                    {% if recipe.selected == True and 1 in recipe.weeks %}
+                    <input type="checkbox"
+                           id="{{recipe.__class__.__name__}}_1"
+                           onchange="set_selected(this)" checked>
+                    {% else %}
+                    <input type="checkbox"
+                           id="{{recipe.__class__.__name__}}_1"
+                           onchange="set_selected(this)">
+                    {% endif %}
+                    <!--                    <input type="checkbox" id="{{recipe.__class__.__name__}}_1" onchange="set_selected(this)">-->
                 </td>
                 <td>
-                    <input type="checkbox" id="{{recipe.__class__.__name__}}_2">
+                    {% if recipe.selected == True and 2 in recipe.weeks %}
+                    <input type="checkbox"
+                           id="{{recipe.__class__.__name__}}_2"
+                           onchange="set_selected(this)" checked>
+                    {% else %}
+                    <input type="checkbox"
+                           id="{{recipe.__class__.__name__}}_2"
+                           onchange="set_selected(this)">
+                    {% endif %}
                 </td>
                 <td>
-                    <input type="checkbox" id="{{recipe.__class__.__name__}}_3">
+                    {% if recipe.selected == True and 3 in recipe.weeks %}
+                    <input type="checkbox"
+                           id="{{recipe.__class__.__name__}}_3"
+                           onchange="set_selected(this)" checked>
+                    {% else %}
+                    <input type="checkbox"
+                           id="{{recipe.__class__.__name__}}_3"
+                           onchange="set_selected(this)">
+                    {% endif %}
                 </td>
                 <td>{{recipe.name}}</td>
             </tr>
-        {% endfor %}
+            {% endfor %}
         </table>
-    </table>
-    <table id="shopping_list_table">
-        <tr>
-            <th colspan="2">Einkaufsliste</th>
-        </tr>
-    </table>
-
+    </form>
+    {% if food_plan %}
+        <table class="shopping_list">
+            <tr>
+                <th colspan="2">Einkaufsliste</th>
+            </tr>
+            {% for list in food_plan.get_shopping_lists() %}
+                <th colspan="2" class="shopping_list_header">
+                    {{ list.name }}
+                </th>
+                {% if list|length < 1 %}
+                    <tr>
+                        <td id="no_item" colspan="2">---</td>
+                    </tr>
+                {% endif %}
+                {% for item in list %}
+                    <tr>
+                        <td>
+                            {% if item.amount_piece.num > 0 %}
+                                {{ item.amount_piece.num }}
+                            {% else %}
+                                {{ item.amount.num }}
+                            {% endif %}
+                            {{ item.unit }}
+                        </td>
+                        <td>
+                            {{ item.name }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+            </td>
+        </table>
+        </div>
+    {% endif %}
 </div>
-
 
 {% endblock %}

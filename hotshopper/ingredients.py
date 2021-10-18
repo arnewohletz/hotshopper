@@ -29,10 +29,12 @@ class Ingredient(ABC):
 
     def __init__(self, unit: unit, amount: float):
         self.amount_piece = piece(0)
-        self.amount = gram(0)
+        self.amount = None
         self.unit = unit
         if unit not in (piece, gram, kilogram):
             raise UnsupportedUnitError("This unit is not supported")
+        # else:
+        #     self.amount = unit(amount)
         if unit == piece:
             self.amount_piece = unit(amount)
         else:
@@ -78,6 +80,7 @@ class Baguette(Ingredient):
 class BakedFishFrozen(Ingredient):
     name = "TK-Backfisch"
     where = SUPERMARKET
+    id = 11120
 
 
 class BakingPowder(Ingredient):

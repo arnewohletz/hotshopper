@@ -40,9 +40,8 @@ class ShoppingList(list):
                 else:
                     existing_ingredient.amount -= ingredient.amount
                 if (
-                    existing_ingredient.amount
-                    <= 0 & existing_ingredient.amount_piece
-                    <= 0
+                    existing_ingredient.amount <= 0 &
+                    existing_ingredient.amount_piece <= 0
                 ):
                     self.remove(ingredient)
 
