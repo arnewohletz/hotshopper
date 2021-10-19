@@ -47,7 +47,7 @@ from hotshopper.ingredients import (AgaveSyrup, Ajvar, ApplePuree, Asparagus,
                                     TortelliniDried, Tortilla, TurkeySchnitzel,
                                     Tzatziki, VanillaSugar, VegetablesFrozen,
                                     WheatFlour, Wiener, Zucchini)
-from hotshopper.ingredients import piece, gram, kilogram
+from hotshopper.ingredients import piece, gram
 
 
 class Recipe:
@@ -73,7 +73,7 @@ class PotatoSoup(Recipe):
         super().__init__()
         self.name = "Kartoffelsuppe (S.77)"
         self.ingredients = [
-            Carrot(kilogram, 0.5),
+            Carrot(gram, 500),
             Onion(piece, 1),
             StarchyPotato(gram, 750),
             HamCubes(gram, 125),
@@ -138,7 +138,7 @@ class OrientalSproutPan(Recipe):
         super().__init__()
         self.name = "Orientalische Rosenkohlpfanne (S.92)"
         self.ingredients = [
-            PrimarilyWaxyPotato(kilogram, 1),
+            PrimarilyWaxyPotato(gram, 1000),
             Sprout(gram, 750),
             Carrot(gram, 150),
             Onion(piece, 1),

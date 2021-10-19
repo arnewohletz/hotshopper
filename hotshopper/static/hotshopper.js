@@ -1,7 +1,8 @@
-// let controller;
+let scroll_height = document.documentElement.scrollHeight;
 
 function init() {
     // hide_shopping_list();
+    document.documentElement.scrollTop = scroll_height;
     const calc_button = document.getElementById("calc_button");
     calc_button.addEventListener("click", shopping_list_calc);
 }
@@ -24,6 +25,7 @@ function set_selected(checkboxElem) {
     else {
         window.location.href = "/uncheck_recipe/" + checkboxElem.id
     }
+    scroll_height = document.documentElement.scrollHeight;
 }
 
 

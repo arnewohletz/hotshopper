@@ -1,10 +1,9 @@
 from abc import ABC
-from units import unit, scaled_unit
+from units import unit
 from hotshopper.errors import UnsupportedUnitError
 
 piece = unit("St.")
 gram = unit("g")
-kilogram = scaled_unit("kg", "g", 1000)
 
 
 class Location:
@@ -29,9 +28,9 @@ class Ingredient(ABC):
 
     def __init__(self, unit: unit, amount: float):
         self.amount_piece = piece(0)
-        self.amount = None
+        self.amount = gram(0)
         self.unit = unit
-        if unit not in (piece, gram, kilogram):
+        if unit not in (piece, gram):
             raise UnsupportedUnitError("This unit is not supported")
         # else:
         #     self.amount = unit(amount)
@@ -574,6 +573,7 @@ class PotatoePancankesFrozen(Ingredient):
 class Remoulade(Ingredient):
     name = "Remouladensauce"
     where = SUPERMARKET
+    id = 8051
 
 
 class RicePudding(Ingredient):

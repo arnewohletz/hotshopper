@@ -9,7 +9,7 @@ class View(tk.Tk):
         super(View, self).__init__()
         self.title("Hotshopper")
         self.configure(background=BACKGROUND_COLOR)
-        self.geometry("900x1000")
+        self.geometry("900x800")
         self.controller = None
         self.frm_recipes = None
         self.frm_shopping_lists = None
@@ -61,9 +61,9 @@ class RecipeSelection(tk.Frame):
         self.canvas_recipes = tk.Canvas(
             self.frame_canvas,
             width=500,
-            height=900,
+            height=700,
             bg=BACKGROUND_COLOR,
-            scrollregion=(0, 0, 0, 900),
+            scrollregion=(0, 0, 0, 800),
         )
         self.frame_buttons = tk.Frame(self, bg=BACKGROUND_COLOR)
         self.frame_recipes = tk.Frame(self.canvas_recipes, bg=BACKGROUND_COLOR,
@@ -169,7 +169,7 @@ class ShoppingListsFrame(tk.Frame):
             width=300,
             height=950,
             bg=BACKGROUND_COLOR,
-            scrollregion=(0, 0, 0, 900),
+            scrollregion=(0, 0, 0, 800),
         )
         self.frame_shopping_lists = tk.Frame(
             self.canvas_shopping_lists, bg=BACKGROUND_COLOR

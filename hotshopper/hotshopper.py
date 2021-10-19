@@ -13,87 +13,81 @@ from flask import (Flask, render_template, request, redirect, make_response,
                    )
 
 
-# class Controller:
-#     def __init__(self, view):
-#         self.foodplan = None
-#         self.recipes = []
-#         self.view = view
-#         self.view.initialize(self, self.get_recipes())
-#
-#     def get_recipes(self):
-#         self.recipes = [recipe() for recipe in Recipe.__subclasses__()]
-#         return sorted(self.recipes, key=lambda recipe: recipe.name)
-#
-#     def display_shopping_lists(self):
-#         self.foodplan = FoodPlan()
-#         self.foodplan.set_shopping_lists(self.recipes)
-#         shopping_lists = self.foodplan.get_shopping_lists()
-#         self.view.display_shopping_lists(shopping_lists)
-
-
 class Controller:
-    def __init__(self):
+    def __init__(self, view=None):
         self.foodplan = None
         self.recipes = []
-        # self.view = view
+        if view:
+            self.view = view
+            self.view.initialize(self, self.get_recipes())
 
     def get_recipes(self):
         self.recipes = [recipe() for recipe in Recipe.__subclasses__()]
         return sorted(self.recipes, key=lambda recipe: recipe.name)
 
+    def display_shopping_lists(self):
+        self.foodplan = FoodPlan()
+        self.foodplan.set_shopping_lists(self.recipes)
+        shopping_lists = self.foodplan.get_shopping_lists()
+        self.view.display_shopping_lists(shopping_lists)
 
-def main(autostart=False, debug=True):
-    app = Flask(__name__)
 
-    # Controller(app)
+# class Controller:
+#     def __init__(self, view=None):
+#         self.foodplan = None
+#         self.recipes = []
+#         if view:
+#             self.view = view
+#
+#     def get_recipes(self):
+#         self.recipes = [recipe() for recipe in Recipe.__subclasses__()]
+#         return sorted(self.recipes, key=lambda recipe: recipe.name)
 
-    # view = View()
-    # Controller(view)
-    # view.mainloop()
+
+def main(web=True):
+    app = None
     controller = Controller()
     recipes = controller.get_recipes()
 
-    # def run():
-    #     app.run(port=port, debug=debug)
+    # Controller(app)
+    # view = View()
+    # Controller(view)
+    # view.mainloop()
 
-    @app.route("/")
-    def show_init_app():
-        return render_template("foodplan.html", recipes=recipes)
+    if web:
+        app = Flask(__name__)
+        port = 5001
 
-    @app.route("/check_recipe/<recipe>_<int:week>")
-    def check_recipe(recipe, week):
-        for i in recipes:
-            if i.__class__.__name__ == recipe:
-                i.set_selected(True, week)
-        return redirect("/")
-        # return f"Checked {recipe}"
+        @app.route("/")
+        def show_init_app():
+            return render_template("foodplan.html", recipes=recipes)
 
-    @app.route("/uncheck_recipe/<recipe>_<int:week>")
-    def uncheck_recipe(recipe, week):
-        for i in recipes:
-            if i.__class__.__name__ == recipe:
-                i.set_selected(False, week)
-        return redirect("/")
-        # return f"Checked {recipe}"
+        @app.route("/check_recipe/<recipe>_<int:week>")
+        def check_recipe(recipe, week):
+            for i in recipes:
+                if i.__class__.__name__ == recipe:
+                    i.set_selected(True, week)
+            return redirect("/")
 
-    @app.route("/show_shopping_list", methods=["POST"])
-    def show_shopping_list():
-        food_plan = FoodPlan()
-        food_plan.set_shopping_lists(recipes)
-        # for recipe in recipes:
-        #     if recipe.selected:
-        #         food_plan.
-        #     for week in recipe.weeks:
-        #         print(f"{recipe.name} selected for week {week}")
+        @app.route("/uncheck_recipe/<recipe>_<int:week>")
+        def uncheck_recipe(recipe, week):
+            for i in recipes:
+                if i.__class__.__name__ == recipe:
+                    i.set_selected(False, week)
+            return redirect("/")
 
-            # for week in range(1, 4):
-            #     recipe_data = request.form[
-            #         f"{recipe.__class__.__name__}_{week}"]
-            #     print(recipe_data)
-            # recipe_data = request.form[f"{recipe.name}_{week}"]
+        @app.route("/show_shopping_list", methods=["POST"])
+        def show_shopping_list():
+            food_plan = FoodPlan()
+            food_plan.set_shopping_lists(recipes)
+            return render_template("foodplan.html",
+                                   recipes=recipes,
+                                   food_plan=food_plan)
 
-        return render_template("foodplan.html",
-                               recipes=recipes,
-                               food_plan=food_plan)
+        app.run(port=port, debug=True)
 
-    return app
+    else:
+        view = View()
+        Controller(view)
+        view.mainloop()
+
