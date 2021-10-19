@@ -1,8 +1,9 @@
-let scroll_height = document.documentElement.scrollHeight;
+// let scroll_height;
 
 function init() {
     // hide_shopping_list();
-    document.documentElement.scrollTop = scroll_height;
+    window.scroll(0, scroll_height);
+    // document.scroll = scroll_height;
     const calc_button = document.getElementById("calc_button");
     calc_button.addEventListener("click", shopping_list_calc);
 }
@@ -19,13 +20,14 @@ function shopping_list_calc() {
 }
 
 function set_selected(checkboxElem) {
+    scroll_height = document.documentElement.scrollTop || document.body.scrollTop
+    // scroll_height = document.documentElement.scrollHeight;
     if (checkboxElem.checked) {
-        window.location.href = "/check_recipe/" + checkboxElem.id
+        window.location.href = "/check_recipe/" + checkboxElem.id + "_" + scroll_height
     }
     else {
-        window.location.href = "/uncheck_recipe/" + checkboxElem.id
+        window.location.href = "/uncheck_recipe/" + checkboxElem.id + "_" + scroll_height
     }
-    scroll_height = document.documentElement.scrollHeight;
 }
 
 

@@ -7,6 +7,8 @@ from hotshopper.foodplan import FoodPlan
 import random
 import threading
 import webbrowser
+import secrets
+
 
 from flask import (Flask, render_template, request, redirect, make_response,
                    session
@@ -56,24 +58,32 @@ def main(web=True):
 
     if web:
         app = Flask(__name__)
+        app.secret_key = secrets.token_hex()
         port = 5001
 
         @app.route("/")
         def show_init_app():
-            return render_template("foodplan.html", recipes=recipes)
+            try:
+                scroll_height = session.pop("scroll_height")
+            except KeyError:
+                scroll_height = 0
+            return render_template("foodplan.html", recipes=recipes,
+                                   scroll_height=scroll_height)
 
-        @app.route("/check_recipe/<recipe>_<int:week>")
-        def check_recipe(recipe, week):
+        @app.route("/check_recipe/<recipe>_<int:week>_<int:scroll_height>")
+        def check_recipe(recipe, week, scroll_height):
             for i in recipes:
                 if i.__class__.__name__ == recipe:
                     i.set_selected(True, week)
+                    session["scroll_height"] = scroll_height
             return redirect("/")
 
-        @app.route("/uncheck_recipe/<recipe>_<int:week>")
-        def uncheck_recipe(recipe, week):
+        @app.route("/uncheck_recipe/<recipe>_<int:week>_<int:scroll_height>")
+        def uncheck_recipe(recipe, week, scroll_height):
             for i in recipes:
                 if i.__class__.__name__ == recipe:
                     i.set_selected(False, week)
+                    session["scroll_height"] = scroll_height
             return redirect("/")
 
         @app.route("/show_shopping_list", methods=["POST"])
