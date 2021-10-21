@@ -5,14 +5,16 @@ from hotshopper.recipes import Recipe
 
 
 class ShoppingList(list):
+
+    def __init__(self, name):
+        super().__init__()
+        self.name = name
+
     def __contains__(self, type):
         for ingredient in self:
             if isinstance(ingredient, type):
                 return True
             return False
-
-    def set_name(self, name):
-        self.name = name
 
     def get_name(self):
         return self.name
@@ -49,15 +51,10 @@ class ShoppingList(list):
 class FoodPlan:
     def __init__(self):
         self.recipes = []
-        self.shopping_list_supermarket = ShoppingList()
-        self.shopping_list_market_week1 = ShoppingList()
-        self.shopping_list_market_week2 = ShoppingList()
-        self.shopping_list_market_week3 = ShoppingList()
-
-        self.shopping_list_supermarket.set_name("Supermarkt")
-        self.shopping_list_market_week1.set_name("Markt Woche 1")
-        self.shopping_list_market_week2.set_name("Markt Woche 2")
-        self.shopping_list_market_week3.set_name("Markt Woche 3")
+        self.shopping_list_supermarket = ShoppingList("Supermarkt")
+        self.shopping_list_market_week1 = ShoppingList("Markt Woche 1")
+        self.shopping_list_market_week2 = ShoppingList("Markt Woche 2")
+        self.shopping_list_market_week3 = ShoppingList("Markt Woche 3")
 
     def __add_recipe(self, recipe: Recipe):
         self.recipes.append(recipe)
