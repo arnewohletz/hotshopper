@@ -20,7 +20,6 @@
                 <tr>
                     <td colspan="3">Woche</td>
                     <td rowspan="2">
-
                     </td>
                 </td>
                 </tr>
@@ -32,17 +31,7 @@
             </tbody>
             {% for recipe in recipes %}
             <tr>
-                <!--                <td>-->
-                <!--                    <input type="checkbox" id="{{recipe.__class__.__name__}}_1" onchange="set_selected(this)">-->
-                <!--                </td>-->
-                <!--                <td>-->
-                <!--                    <input type="checkbox" id="{{recipe.__class__.__name__}}_2" onchange="set_selected(this)">-->
-                <!--                </td>-->
-                <!--                <td>-->
-                <!--                    <input type="checkbox" id="{{recipe.__class__.__name__}}_3" onchange="set_selected(this)">-->
-                <!--                </td>-->
                 <td>
-                    <!--                    <input type="checkbox" id="{{recipe.__class__.__name__}}_1" onchange="set_selected(this)">-->
                     {% if recipe.selected == True and 1 in recipe.weeks %}
                     <input type="checkbox"
                            id="{{recipe.__class__.__name__}}_1"
@@ -52,7 +41,6 @@
                            id="{{recipe.__class__.__name__}}_1"
                            onchange="set_selected(this)">
                     {% endif %}
-                    <!--                    <input type="checkbox" id="{{recipe.__class__.__name__}}_1" onchange="set_selected(this)">-->
                 </td>
                 <td>
                     {% if recipe.selected == True and 2 in recipe.weeks %}
@@ -99,11 +87,6 @@
                     <tr>
                         <td>
                             {{ item.get_amount() }}
-<!--                            {% if item.amount_piece.num > 0 %}-->
-<!--                                {{ item.amount_piece.num }}-->
-<!--                            {% else %}-->
-<!--                                {{ item.amount.num }}-->
-<!--                            {% endif %}-->
                             {{ item.unit }}
                         </td>
                         <td>
