@@ -98,11 +98,12 @@
                 {% for item in list %}
                     <tr>
                         <td>
-                            {% if item.amount_piece.num > 0 %}
-                                {{ item.amount_piece.num }}
-                            {% else %}
-                                {{ item.amount.num }}
-                            {% endif %}
+                            {{ item.get_amount() }}
+<!--                            {% if item.amount_piece.num > 0 %}-->
+<!--                                {{ item.amount_piece.num }}-->
+<!--                            {% else %}-->
+<!--                                {{ item.amount.num }}-->
+<!--                            {% endif %}-->
                             {{ item.unit }}
                         </td>
                         <td>

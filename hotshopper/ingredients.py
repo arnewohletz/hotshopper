@@ -32,12 +32,24 @@ class Ingredient(ABC):
         self.unit = unit
         if unit not in (piece, gram):
             raise UnsupportedUnitError("This unit is not supported")
-        # else:
-        #     self.amount = unit(amount)
         if unit == piece:
             self.amount_piece = unit(amount)
         else:
             self.amount = unit(amount)
+
+    def get_amount(self):
+        if self.amount_piece.num > 0:
+            if float(self.amount_piece.num).is_integer():
+                return int(self.amount_piece)
+            else:
+                return self.amount_piece
+        elif self.amount.num > 0:
+            if float(self.amount.num).is_integer():
+                return int(self.amount)
+            else:
+                return self.amount
+        else:
+            return 0
 
 
 class AgaveSyrup(Ingredient):
