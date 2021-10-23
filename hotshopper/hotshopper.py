@@ -49,7 +49,7 @@ def main(web=True):
         def check_recipe(recipe, week, scroll_height):
             for i in recipes:
                 if i.__class__.__name__ == recipe:
-                    i.set_selected(True, week)
+                    i.select(True, week)
                     session["scroll_height"] = scroll_height
             return redirect("/")
 
@@ -57,7 +57,7 @@ def main(web=True):
         def uncheck_recipe(recipe, week, scroll_height):
             for i in recipes:
                 if i.__class__.__name__ == recipe:
-                    i.set_selected(False, week)
+                    i.select(False, week)
                     session["scroll_height"] = scroll_height
             return redirect("/")
 

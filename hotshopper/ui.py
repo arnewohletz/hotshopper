@@ -43,7 +43,7 @@ class RecipeCheckbutton:
         )
 
     def set_selected(self):
-        self.recipe.set_selected(self.selected.get(), self.week)
+        self.recipe.select(self.selected.get(), self.week)
 
     def get(self):
         return self.button

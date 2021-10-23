@@ -52,6 +52,27 @@ class Ingredient(ABC):
             return 0
 
 
+class Ingredients(list):
+    def __init__(self, *ingredients):
+        super().__init__()
+        for ingredient in ingredients:
+            self.append(ingredient)
+
+    def __contains__(self, typ):
+        for index, ingredient in enumerate(self):
+            if isinstance(ingredient, typ):
+                return index
+        return -1
+
+    def __getitem__(self, key):
+        if isinstance(key, Ingredient):
+            for item in self:
+                if isinstance(item, type(key)):
+                    return item
+        else:
+            return self[key]
+
+
 class AgaveSyrup(Ingredient):
     name = "Agavendicksaft"
     where = SUPERMARKET

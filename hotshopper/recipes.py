@@ -47,32 +47,39 @@ from hotshopper.ingredients import (AgaveSyrup, Ajvar, ApplePuree, Asparagus,
                                     TortelliniDried, Tortilla, TurkeySchnitzel,
                                     Tzatziki, VanillaSugar, VegetablesFrozen,
                                     WheatFlour, Wiener, Zucchini)
-from hotshopper.ingredients import piece, gram
+from hotshopper.ingredients import piece, gram, Ingredients
 
 
 class Recipe:
     def __init__(self):
         self.name = ""
         self.weeks = []
-        self.ingredients = []
+        self.ingredients = Ingredients()
         self.selected = False
 
-    def set_selected(self, selected: bool, week: int):
+    def select(self, selected: bool, week: int):
         if selected:
             self.selected = True
             self.weeks.append(week)
             print(self.name + " is selected for week " + str(week))
         else:
-            self.selected = False
-            print(self.name + " is deselected from week " + str(week))
             self.weeks.remove(week)
+            if len(self.weeks) == 0:
+                self.selected = False
+            print(self.name + " is deselected from week " + str(week))
+
+    # def __contains__(self, typ):
+    #     for ingredient, index in enumerate(self.ingredients):
+    #         if isinstance(ingredient, typ):
+    #             return index
+    #     return -1
 
 
 class PotatoSoup(Recipe):
     def __init__(self):
         super().__init__()
         self.name = "Kartoffelsuppe (S.77)"
-        self.ingredients = [
+        self.ingredients = Ingredients(
             Carrot(gram, 500),
             Onion(piece, 1),
             StarchyPotato(gram, 750),
@@ -81,7 +88,7 @@ class PotatoSoup(Recipe):
             CremeFraiche(gram, 100),
             CardamomMilled(piece, 1),
             Wiener(piece, 2),
-        ]
+        )
 
 
 class ParsleyRootCurry(Recipe):

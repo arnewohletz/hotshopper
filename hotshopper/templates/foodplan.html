@@ -17,19 +17,20 @@
                 </th>
             </tr>
             <tbody class="header">
-                <tr>
-                    <td colspan="3">Woche</td>
-                    <td rowspan="2">
-                    </td>
+            <tr>
+                <td colspan="3">Woche</td>
+                <td rowspan="2">
                 </td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>2</td>
-                    <td>3</td>
-                </tr>
+                </td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>2</td>
+                <td>3</td>
+            </tr>
             </tbody>
             {% for recipe in recipes %}
+            <tr><td>{{ clever_function }}</td></tr>
             <tr>
                 <td>
                     {% if recipe.selected == True and 1 in recipe.weeks %}
@@ -70,35 +71,35 @@
         </table>
     </form>
     {% if food_plan %}
-        <table class="shopping_list">
-            <tr>
-                <th colspan="2">Einkaufsliste</th>
-            </tr>
-            {% for list in food_plan.get_shopping_lists() %}
-                <th colspan="2" class="shopping_list_header">
-                    {{ list.name }}
-                </th>
-                {% if list|length < 1 %}
-                    <tr>
-                        <td id="no_item" colspan="2">---</td>
-                    </tr>
-                {% endif %}
-                {% for item in list %}
-                    <tr>
-                        <td>
-                            {{ item.get_amount() }}
-                            {{ item.unit }}
-                        </td>
-                        <td>
-                            {{ item.name }}
-                        </td>
-                    </tr>
-                {% endfor %}
-            {% endfor %}
+    <table class="shopping_list">
+        <tr>
+            <th colspan="2">Einkaufsliste</th>
+        </tr>
+        {% for list in food_plan.get_shopping_lists() %}
+        <th colspan="2" class="shopping_list_header">
+            {{ list.name }}
+        </th>
+        {% if list|length < 1 %}
+        <tr>
+            <td id="no_item" colspan="2">---</td>
+        </tr>
+        {% endif %}
+        {% for item in list %}
+        <tr>
+            <td>
+                {{ item.get_amount() }}
+                {{ item.unit }}
             </td>
-        </table>
-        </div>
+            <td class="shopping_list_item_name">
+                {{ item.name }}
+            </td>
+        </tr>
+        {% endfor %}
+        {% endfor %}
+        </td>
+    </table>
     {% endif %}
+    <!--</div>-->
 </div>
 
 {% endblock %}

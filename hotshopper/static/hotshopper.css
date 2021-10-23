@@ -46,6 +46,10 @@ td#no_item {
     text-align: center;
 }
 
+td.shopping_list_item_name {
+    padding-left: 10px;
+}
+
 tbody.header {
     text-align: center;
 }

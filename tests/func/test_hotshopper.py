@@ -1,13 +1,23 @@
 from hotshopper.foodplan import FoodPlan
-from hotshopper.ingredients import Carrot
 from hotshopper.recipes import *
 
 
-def test_add_recipe_to_shopping_list():
+# working
+def test_add_single_recipe_to_shopping_list():
     food_plan = FoodPlan()
-    food_plan.add_recipe(PotatoSoup())
-    assert(any(isinstance(x, Carrot) for x in food_plan.shopping_list))
-    food_plan.shopping_list.print_ingredients()
+    recipes = [PotatoSoup()]
+    for recipe in recipes:
+        recipe.select(True, week=1)
+    food_plan.set_shopping_lists(recipes)
+
+    for shopping_list in food_plan.get_shopping_lists():
+        for ingredient in shopping_list:
+            if any(isinstance(ingredient, type(item)) for item in
+                   PotatoSoup().ingredients):
+                i = PotatoSoup().ingredients[ingredient]
+                assert ingredient.get_amount() == i.get_amount()
+            else:
+                assert False
 
 
 def test_two_combined_quantities_on_shopping_list():
@@ -23,19 +33,19 @@ def test_remove_recipe_from_shopping_list():
     food_plan.add_recipe(ParsleyRootCurry())
     food_plan.add_recipe(PotatoSoup())
     food_plan.remove_recipe(PotatoSoup())
-    assert(food_plan.shopping_list.items, ParsleyRootCurry().ingredients)
+    assert (food_plan.shopping_list.items, ParsleyRootCurry().ingredients)
 
 
 def test_correct_ingredients_market_1():
     food_plan = FoodPlan()
 
     salad = SaladAndMaultaschen()
-    salad.set_selected(True, week=1)
-    salad.set_selected(True, week=2)
-    salad.set_selected(True, week=3)
+    salad.select(True, week=1)
+    salad.select(True, week=2)
+    salad.select(True, week=3)
 
     chicoree = ChicoryWithHam()
-    chicoree.set_selected(True, week=1)
+    chicoree.select(True, week=1)
 
     recipes = [salad, chicoree]
     food_plan.set_shopping_lists(recipes)
