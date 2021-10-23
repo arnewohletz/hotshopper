@@ -613,11 +613,11 @@ class CheeseNoodles(Recipe):
     def __init__(self):
         super().__init__()
         self.name = "Käsespätzle"
-        self.ingredients = [
+        self.ingredients = Ingredients(
             SpaetzleNoodles(piece, 1),
             SpaetzleCheese(piece, 1),
             Onion(piece, 4),
-        ]
+        )
 
 
 class SpaghettiWithTomatosauce(Recipe):

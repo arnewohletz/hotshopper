@@ -65,9 +65,9 @@ class Ingredients(list):
         return -1
 
     def __getitem__(self, key):
-        if isinstance(key, Ingredient):
+        if isinstance(key, type(Ingredient)):
             for item in self:
-                if isinstance(item, type(key)):
+                if isinstance(item, key):
                     return item
         else:
             return self[key]
