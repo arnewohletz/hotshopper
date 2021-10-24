@@ -57,22 +57,16 @@ class Recipe:
         self.ingredients = Ingredients()
         self.selected = False
 
-    def select(self, selected: bool, week: int):
-        if selected:
-            self.selected = True
-            self.weeks.append(week)
-            print(self.name + " is selected for week " + str(week))
-        else:
-            self.weeks.remove(week)
-            if len(self.weeks) == 0:
-                self.selected = False
-            print(self.name + " is deselected from week " + str(week))
+    def select(self, week: int):
+        self.selected = True
+        self.weeks.append(week)
+        print(self.name + " is selected for week " + str(week))
 
-    # def __contains__(self, typ):
-    #     for ingredient, index in enumerate(self.ingredients):
-    #         if isinstance(ingredient, typ):
-    #             return index
-    #     return -1
+    def unselect(self, week: int):
+        self.weeks.remove(week)
+        if len(self.weeks) == 0:
+            self.selected = False
+        print(self.name + " is deselected from week " + str(week))
 
 
 class PotatoSoup(Recipe):
