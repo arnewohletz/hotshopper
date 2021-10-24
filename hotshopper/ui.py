@@ -9,7 +9,7 @@ class View(tk.Tk):
         super(View, self).__init__()
         self.title("Hotshopper")
         self.configure(background=BACKGROUND_COLOR)
-        self.geometry("900x1000")
+        self.geometry("900x800")
         self.controller = None
         self.frm_recipes = None
         self.frm_shopping_lists = None
@@ -43,7 +43,7 @@ class RecipeCheckbutton:
         )
 
     def set_selected(self):
-        self.recipe.set_selected(self.selected.get(), self.week)
+        self.recipe.select(self.selected.get(), self.week)
 
     def get(self):
         return self.button
@@ -61,9 +61,9 @@ class RecipeSelection(tk.Frame):
         self.canvas_recipes = tk.Canvas(
             self.frame_canvas,
             width=500,
-            height=750,
+            height=700,
             bg=BACKGROUND_COLOR,
-            scrollregion=(0, 0, 0, 900),
+            scrollregion=(0, 0, 0, 800),
         )
         self.frame_buttons = tk.Frame(self, bg=BACKGROUND_COLOR)
         self.frame_recipes = tk.Frame(self.canvas_recipes, bg=BACKGROUND_COLOR,
@@ -169,7 +169,7 @@ class ShoppingListsFrame(tk.Frame):
             width=300,
             height=950,
             bg=BACKGROUND_COLOR,
-            scrollregion=(0, 0, 0, 900),
+            scrollregion=(0, 0, 0, 800),
         )
         self.frame_shopping_lists = tk.Frame(
             self.canvas_shopping_lists, bg=BACKGROUND_COLOR
@@ -212,7 +212,8 @@ class ShoppingListFrame(tk.Frame):
 
     def add_ingredients(self):
         current_row = 0
-        tk.Label(self, text=self.shopping_list.get_name(), bg="#FFF").grid(
+        tk.Label(self, text=self.shopping_list.get_name(), bg="#FFF",
+                 fg="black").grid(
             row=current_row, column=0, sticky="nw"
         )
         current_row += 1
@@ -220,10 +221,10 @@ class ShoppingListFrame(tk.Frame):
         for ingredient in self.shopping_list:
             var = tk.StringVar()
             if ingredient.amount.num > 0.0 and \
-                    ingredient.amount_piece.num == 0:
+                ingredient.amount_piece.num == 0:
                 var.set(f"{ingredient.amount} {ingredient.name}")
             elif ingredient.amount.num == 0.0 and \
-                    ingredient.amount_piece.num >= 0:
+                ingredient.amount_piece.num >= 0:
                 var.set(f"{ingredient.amount_piece} {ingredient.name}")
             else:
                 var.set(
