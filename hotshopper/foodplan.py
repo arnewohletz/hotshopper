@@ -38,7 +38,7 @@ class ShoppingList(list):
     #     for existing_ingredient in self:
     #         if isinstance(ingredient, type(existing_ingredient)):
     #             if ingredient.unit.specifier == piece.specifier:
-    #                 existing_ingredient.amount_piece -= ingredient.amount_piece
+    #               existing_ingredient.amount_piece -= ingredient.amount_piece
     #             else:
     #                 existing_ingredient.amount -= ingredient.amount
     #             if (
