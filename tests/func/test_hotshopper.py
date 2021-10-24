@@ -50,27 +50,10 @@ def test_remove_recipe_from_food_plan():
     assert not potato_soup.selected
 
 
-def test_remove_recipe_from_shopping_list():
-    food_plan = FoodPlan()
-    food_plan.add_recipe(ParsleyRootCurry(week=2))
-    food_plan.add_recipe(PotatoSoup(week=1))
-    food_plan.remove_recipe(PotatoSoup(week=1))
-    assert (food_plan.shopping_list.items, ParsleyRootCurry().ingredients)
+# def test_remove_recipe_from_shopping_list():
+#     food_plan = FoodPlan()
+#     food_plan.add_recipe(ParsleyRootCurry(week=2))
+#     food_plan.add_recipe(PotatoSoup(week=1))
+#     food_plan.remove_recipe(PotatoSoup(week=1))
+#     assert (food_plan.shopping_list.items, ParsleyRootCurry().ingredients)
 
-
-def test_correct_ingredients_market_1():
-    food_plan = FoodPlan()
-
-    salad = SaladAndMaultaschen()
-    salad.select(True, week=1)
-    salad.select(True, week=2)
-    salad.select(True, week=3)
-
-    chicoree = ChicoryWithHam()
-    chicoree.select(True, week=1)
-
-    recipes = [salad, chicoree]
-    food_plan.set_shopping_lists(recipes)
-
-    assert food_plan.shopping_list_market_week1 != \
-           food_plan.shopping_list_market_week2
