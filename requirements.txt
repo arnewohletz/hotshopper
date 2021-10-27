@@ -1,2 +1,4 @@
 units==0.07
 flask>=2.0.2
+sqlalchemy>=1.4.26
+Flask-SQLAlchemy>=2.5.1

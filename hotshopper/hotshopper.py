@@ -2,10 +2,13 @@
 import secrets
 
 from flask import (Flask, render_template, redirect, session)
+from flask_sqlalchemy import SQLAlchemy
 
 from hotshopper.foodplan import FoodPlan
 from hotshopper.recipes import Recipe
 from hotshopper.ui import View
+
+from . import app, db
 
 
 class Controller:
@@ -16,7 +19,12 @@ class Controller:
             self.view = view
             self.view.initialize(self, self.get_recipes())
 
+    # def get_recipes(self):
+    #     self.recipes = [recipe() for recipe in Recipe.__subclasses__()]
+    #     return sorted(self.recipes, key=lambda recipe: recipe.name)
+
     def get_recipes(self):
+        self.recipes = db.session.query(Recipe).all()
         self.recipes = [recipe() for recipe in Recipe.__subclasses__()]
         return sorted(self.recipes, key=lambda recipe: recipe.name)
 
@@ -32,8 +40,10 @@ def main(web=True):
     recipes = controller.get_recipes()
 
     if web:
-        app = Flask(__name__)
-        app.secret_key = secrets.token_hex()
+        # app = Flask(__name__)
+        # app.secret_key = secrets.token_hex()
+        # port = 5001
+        # db = SQLAlchemy(app)
         port = 5001
 
         @app.route("/")
