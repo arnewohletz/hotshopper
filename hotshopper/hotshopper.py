@@ -5,7 +5,7 @@ from flask import (Flask, render_template, redirect, session)
 from flask_sqlalchemy import SQLAlchemy
 
 from hotshopper.foodplan import FoodPlan
-from hotshopper.recipes import Recipe
+from hotshopper.model import Recipe
 from hotshopper.ui import View
 
 from . import app, db

@@ -5,7 +5,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey, Table, Float, \
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 
-from hotshopper.hotshopper import app, db
+from hotshopper import db
 
 Base = declarative_base()
 
@@ -18,41 +18,41 @@ Base = declarative_base()
 # )
 
 
-class Recipe(Base):
+class Recipe(db.Model):
     __tablename__ = "recipe"
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
+    id = db.Column(Integer, primary_key=True)
+    name = db.Column(String)
     # ingredients = relationship("Ingredient", secondary=recipe_ingredient,
     #                            back_populates="recipes")
-    ingredients = relationship("RecipeIngredient",
+    ingredients = db.relationship("RecipeIngredient",
                                back_populates="recipe")
 
 
-class Ingredient(Base):
+class Ingredient(db.Model):
     __tablename__ = "ingredient"
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    order_id = Column(Integer)
-    where = Column(String)
+    id = db.Column(Integer, primary_key=True)
+    name = db.Column(String)
+    order_id = db.Column(Integer)
+    where = db.Column(String)
     # recipes = relationship("Recipe", secondary=recipe_ingredient,
     #                        back_populates="ingredients")
-    recipes = relationship("RecipeIngredient",
+    recipes = db.relationship("RecipeIngredient",
                            back_populates="ingredient")
 
 
-class RecipeIngredient(Base):
+class RecipeIngredient(db.Model):
     __tablename__ = "recipe_ingredient"
     # recipe_id = Column(Integer)
     # ingredient_id = Column(Integer)
-    recipe_id = Column(Integer, ForeignKey("recipe.id"), primary_key=True)
-    ingredient_id = Column(Integer, ForeignKey("ingredient.id"),
+    recipe_id = db.Column(Integer, db.ForeignKey("recipe.id"), primary_key=True)
+    ingredient_id = db.Column(Integer, db.ForeignKey("ingredient.id"),
                            primary_key=True)
-    amount_per_person = Column(Float)
-    unit = Column(String)
+    amount_per_person = db.Column(Float)
+    unit = db.Column(String)
     # recipe = relationship("Recipe", back_populates="ingredients")
     # ingredient = relationship("Ingredient", back_populates="recipes")
-    ingredient = relationship("Ingredient", back_populates="recipes")
-    recipe = relationship("Recipe", back_populates="ingredients")
+    ingredient = db.relationship("Ingredient", back_populates="recipes")
+    recipe = db.relationship("Recipe", back_populates="ingredients")
 
 
 def get_all_ingredients_for_recipe(session, recipe):
