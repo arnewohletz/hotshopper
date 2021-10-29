@@ -21,18 +21,23 @@ class ShoppingList(list):
 
     def add(self, ingredient):
         for existing_ingredient in self:
-            if isinstance(ingredient, type(existing_ingredient)):
-                if ingredient.unit.specifier == piece.specifier:
-                    existing_ingredient.amount_piece += ingredient.amount_piece
+            if ingredient.ingredient.name == existing_ingredient.ingredient.name:
+            # if isinstance(ingredient, type(existing_ingredient)):
+                if ingredient.unit == "St.":
+                    existing_ingredient.total_amount_piece_recipes += ingredient.amount_per_person * 2
                 else:
-                    existing_ingredient.amount += ingredient.amount
+                    existing_ingredient.total_amount_gram_recipes += ingredient.amount_per_person * 2
                 return True
         # Copy required since shopping list otherwise alters the ingredient
         # amount in the recipe, when adding them (not nice, I know)
+        if ingredient.unit == "St.":
+            ingredient.total_amount_piece_recipes += ingredient.amount_per_person * 2
+        else:
+            ingredient.total_amount_gram_recipes += ingredient.amount_per_person * 2
         self.append(copy.deepcopy(ingredient))
 
     def sort_ingredients(self):
-        self.sort(key=lambda ingredient: ingredient.id)
+        self.sort(key=lambda ingredient: ingredient.ingredient_id)
 
     # def substract(self, ingredient):
     #     for existing_ingredient in self:
@@ -60,10 +65,10 @@ class FoodPlan:
         self.recipes.append(recipe)
 
         for ingredient in recipe.ingredients:
-            if isinstance(ingredient.where, Supermarket):
+            if ingredient.ingredient.where == "supermarket":
                 for i in range(len(recipe.weeks)):
                     self.shopping_list_supermarket.add(ingredient)
-            elif isinstance(ingredient.where, Market):
+            elif ingredient.ingredient.where == "market":
                 if 1 in recipe.weeks:
                     self.shopping_list_market_week1.add(ingredient)
                 if 2 in recipe.weeks:

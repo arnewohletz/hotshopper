@@ -13,6 +13,6 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 
 with Path("hotshopper/recipes.db").resolve() as path:
-    app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{path}"
+    app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{path}?check_same_thread=False"
 app.secret_key = secrets.token_hex()
 db = SQLAlchemy(app)

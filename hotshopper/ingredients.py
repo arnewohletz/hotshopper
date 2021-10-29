@@ -30,6 +30,7 @@ class Ingredient(ABC):
         self.amount_piece = piece(0)
         self.amount = gram(0)
         self.unit = unit
+        self.id = -1
         if unit not in (piece, gram):
             raise UnsupportedUnitError("This unit is not supported")
         if unit == piece:
@@ -163,6 +164,7 @@ class Buckwheat(Ingredient):
 class Butter(Ingredient):
     name = "Butter"
     where = SUPERMARKET
+    id = 5110
 
 
 class Cabanossi(Ingredient):
@@ -633,10 +635,10 @@ class Salami(Ingredient):
     id = 6501
 
 
-class SandwichCheese(Ingredient):
-    name = "Schablettenkäse"
-    where = SUPERMARKET
-    id = 5210
+# class SandwichCheese(Ingredient):
+#     name = "Schablettenkäse"
+#     where = SUPERMARKET
+#     id = 5210
 
 
 class SausageStripes(Ingredient):
@@ -813,21 +815,30 @@ class Zucchini(Ingredient):
     id = 14050
 
 
-class _Potato(Ingredient):
-    where = MARKET
-    pass
+# class _Potato(Ingredient):
+#     where = MARKET
+#     pass
 
 
-class LowStarchPotatoe(_Potato):
+class LowStarchPotatoe(Ingredient):
     name = "Kartoffeln festk."
     id = 13070
+    where = MARKET
 
 
-class StarchyPotato(_Potato):
+class StarchyPotato(Ingredient):
     name = "Kartoffeln mehlig"
     id = 13050
+    where = MARKET
 
 
-class PrimarilyWaxyPotato(_Potato):
+class PrimarilyWaxyPotato(Ingredient):
     name = "Kartoffeln vorw. festk."
     id = 13060
+    where = MARKET
+
+
+def main():
+    ingredients = [ingredient(gram, 0) for ingredient in Ingredient.__subclasses__()]
+    for i, ingredient in enumerate(ingredients):
+        print(f"{i+1},{ingredient.name},{ingredient.__class__.id},{ingredient.where.__class__}")

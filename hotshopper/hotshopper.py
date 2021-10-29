@@ -2,7 +2,7 @@
 import secrets
 
 from flask import (Flask, render_template, redirect, session)
-from flask_sqlalchemy import SQLAlchemy
+# from flask_sqlalchemy import SQLAlchemy
 
 from hotshopper.foodplan import FoodPlan
 from hotshopper.model import Recipe
@@ -25,7 +25,7 @@ class Controller:
 
     def get_recipes(self):
         self.recipes = db.session.query(Recipe).all()
-        self.recipes = [recipe() for recipe in Recipe.__subclasses__()]
+        # db.session.close()
         return sorted(self.recipes, key=lambda recipe: recipe.name)
 
     def display_shopping_lists(self):
@@ -58,7 +58,7 @@ def main(web=True):
         @app.route("/check_recipe/<recipe>_<int:week>_<int:scroll_height>")
         def check_recipe(recipe, week, scroll_height):
             for i in recipes:
-                if i.__class__.__name__ == recipe:
+                if i.name == recipe:
                     i.select(week)
                     session["scroll_height"] = scroll_height
             return redirect("/")
@@ -66,7 +66,7 @@ def main(web=True):
         @app.route("/uncheck_recipe/<recipe>_<int:week>_<int:scroll_height>")
         def uncheck_recipe(recipe, week, scroll_height):
             for i in recipes:
-                if i.__class__.__name__ == recipe:
+                if i.name == recipe:
                     i.unselect(week)
                     session["scroll_height"] = scroll_height
             return redirect("/")

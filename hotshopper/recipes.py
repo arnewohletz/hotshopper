@@ -35,7 +35,7 @@ from hotshopper.ingredients import (AgaveSyrup, Ajvar, ApplePuree, Asparagus,
                                     PrimarilyWaxyPotato, Remoulade,
                                     RiceBasmati,
                                     RicePudding, SaladSauce, Salami,
-                                    SandwichCheese, SausageStripes,
+                                    SausageStripes,
                                     Schupfnudeln, Smetana, SourCream,
                                     Sourcrout, SoySauce, SpaetzleCheese,
                                     SpaetzleNoodles, SpaghettiNoodles,
@@ -595,9 +595,8 @@ class ToastHawaii(Recipe):
         super().__init__()
         self.name = "Toast Hawaii"
         self.ingredients = [
-            ToastbreadWheatSlice(piece, 10),
-            SandwichCheese(piece, 10),
-            PineapplesSlicesPickled(piece, 10),
+            ToastbreadWheatSlice(piece, 1),
+            PineapplesSlicesPickled(piece, 1),
             HamCooked(piece, 1),
             CheeseSlices(piece, 1)
         ]
@@ -683,3 +682,17 @@ class PotatoSaladAndMaultaschen(Recipe):
             Maultaschen(piece, 2),
             Onion(piece, 2)
         ]
+
+
+def main():
+    from hotshopper.ingredients import Ingredient
+    ingredients = [ingredient(gram, 0) for ingredient in Ingredient.__subclasses__()]
+    # for i, ingredient in enumerate(ingredients):
+    #     print(
+    #         f"{i + 1},{ingredient.name},{ingredient.__class__.id},{ingredient.where.__class__}")
+    recipes = [recipe() for recipe in Recipe.__subclasses__()]
+    for i, recipe in enumerate(recipes):
+        for recipe_ingredient in recipe.ingredients:
+            for j, ingredient in enumerate(ingredients):
+                if recipe_ingredient.name == ingredient.name:
+                    print(f"{i+1},{j+1},{recipe_ingredient.get_amount()/2},{recipe_ingredient.unit}")

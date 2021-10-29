@@ -35,33 +35,33 @@
                 <td>
                     {% if recipe.selected == True and 1 in recipe.weeks %}
                     <input type="checkbox"
-                           id="{{recipe.__class__.__name__}}_1"
+                           id="{{recipe.name}}_1"
                            onchange="set_selected(this)" checked>
                     {% else %}
                     <input type="checkbox"
-                           id="{{recipe.__class__.__name__}}_1"
+                           id="{{recipe.name}}_1"
                            onchange="set_selected(this)">
                     {% endif %}
                 </td>
                 <td>
                     {% if recipe.selected == True and 2 in recipe.weeks %}
                     <input type="checkbox"
-                           id="{{recipe.__class__.__name__}}_2"
+                           id="{{recipe.name}}_2"
                            onchange="set_selected(this)" checked>
                     {% else %}
                     <input type="checkbox"
-                           id="{{recipe.__class__.__name__}}_2"
+                           id="{{recipe.name}}_2"
                            onchange="set_selected(this)">
                     {% endif %}
                 </td>
                 <td>
                     {% if recipe.selected == True and 3 in recipe.weeks %}
                     <input type="checkbox"
-                           id="{{recipe.__class__.__name__}}_3"
+                           id="{{recipe.name}}_3"
                            onchange="set_selected(this)" checked>
                     {% else %}
                     <input type="checkbox"
-                           id="{{recipe.__class__.__name__}}_3"
+                           id="{{recipe.name}}_3"
                            onchange="set_selected(this)">
                     {% endif %}
                 </td>
@@ -91,7 +91,7 @@
                 {{ item.unit }}
             </td>
             <td class="shopping_list_item_name">
-                {{ item.name }}
+                {{ item.ingredient.name }}
             </td>
         </tr>
         {% endfor %}

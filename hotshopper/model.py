@@ -3,7 +3,7 @@ from pathlib import Path
 from sqlalchemy import Column, Integer, String, ForeignKey, Table, Float, \
     create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy.orm import relationship, sessionmaker, reconstructor
 
 from hotshopper import db
 
@@ -18,6 +18,18 @@ Base = declarative_base()
 # )
 
 
+class Location:
+    pass
+
+
+class Supermarket(Location):
+    pass
+
+
+class Market(Location):
+    pass
+
+
 class Recipe(db.Model):
     __tablename__ = "recipe"
     id = db.Column(Integer, primary_key=True)
@@ -25,7 +37,28 @@ class Recipe(db.Model):
     # ingredients = relationship("Ingredient", secondary=recipe_ingredient,
     #                            back_populates="recipes")
     ingredients = db.relationship("RecipeIngredient",
-                               back_populates="recipe")
+                                  back_populates="recipe")
+    selected = False
+    weeks = []
+
+    def __init__(self):
+        self.db_init(self)
+
+    @reconstructor
+    def db_init(self):
+        self.selected = False
+        self.weeks = []
+
+    def select(self, week: int):
+        self.selected = True
+        self.weeks.append(week)
+        print(self.name + " is selected for week " + str(week))
+
+    def unselect(self, week: int):
+        self.weeks.remove(week)
+        if len(self.weeks) == 0:
+            self.selected = False
+        print(self.name + " is deselected from week " + str(week))
 
 
 class Ingredient(db.Model):
@@ -37,22 +70,54 @@ class Ingredient(db.Model):
     # recipes = relationship("Recipe", secondary=recipe_ingredient,
     #                        back_populates="ingredients")
     recipes = db.relationship("RecipeIngredient",
-                           back_populates="ingredient")
+                              back_populates="ingredient")
 
 
 class RecipeIngredient(db.Model):
     __tablename__ = "recipe_ingredient"
     # recipe_id = Column(Integer)
     # ingredient_id = Column(Integer)
-    recipe_id = db.Column(Integer, db.ForeignKey("recipe.id"), primary_key=True)
+    recipe_id = db.Column(Integer, db.ForeignKey("recipe.id"),
+                          primary_key=True)
     ingredient_id = db.Column(Integer, db.ForeignKey("ingredient.id"),
-                           primary_key=True)
+                              primary_key=True)
     amount_per_person = db.Column(Float)
     unit = db.Column(String)
     # recipe = relationship("Recipe", back_populates="ingredients")
     # ingredient = relationship("Ingredient", back_populates="recipes")
     ingredient = db.relationship("Ingredient", back_populates="recipes")
     recipe = db.relationship("Recipe", back_populates="ingredients")
+
+    total_amount_gram_recipes = 0
+    total_amount_piece_recipes = 0.0
+
+    def __init__(self):
+        self.db_init(self)
+
+    @reconstructor
+    def db_init(self):
+        self.total_amount_gram_recipes = 0
+        self.total_amount_piece_recipes = 0.0
+
+    # def __init__(self):
+    #     if ingredient.where == "supermarket":
+    #         self.where = Supermarket()
+    #     elif ingredient.where == "market":
+    #         self.where = Market()
+
+    def get_amount(self):
+        if self.total_amount_piece_recipes > 0:
+            if float(self.total_amount_piece_recipes).is_integer():
+                return int(self.total_amount_piece_recipes)
+            else:
+                return self.total_amount_piece_recipes
+        elif self.total_amount_gram_recipes > 0:
+            if float(self.total_amount_gram_recipes).is_integer():
+                return int(self.total_amount_gram_recipes)
+            else:
+                return self.total_amount_gram_recipes
+        else:
+            return 0
 
 
 def get_all_ingredients_for_recipe(session, recipe):
