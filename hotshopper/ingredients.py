@@ -28,28 +28,40 @@ class Ingredient(ABC):
 
     def __init__(self, unit: unit, amount: float):
         self.amount_piece = piece(0)
-        self.amount = gram(0)
+        self.amount_gram = gram(0)
         self.unit = unit
         if unit not in (piece, gram):
             raise UnsupportedUnitError("This unit is not supported")
         if unit == piece:
             self.amount_piece = unit(amount)
         else:
-            self.amount = unit(amount)
+            self.amount_gram = unit(amount)
 
-    def get_amount(self):
-        if self.amount_piece.num > 0:
+    def _get_amount(self, unit):
+        if unit.specifier == piece.specifier:
             if float(self.amount_piece.num).is_integer():
                 return int(self.amount_piece)
             else:
                 return self.amount_piece
-        elif self.amount.num > 0:
-            if float(self.amount.num).is_integer():
-                return int(self.amount)
+        elif unit.specifier == gram.specifier:
+            if float(self.amount_gram.num).is_integer():
+                return int(self.amount_gram)
             else:
-                return self.amount
+                return self.amount_gram
         else:
-            return 0
+            return -1
+
+    def get_amount_gram(self):
+        return self._get_amount(gram)
+
+    def get_amount_piece(self):
+        return self._get_amount(piece)
+
+
+    # TODO: get_amount() must return both amount and amount_piece, if both
+    #  are > 0. Idea: transform Ingredient object into ShoppingListIngredient
+    #  when putting it on ShoppingList and implement different get_amount()
+    #  method (ShoppingListIngredient may be a subtype of Ingredient)
 
 
 class Ingredients(list):

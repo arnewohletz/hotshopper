@@ -86,9 +86,16 @@
         {% endif %}
         {% for item in list %}
         <tr>
-            <td>
-                {{ item.get_amount() }}
-                {{ item.unit }}
+            <td class="amount">
+                {% if item.amount_gram %}
+                {{ item.get_amount_gram() }} g
+                    {% if item.amount_piece %}
+                     +<br>
+                    {% endif %}
+                {% endif %}
+                {% if item.amount_piece %}
+                    {{ item.get_amount_piece() }} St.
+                {% endif %}
             </td>
             <td class="shopping_list_item_name">
                 {{ item.name }}

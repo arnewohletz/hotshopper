@@ -79,7 +79,7 @@ class PotatoSoup(Recipe):
             StarchyPotato(gram, 750),
             HamCubes(gram, 125),
             Leek(piece, 1),
-            CremeFraiche(gram, 100),
+            CremeFraiche(piece, 1),
             CardamomMilled(piece, 1),
             Wiener(piece, 2),
         )
@@ -517,7 +517,7 @@ class Lasagne(Recipe):
         self.name = "Lasagne"
         self.ingredients = [
             MaggiFixLasagna(piece, 2),
-            CremeFraiche(piece, 1),
+            CremeFraiche(gram, 100),
             GroundMeat(gram, 250),
             GratinCheese(piece, 1),
         ]

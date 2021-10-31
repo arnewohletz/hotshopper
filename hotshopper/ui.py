@@ -220,15 +220,15 @@ class ShoppingListFrame(tk.Frame):
 
         for ingredient in self.shopping_list:
             var = tk.StringVar()
-            if ingredient.amount.num > 0.0:
+            if ingredient.amount_gram.num > 0.0:
                 if ingredient.amount_piece.num == 0:
-                    var.set(f"{ingredient.amount} {ingredient.name}")
-            elif ingredient.amount.num == 0.0:
+                    var.set(f"{ingredient.amount_gram} {ingredient.name}")
+            elif ingredient.amount_gram.num == 0.0:
                 if ingredient.amount_piece.num >= 0:
                     var.set(f"{ingredient.amount_piece} {ingredient.name}")
             else:
                 var.set(
-                    f"{ingredient.amount} + {ingredient.amount_piece} "
+                    f"{ingredient.amount_gram} + {ingredient.amount_piece} "
                     f"{ingredient.name}"
                 )
             label = tk.Label(

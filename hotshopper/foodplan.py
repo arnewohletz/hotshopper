@@ -25,7 +25,7 @@ class ShoppingList(list):
                 if ingredient.unit.specifier == piece.specifier:
                     existing_ingredient.amount_piece += ingredient.amount_piece
                 else:
-                    existing_ingredient.amount += ingredient.amount
+                    existing_ingredient.amount_gram += ingredient.amount_gram
                 return True
         # Copy required since shopping list otherwise alters the ingredient
         # amount in the recipe, when adding them (not nice, I know)
