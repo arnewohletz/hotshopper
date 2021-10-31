@@ -19,7 +19,7 @@ body h2 {
 .shopping_list {
     display: flex;
     max-width: max-content;
-    background-color: red;
+    background-color: palevioletred;
     padding: 5px;
     margin: 0 10px 10px 0;
 }
@@ -31,7 +31,7 @@ body h2 {
 .food_plan {
     min-width: max-content;
     margin: 0 10px 10px 10px;
-    background-color: green;
+    background-color: darkseagreen;
     padding: 5px;
 }
 
@@ -48,6 +48,10 @@ td#no_item {
 
 td.shopping_list_item_name {
     padding-left: 10px;
+}
+
+td.amount {
+    text-align: right;
 }
 
 tbody.header {
