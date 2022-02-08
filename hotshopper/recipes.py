@@ -9,6 +9,7 @@ from hotshopper.ingredients import (AgaveSyrup, Ajvar, ApplePuree, Asparagus,
                                     CauliflowerWithCreamFrozen, CeleryRoot,
                                     Champignon, CheeseSlices, CherryTomato,
                                     ChickenCuts, Chicory, ChiliPepper,
+                                    ChiliSausage, Coleslaw,
                                     CoconutMilk, Cream, CreamCheese,
                                     CremeFraiche, CroquettesFrozen, Cucumber,
                                     DillFrozen, Egg, EightHerbsFrozen,
@@ -371,7 +372,7 @@ class VeggieRice(Recipe):
         self.ingredients = [
             RiceBasmati(piece, 2),
             PepperRed(piece, 1),
-            CreamCheese(gram, 300),
+            CreamCheese(piece, 1),
             TomatoPaste(gram, 150),
             Onion(piece, 2),
             Zucchini(piece, 1),
@@ -682,4 +683,29 @@ class PotatoSaladAndMaultaschen(Recipe):
             LowStarchPotatoe(gram, 1200),
             Maultaschen(piece, 2),
             Onion(piece, 2)
+        ]
+
+
+class FriedPotatoesFriedEggs(Recipe):
+    def __init__(self):
+        super().__init__()
+        self.name = "Bratkartoffeln mit Rührei (Steffi)"
+        self.ingredients = [
+            LowStarchPotatoe(gram, 1200),
+            Egg(piece, 2),
+            Champignon(piece, 3),
+            Tomato(piece, 1)
+        ]
+
+
+class ChiliSausagesInBread(Recipe):
+    def __init__(self):
+        super().__init__()
+        self.name = "Feuerwürste"
+        self.ingredients = [
+            ChiliSausage(piece, 4),
+            Tzatziki(piece, 1),
+            Coleslaw(gram, 300),
+            Baguette(piece, 2)
+
         ]

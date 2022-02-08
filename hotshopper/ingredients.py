@@ -261,6 +261,24 @@ class ChiliPepper(Ingredient):
     id = 14130
 
 
+class ChiliSausage(Ingredient):
+    name = "Chili-Wurst"
+    where = MARKET
+    id = 12051
+
+
+class CoconutMilk(Ingredient):
+    name = "Kokosmilch"
+    where = SUPERMARKET
+    id = 8160
+
+
+class Coleslaw(Ingredient):
+    name = "Krautsalat"
+    where = SUPERMARKET
+    id = 5105
+
+
 class Cream(Ingredient):
     name = "Sahne"
     where = SUPERMARKET
@@ -285,10 +303,7 @@ class CroquettesFrozen(Ingredient):
     id = 11020
 
 
-class CoconutMilk(Ingredient):
-    name = "Kokosmilch"
-    where = SUPERMARKET
-    id = 8160
+
 
 
 class Cucumber(Ingredient):
