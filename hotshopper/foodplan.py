@@ -21,18 +21,23 @@ class ShoppingList(list):
 
     def add(self, ingredient):
         for existing_ingredient in self:
-            if isinstance(ingredient, type(existing_ingredient)):
-                if ingredient.unit.specifier == piece.specifier:
-                    existing_ingredient.amount_piece += ingredient.amount_piece
+            if ingredient.ingredient.name == existing_ingredient.ingredient.name:
+            # if isinstance(ingredient, type(existing_ingredient)):
+                if ingredient.unit == "piece":
+                    existing_ingredient.amount_piece += ingredient.quantity_per_person
                 else:
-                    existing_ingredient.amount += ingredient.amount
+                    existing_ingredient.amount += ingredient.quantity_per_person
                 return True
         # Copy required since shopping list otherwise alters the ingredient
         # amount in the recipe, when adding them (not nice, I know)
+        if ingredient.unit == "piece":
+            ingredient.amount_piece = ingredient.quantity_per_person
+        else:
+            ingredient.amount = ingredient.quantity_per_person
         self.append(copy.deepcopy(ingredient))
 
     def sort_ingredients(self):
-        self.sort(key=lambda ingredient: ingredient.id)
+        self.sort(key=lambda ri: ri.ingredient.id)
 
     # def substract(self, ingredient):
     #     for existing_ingredient in self:
@@ -59,17 +64,17 @@ class FoodPlan:
     def __add_recipe(self, recipe: Recipe):
         self.recipes.append(recipe)
 
-        for ingredient in recipe.ingredients:
-            if isinstance(ingredient.where, Supermarket):
+        for ri in recipe.ingredients:
+            if ri.ingredient.where == "supermarket":
                 for i in range(len(recipe.weeks)):
-                    self.shopping_list_supermarket.add(ingredient)
-            elif isinstance(ingredient.where, Market):
+                    self.shopping_list_supermarket.add(ri)
+            elif ri.ingredient.where == "market":
                 if 1 in recipe.weeks:
-                    self.shopping_list_market_week1.add(ingredient)
+                    self.shopping_list_market_week1.add(ri)
                 if 2 in recipe.weeks:
-                    self.shopping_list_market_week2.add(ingredient)
+                    self.shopping_list_market_week2.add(ri)
                 if 3 in recipe.weeks:
-                    self.shopping_list_market_week3.add(ingredient)
+                    self.shopping_list_market_week3.add(ri)
 
     # def __remove_recipe(self, recipe: Recipe):
     #     self.recipes.remove(recipe)
