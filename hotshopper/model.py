@@ -43,7 +43,7 @@ class RecipeIngredient(db.Model):
     ingredient_id = db.Column(db.ForeignKey("ingredient.id"),
                               primary_key=True)
     quantity_per_person = db.Column(db.Integer)
-    unit = db.Column(db.Integer)
+    unit = db.Column(db.String)
     amount_piece = 0
     amount = 0
     # recipe = db.relationship("Recipe", backref=db.backref("recipes"))

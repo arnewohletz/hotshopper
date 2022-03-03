@@ -1,8 +1,5 @@
 """Main module."""
-import secrets
-
-from flask import (Flask, render_template, redirect, session)
-from flask_sqlalchemy import SQLAlchemy
+from flask import (render_template, redirect, session)
 
 from hotshopper.foodplan import FoodPlan
 from hotshopper.model import Recipe
@@ -19,13 +16,8 @@ class Controller:
             self.view = view
             self.view.initialize(self, self.get_recipes())
 
-    # def get_recipes(self):
-    #     self.recipes = [recipe() for recipe in Recipe.__subclasses__()]
-    #     return sorted(self.recipes, key=lambda recipe: recipe.name)
-
     def get_recipes(self):
         self.recipes = db.session.query(Recipe).all()
-        # self.recipes = [recipe() for recipe in Recipe.__subclasses__()]
         return sorted(self.recipes, key=lambda recipe: recipe.name)
 
     def display_shopping_lists(self):
@@ -40,10 +32,6 @@ def main(web=True):
     recipes = controller.get_recipes()
 
     if web:
-        # app = Flask(__name__)
-        # app.secret_key = secrets.token_hex()
-        # port = 5001
-        # db = SQLAlchemy(app)
         port = 5001
 
         @app.route("/")
