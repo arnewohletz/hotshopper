@@ -458,7 +458,7 @@ class Lettuce(Ingredient):
 
 class Lime(Ingredient):
     name = "Limette(n)"
-    where = SUPERMARKET
+    where = MARKET
     id = 2010
 
 
