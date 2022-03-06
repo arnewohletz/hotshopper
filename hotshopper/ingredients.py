@@ -25,6 +25,7 @@ MARKET = Market()
 class Ingredient(ABC):
     name = ""
     where = Location()
+    id = None
 
     def __init__(self, unit: unit, amount: float):
         self.amount_piece = piece(0)
@@ -301,9 +302,6 @@ class CroquettesFrozen(Ingredient):
     name = "TK-Kroketten"
     where = SUPERMARKET
     id = 11020
-
-
-
 
 
 class Cucumber(Ingredient):
