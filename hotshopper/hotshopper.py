@@ -43,18 +43,18 @@ def main(web=True):
             return render_template("foodplan.html", recipes=recipes,
                                    scroll_height=scroll_height)
 
-        @app.route("/check_recipe/<recipe>_<int:week>_<int:scroll_height>")
-        def check_recipe(recipe, week, scroll_height):
-            for i in recipes:
-                if i.__class__.__name__ == recipe:
-                    i.select(week)
+        @app.route("/check_recipe/<recipe_id>_<int:week>_<int:scroll_height>")
+        def check_recipe(recipe_id, week, scroll_height):
+            for r in recipes:
+                if r.id == int(recipe_id):
+                    r.select(week)
                     session["scroll_height"] = scroll_height
-            return redirect("/")
+                    return redirect("/")
 
-        @app.route("/uncheck_recipe/<recipe>_<int:week>_<int:scroll_height>")
-        def uncheck_recipe(recipe, week, scroll_height):
+        @app.route("/uncheck_recipe/<recipe_id>_<int:week>_<int:scroll_height>")
+        def uncheck_recipe(recipe_id, week, scroll_height):
             for i in recipes:
-                if i.__class__.__name__ == recipe:
+                if i.id == int(recipe_id):
                     i.unselect(week)
                     session["scroll_height"] = scroll_height
             return redirect("/")

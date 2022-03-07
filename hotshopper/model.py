@@ -4,8 +4,10 @@ from sqlalchemy import Column, Integer, String, ForeignKey, Table, Float, \
     create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
+# from sqlalchemy import orm
 
 from hotshopper import db
+
 
 Base = declarative_base()
 
@@ -83,18 +85,24 @@ class Recipe(db.Model):
     # ingredients = db.relationship("RecipeIngredient")
     # backref=db.backref("recipes"))
 
-    weeks = []
+    # Somehow assigning empty list to weeks here leads to all Recipe instance
+    # get the same values for self.weeks (???)
+    weeks = None
     selected = False
 
     def select(self, week: int):
+        if not self.weeks:
+            self.weeks = []
         self.selected = True
         self.weeks.append(week)
+        # self.weeks = week
         print(self.name + " is selected for week " + str(week))
 
     def unselect(self, week: int):
         self.weeks.remove(week)
         if len(self.weeks) == 0:
             self.selected = False
+            self.weeks = None
         print(self.name + " is deselected from week " + str(week))
 
 

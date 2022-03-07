@@ -1,7 +1,7 @@
 import copy
 
 from hotshopper.ingredients import piece, Supermarket, Market
-from hotshopper.recipes import Recipe
+from hotshopper.model import Recipe
 
 
 class ShoppingList(list):
