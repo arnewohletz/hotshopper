@@ -33,7 +33,8 @@ class ShoppingList(list):
             ingredient.amount = ingredient.quantity_per_person
         # Copy required since shopping list otherwise alters the ingredient
         # amount in the recipe, when adding them (not nice, I know)
-        self.append(copy.deepcopy(ingredient))
+        self.append(ingredient)
+        # self.append(copy.deepcopy(ingredient))
 
     def sort_ingredients(self):
         self.sort(key=lambda ri: ri.ingredient.id)
@@ -60,7 +61,7 @@ class FoodPlan:
         self.shopping_list_market_week2 = ShoppingList("Markt Woche 2")
         self.shopping_list_market_week3 = ShoppingList("Markt Woche 3")
 
-    def __add_recipe(self, recipe: Recipe):
+    def _add_recipe(self, recipe: Recipe):
         self.recipes.append(recipe)
 
         for ri in recipe.ingredients:
@@ -92,7 +93,7 @@ class FoodPlan:
     def set_shopping_lists(self, recipes: list):
         for recipe in recipes:
             if recipe.selected:
-                self.__add_recipe(recipe)
+                self._add_recipe(recipe)
 
     def get_shopping_lists(self):
         # Currently, sorting the ingredients is done here - not nice

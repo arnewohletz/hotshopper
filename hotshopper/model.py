@@ -95,7 +95,6 @@ class Recipe(db.Model):
             self.weeks = []
         self.selected = True
         self.weeks.append(week)
-        # self.weeks = week
         print(self.name + " is selected for week " + str(week))
 
     def unselect(self, week: int):
@@ -141,33 +140,33 @@ class Ingredient(db.Model):
 #     recipe = db.relationship("Recipe", back_populates="ingredients")
 
 
-def get_all_ingredients_for_recipe(recipe):
-    recipes = (
-        db.session.query(Recipe)
-        .join(Recipe.ingredients)
-        .filter(Recipe.name == recipe.name)
-    )
-    for recipe in recipes:
-        print(f"{recipe.name}")
-        for ingredient in recipe.ingredients:
-            print(f"{ingredient.ingredient.name}: "
-                  f"{ingredient.amount_per_person} "
-                  f"{ingredient.unit}")
+# def get_all_ingredients_for_recipe(recipe):
+#     recipes = (
+#         db.session.query(Recipe)
+#         .join(Recipe.ingredients)
+#         .filter(Recipe.name == recipe.name)
+#     )
+#     for recipe in recipes:
+#         print(f"{recipe.name}")
+#         for ingredient in recipe.ingredients:
+#             print(f"{ingredient.ingredient.name}: "
+#                   f"{ingredient.amount_per_person} "
+#                   f"{ingredient.unit}")
 
 
-if __name__ == "__main__":
-
-    # with Path("./recipes.db").resolve() as path:
-    #     engine = create_engine(f"sqlite:///{path}")
-
-    # Session = sessionmaker()
-    # Session.configure(bind=engine)
-    # session = Session()
-    all_ingredients = db.session.query(Ingredient).all()
-    for ingredient in all_ingredients:
-        print(f"{ingredient.name}, {ingredient.order_id}, {ingredient.where}")
-
-    all_recipes = db.session.query(Recipe).all()
-    for recipe in all_recipes:
-        # print(f"{recipe.name}")
-        get_all_ingredients_for_recipe(recipe)
+# if __name__ == "__main__":
+#
+#     # with Path("./recipes.db").resolve() as path:
+#     #     engine = create_engine(f"sqlite:///{path}")
+#
+#     # Session = sessionmaker()
+#     # Session.configure(bind=engine)
+#     # session = Session()
+#     all_ingredients = db.session.query(Ingredient).all()
+#     for ingredient in all_ingredients:
+#         print(f"{ingredient.name}, {ingredient.order_id}, {ingredient.where}")
+#
+#     all_recipes = db.session.query(Recipe).all()
+#     for recipe in all_recipes:
+#         # print(f"{recipe.name}")
+#         get_all_ingredients_for_recipe(recipe)
