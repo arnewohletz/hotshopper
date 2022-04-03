@@ -22,15 +22,14 @@ class ShoppingList(list):
     def add(self, ingredient):
         for existing_ingredient in self:
             if ingredient.ingredient.name == existing_ingredient.ingredient.name:
-                if ingredient.unit == "piece":
+                if ingredient.unit == "st.":
                     existing_ingredient.amount_piece += ingredient.amount_piece
                 else:
                     existing_ingredient.amount += ingredient.amount
                 return True
         # Copy required since shopping list otherwise alters the ingredient
         # amount in the recipe, when adding them (not nice, I know)
-        self.append(ingredient)
-        # self.append(copy.deepcopy(ingredient))
+        self.append(copy.deepcopy(ingredient))
 
     def sort_ingredients(self):
         self.sort(key=lambda ri: ri.ingredient.id)

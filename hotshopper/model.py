@@ -50,7 +50,7 @@ class RecipeIngredient(db.Model):
 
     @orm.reconstructor
     def assign_amount(self):
-        if self.unit == "piece":
+        if self.unit == "st.":
             self.amount = 0
             self.amount_piece = self.quantity_per_person
         else:
