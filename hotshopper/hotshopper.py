@@ -51,7 +51,8 @@ def main(web=True):
                     session["scroll_height"] = scroll_height
                     return redirect("/")
 
-        @app.route("/uncheck_recipe/<recipe_id>_<int:week>_<int:scroll_height>")
+        @app.route(
+            "/uncheck_recipe/<recipe_id>_<int:week>_<int:scroll_height>")
         def uncheck_recipe(recipe_id, week, scroll_height):
             for i in recipes:
                 if i.id == int(recipe_id):
