@@ -23,14 +23,10 @@ class ShoppingList(list):
         for existing_ingredient in self:
             if ingredient.ingredient.name == existing_ingredient.ingredient.name:
                 if ingredient.unit == "piece":
-                    existing_ingredient.amount_piece += ingredient.quantity_per_person
+                    existing_ingredient.amount_piece += ingredient.amount_piece
                 else:
-                    existing_ingredient.amount += ingredient.quantity_per_person
+                    existing_ingredient.amount += ingredient.amount
                 return True
-        if ingredient.unit == "piece":
-            ingredient.amount_piece = ingredient.quantity_per_person
-        else:
-            ingredient.amount = ingredient.quantity_per_person
         # Copy required since shopping list otherwise alters the ingredient
         # amount in the recipe, when adding them (not nice, I know)
         self.append(ingredient)

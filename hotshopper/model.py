@@ -3,8 +3,7 @@ from pathlib import Path
 from sqlalchemy import Column, Integer, String, ForeignKey, Table, Float, \
     create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, sessionmaker
-# from sqlalchemy import orm
+from sqlalchemy import orm
 
 from hotshopper import db
 
@@ -48,6 +47,16 @@ class RecipeIngredient(db.Model):
     unit = db.Column(db.String)
     amount_piece = 0
     amount = 0
+
+    @orm.reconstructor
+    def assign_amount(self):
+        if self.unit == "piece":
+            self.amount = 0
+            self.amount_piece = self.quantity_per_person
+        else:
+            self.amount_piece = 0
+            self.amount = self.quantity_per_person
+
     # recipe = db.relationship("Recipe", backref=db.backref("recipes"))
     # ingredient = db.relationship("Ingredient", backref=db.backref("ingredients"))
 
