@@ -1,7 +1,4 @@
-import copy
-
-from hotshopper.ingredients import piece, Supermarket, Market
-from hotshopper.model import Recipe, RecipeIngredient, ShoppingListIngredient
+from hotshopper.model import Recipe, ShoppingListIngredient
 
 
 class ShoppingList(list):
@@ -30,24 +27,10 @@ class ShoppingList(list):
         self.append(ShoppingListIngredient(ingredient))
         # Copy required since shopping list otherwise alters the ingredient
         # amount in the recipe, when adding them (not nice, I know)
-        # TODO: deepcopy breaks test -> find better solution
         # self.append(copy.deepcopy(ingredient))
 
     def sort_ingredients(self):
         self.sort(key=lambda ri: ri.order_id)
-
-    # def substract(self, ingredient):
-    #     for existing_ingredient in self:
-    #         if isinstance(ingredient, type(existing_ingredient)):
-    #             if ingredient.unit.specifier == piece.specifier:
-    #               existing_ingredient.amount_piece -= ingredient.amount_piece
-    #             else:
-    #                 existing_ingredient.amount -= ingredient.amount
-    #             if (
-    #                 existing_ingredient.amount <= 0 &
-    #                 existing_ingredient.amount_piece <= 0
-    #             ):
-    #                 self.remove(ingredient)
 
 
 class FoodPlan:
@@ -72,20 +55,6 @@ class FoodPlan:
                     self.shopping_list_market_week2.add(ri)
                 if 3 in recipe.weeks:
                     self.shopping_list_market_week3.add(ri)
-
-    # def __remove_recipe(self, recipe: Recipe):
-    #     self.recipes.remove(recipe)
-    #
-    #     for ingredient in recipe.ingredients:
-    #         if isinstance(ingredient.where, Supermarket):
-    #             self.shopping_list_supermarket.substract(ingredient)
-    #         elif isinstance(ingredient.where, Market):
-    #             if 1 in recipe.weeks:
-    #                 self.shopping_list_market_week1.substract(ingredient)
-    #             if 2 in recipe.weeks:
-    #                 self.shopping_list_market_week2.substract(ingredient)
-    #             if 3 in recipe.weeks:
-    #                 self.shopping_list_market_week3.substract(ingredient)
 
     def set_shopping_lists(self, recipes: list):
         for recipe in recipes:
