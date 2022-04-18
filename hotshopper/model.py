@@ -23,19 +23,19 @@ class RecipeIngredient(db.Model):
             self.amount_piece = 0
             self.amount = self.quantity_per_person
 
-    def get_amount(self):
-        if self.amount_piece > 0:
-            if float(self.amount_piece).is_integer():
-                return int(self.amount_piece)
-            else:
-                return self.amount_piece
-        elif self.amount > 0:
-            if float(self.amount).is_integer():
-                return int(self.amount)
-            else:
-                return self.amount
-        else:
-            return 0
+    # def get_amount(self):
+    #     if self.amount_piece > 0:
+    #         if float(self.amount_piece).is_integer():
+    #             return int(self.amount_piece)
+    #         else:
+    #             return self.amount_piece
+    #     elif self.amount > 0:
+    #         if float(self.amount).is_integer():
+    #             return int(self.amount)
+    #         else:
+    #             return self.amount
+    #     else:
+    #         return 0
 
 
 class Recipe(db.Model):
@@ -70,3 +70,30 @@ class Ingredient(db.Model):
     where = db.Column("where", db.String)
     recipes = db.relationship("RecipeIngredient",
                               backref="ingredient")
+
+
+class ShoppingListIngredient:
+    """
+    Stripped down, non-database model representation of
+    :class:`RecipeIngredient` to be added to :class:`ShoppingList`.
+    """
+    def __init__(self, recipe_ingredient: RecipeIngredient):
+        self.name = recipe_ingredient.ingredient.name
+        self.order_id = recipe_ingredient.ingredient.order_id
+        self.unit = recipe_ingredient.unit
+        self.amount = recipe_ingredient.amount
+        self.amount_piece = recipe_ingredient.amount_piece
+
+    def get_amount(self):
+        if self.amount_piece > 0:
+            if float(self.amount_piece).is_integer():
+                return int(self.amount_piece)
+            else:
+                return self.amount_piece
+        elif self.amount > 0:
+            if float(self.amount).is_integer():
+                return int(self.amount)
+            else:
+                return self.amount
+        else:
+            return 0

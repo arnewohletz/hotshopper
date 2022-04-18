@@ -1,7 +1,7 @@
 import copy
 
 from hotshopper.ingredients import piece, Supermarket, Market
-from hotshopper.model import Recipe
+from hotshopper.model import Recipe, RecipeIngredient, ShoppingListIngredient
 
 
 class ShoppingList(list):
@@ -21,18 +21,20 @@ class ShoppingList(list):
 
     def add(self, ingredient):
         for existing_ingredient in self:
-            if ingredient.ingredient.name == existing_ingredient.ingredient.name:
+            if ingredient.ingredient.name == existing_ingredient.name:
                 if ingredient.unit == "st.":
                     existing_ingredient.amount_piece += ingredient.amount_piece
                 else:
                     existing_ingredient.amount += ingredient.amount
                 return True
+        self.append(ShoppingListIngredient(ingredient))
         # Copy required since shopping list otherwise alters the ingredient
         # amount in the recipe, when adding them (not nice, I know)
-        self.append(copy.deepcopy(ingredient))
+        # TODO: deepcopy breaks test -> find better solution
+        # self.append(copy.deepcopy(ingredient))
 
     def sort_ingredients(self):
-        self.sort(key=lambda ri: ri.ingredient.id)
+        self.sort(key=lambda ri: ri.order_id)
 
     # def substract(self, ingredient):
     #     for existing_ingredient in self:
