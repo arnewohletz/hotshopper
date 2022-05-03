@@ -6,20 +6,29 @@
     recipes = "{{ recipes }}"
     scroll_height = "{{ scroll_height }}"
 </script>
-<h2>Hotshopper</h2>
+<h2>
+    <table>
+        <tr>
+            <td>Hotshopper</td>
+            <td id="header_buttons">
+                <button>Zutaten ...</button>
+                <button>Einkaufsliste ...</button>
+            </td>
+        </tr>
+    </table>
+</h2>
 <div class="content">
     <form method="POST" action="/show_shopping_list">
         <table class="food_plan">
-            <tr>
-                <th colspan="4">Essensplan</th>
-                <th class="buttons">
-                    <input type="submit" value="Berechne" id="calc_button">
+                <th colspan="4">
+                    Essensplan
                 </th>
-            </tr>
             <tbody class="header">
             <tr>
                 <td colspan="3">Woche</td>
-                <td rowspan="2">
+                <td rowspan="2" class="food_plan_buttons">
+                    <button type="button" class="food_plan_buttons"> Neues Rezept ...</button>
+                    <input type="submit" value="Berechne" id="calc_button">
                 </td>
                 </td>
             </tr>
@@ -65,7 +74,11 @@
                            onchange="set_selected(this)">
                     {% endif %}
                 </td>
-                <td>{{recipe.name}}</td>
+                <td>
+                    {{recipe.name}}
+                    <button type="button" name="{{recipe.name}}.edit"><i class="fa-solid fa-pen-to-square"></i></button>
+                    <button type="button" name="{{recipe.name}}.delete"><i class="fa-solid fa-trash-can"></i></button>
+                </td>
             </tr>
             {% endfor %}
         </table>
@@ -99,7 +112,6 @@
         </td>
     </table>
     {% endif %}
-    <!--</div>-->
 </div>
 
 {% endblock %}
