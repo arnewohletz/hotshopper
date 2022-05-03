@@ -20,6 +20,7 @@ def dummy_recipe(weeks: list = None):
     recipe = Recipe()
     # recipe.id = _get_random_int(0, 1000)
     recipe.name = _get_random_string(10)
+    recipe.ingredients = []
     if weeks:
         recipe.weeks = weeks
         recipe.selected = True
@@ -28,13 +29,19 @@ def dummy_recipe(weeks: list = None):
 
 def dummy_recipe_ingredient(where: str = "market",
                             quantity_per_person: int = 1,
-                            unit: str = "gram"):
+                            unit: str = "gram",
+                            id: int = -1,
+                            name: str = None):
     """Create dummy RecipeIngredient"""
     recipe_ingredient = RecipeIngredient()
     recipe_ingredient.ingredient = Ingredient()
     # recipe_ingredient.ingredient.id = _get_random_int(0, 1000)
     recipe_ingredient.ingredient.where = where
-    recipe_ingredient.ingredient.name = _get_random_string(10)
+    if name:
+        recipe_ingredient.ingredient.name = name
+    else:
+        recipe_ingredient.ingredient.name = _get_random_string(10)
+    recipe_ingredient.id = id
     recipe_ingredient.quantity_per_person = quantity_per_person
     recipe_ingredient.unit = unit
     if recipe_ingredient.unit == "gram":

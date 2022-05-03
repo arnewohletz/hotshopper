@@ -1,18 +1,30 @@
 import pytest
 
-from hotshopper import model
+from hotshopper import model, db, create_app
+from hotshopper.model import RecipeIngredient
+from hotshopper.errors import DuplicateRecipeIngredientError
 from tests.unit import helper
+
+
+@pytest.fixture
+def app():
+    return create_app(test=True)
+
+
+# @pytest.fixture
+# def db(app):
+#     return SQLAlchemy(app)
+
+@pytest.fixture(scope="function")
+def setup_teardown():
+    db.create_all()
+    yield
+    db.session.remove()
+    db.drop_all()
 
 
 class TestRecipe:
     # INCOMING COMMANDS
-
-    # @pytest.fixture(scope="function")
-    # def dummy_recipe(self):
-    #     """Create dummy Recipe instance"""
-    #     recipe = model.Recipe()
-    #     recipe.name = "NOT_IMPORTANT"
-    #     return recipe
 
     def test_recipe_select(self):
         selected_weeks = [1, 3]
@@ -27,26 +39,51 @@ class TestRecipe:
         assert dummy_recipe.weeks is None
         assert not dummy_recipe.selected
 
+    def test_add_ingredient_to_recipe(self, app, setup_teardown):
+        r = model.Recipe(id=1, name="TestRecipe", ingredients=[])
+        db.session.add(r)
+        result = RecipeIngredient.query.all()
+        assert len(result) == 0
+        i = model.Ingredient(id=1, name="TestIngredient")
+        ri = model.RecipeIngredient(ingredient_id=r.id, recipe_id=i.id,
+                                    quantity_per_person=100, unit="gram")
+        r.add_ingredient(ri)
+        db.session.commit()
+        result = RecipeIngredient.query.filter_by(ingredient_id=1).all()
+        assert len(result) == 1
 
-class TestIngredientRecipe:
+        with pytest.raises(DuplicateRecipeIngredientError):
+            r.add_ingredient(ri)
 
-    def test_get_gram_amount(self):
-        gram_amount = 100
-        recipe_ingredient = helper.dummy_recipe_ingredient(
-            quantity_per_person=gram_amount, unit="gram")
-        assert recipe_ingredient.get_amount() == 100
+    def test_remove_ingredient(self, app, setup_teardown):
+        r = model.Recipe(id=1, name="TestRecipe",
+                         ingredients=[])
+        i = model.Ingredient(id=1, name="TestIngredient")
+        ri = model.RecipeIngredient(ingredient_id=r.id, recipe_id=i.id,
+                                    quantity_per_person=100, unit="gram")
+        r.add_ingredient(ri)
+        r.remove_ingredient(ri)
+        r.save_recipe()
+        result = RecipeIngredient.query.filter_by(ingredient_id=1).all()
+        assert len(result) == 0
 
-    def test_get_piece_amount(self):
-        piece_amount = 5
-        recipe_ingredient = helper.dummy_recipe_ingredient(
-            quantity_per_person=piece_amount, unit="piece")
-        assert recipe_ingredient.get_amount() == 5
 
+class TestRecipeIngredient:
 
-def _get_dummy_recipe_ingredient(amount: int = 0,
-                                 amount_piece: int = 0,
-                                 ) -> model.RecipeIngredient:
-    ingredient = model.RecipeIngredient()
-    ingredient.amount = amount
-    ingredient.amount_piece = amount_piece
-    return ingredient
+    def test_change_ingredient_quantity_per_person(self, app, setup_teardown):
+        r = model.Recipe(id=1, name="TestRecipe", ingredients=[])
+        db.session.add(r)
+        i = model.Ingredient(id=1, name="TestIngredient")
+        ri = model.RecipeIngredient(ingredient_id=r.id, recipe_id=i.id,
+                                    quantity_per_person=100, unit="gram")
+        r.add_ingredient(ri)
+        ri.update_quantity(quantity_per_person=2, unit="St.")
+        result = RecipeIngredient.query.filter_by(ingredient_id=1).first()
+        assert result.quantity_per_person == 2
+        assert result.unit == "St."
+
+        illegal_quantities = ["100", -100, 1000000, 0]
+
+        for value in illegal_quantities:
+            with pytest.raises(ValueError):
+                ri.update_quantity(quantity_per_person=value)
