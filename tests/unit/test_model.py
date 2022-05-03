@@ -26,18 +26,20 @@ def setup_teardown():
 class TestRecipe:
     # INCOMING COMMANDS
 
-    def test_recipe_select(self):
+    def test_recipe_select(self, app, setup_teardown):
+        r = model.Recipe(id=1, name="TestRecipe", ingredients=[])
+        r.select(week=1)
+        r.select(week=3)
         selected_weeks = [1, 3]
-        dummy_recipe = helper.dummy_recipe(weeks=selected_weeks)
-        assert dummy_recipe.selected
-        assert dummy_recipe.weeks == selected_weeks
+        assert r.selected
+        assert r.weeks == selected_weeks
 
-    def test_recipe_unselect(self):
-        dummy_recipe = helper.dummy_recipe()
-        dummy_recipe.select(1)
-        dummy_recipe.unselect(1)
-        assert dummy_recipe.weeks is None
-        assert not dummy_recipe.selected
+    def test_recipe_unselect(self, app, setup_teardown):
+        r = model.Recipe(id=1, name="TestRecipe", ingredients=[])
+        r.select(1)
+        r.unselect(1)
+        assert r.weeks is None
+        assert not r.selected
 
     def test_add_ingredient_to_recipe(self, app, setup_teardown):
         r = model.Recipe(id=1, name="TestRecipe", ingredients=[])

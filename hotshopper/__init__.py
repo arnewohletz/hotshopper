@@ -10,18 +10,15 @@ from pathlib import Path
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
-# app = Flask(__name__)
 db = SQLAlchemy()
 
 
 def create_app(test=False):
     app = Flask(__name__)
     if test:
-        # app = Flask(__name__)
         app.testing = True
         app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
-        # db.init_app(app)
-        # app.app_context().push()
+        app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
     else:
         with Path("hotshopper/recipes.db").resolve() as path:
             app.config[
@@ -32,7 +29,6 @@ def create_app(test=False):
     db.init_app(app)
     app.app_context().push()
     return app
-# create_app = lambda: Flask(__name__)
 
 
 # with Path("hotshopper/recipes.db").resolve() as path:
