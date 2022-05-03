@@ -1,6 +1,8 @@
 from sqlalchemy import orm
 
 from hotshopper import db
+from hotshopper.errors import (DuplicateRecipeIngredientError,
+                               RecipeIngredientNotFoundError)
 
 
 class RecipeIngredient(db.Model):
@@ -27,6 +29,27 @@ class RecipeIngredient(db.Model):
             self.amount_piece = 0
             self.amount = self.quantity_per_person
 
+    def update_quantity(self, quantity_per_person: int = None,
+                        unit: str = None):
+        if quantity_per_person is not None:
+            if not isinstance(quantity_per_person, int):
+                raise ValueError("Enter positive integer value")
+            if not 1 <= quantity_per_person <= 999999:
+                raise ValueError("Enter value between 1 and 999999")
+            self.quantity_per_person = quantity_per_person
+        if unit:
+            self.unit = unit
+
+
+class Ingredient(db.Model):
+    __tablename__ = "ingredient"
+    id = db.Column("id", db.Integer, primary_key=True)
+    name = db.Column("name", db.String)
+    order_id = db.Column("order_id", db.Integer)
+    where = db.Column("where", db.String)
+    recipes = db.relationship("RecipeIngredient",
+                              backref="ingredient")
+
 
 class Recipe(db.Model):
     __tablename__ = "recipe"
@@ -51,15 +74,31 @@ class Recipe(db.Model):
             self.weeks = None
         print(self.name + " is deselected from week " + str(week))
 
+    def add_ingredient(self, ingredient: RecipeIngredient):
+        for existing_ingredient in self.ingredients:
+            if existing_ingredient.ingredient_id == ingredient.ingredient_id:
+                raise DuplicateRecipeIngredientError(
+                    "Ingredient already exists for this recipe")
+        db.session.add(ingredient)
+        db.session.commit()
 
-class Ingredient(db.Model):
-    __tablename__ = "ingredient"
-    id = db.Column("id", db.Integer, primary_key=True)
-    name = db.Column("name", db.String)
-    order_id = db.Column("order_id", db.Integer)
-    where = db.Column("where", db.String)
-    recipes = db.relationship("RecipeIngredient",
-                              backref="ingredient")
+    def remove_ingredient(self, ingredient: RecipeIngredient):
+        self.ingredients = RecipeIngredient.query.filter_by(
+            recipe_id=self.id).all()
+        for existing_ingredient in self.ingredients:
+            if existing_ingredient.ingredient_id == ingredient.ingredient_id:
+                db.session.delete(ingredient)
+                return True
+        raise RecipeIngredientNotFoundError(f"Can't delete ingredient, as it"
+                                            f" is not found in {self.name}")
+
+    @staticmethod
+    def save_recipe():
+        db.session.commit()
+
+    # @staticmethod
+    # def cancel_recipe_changes():
+    #     db.session.rollback()
 
 
 class ShoppingListIngredient:
@@ -67,6 +106,7 @@ class ShoppingListIngredient:
     Stripped down, non-database model representation of
     :class:`RecipeIngredient` to be added to :class:`ShoppingList`.
     """
+
     def __init__(self, recipe_ingredient: RecipeIngredient):
         self.name = recipe_ingredient.ingredient.name
         self.order_id = recipe_ingredient.ingredient.order_id

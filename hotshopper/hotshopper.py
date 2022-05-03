@@ -4,8 +4,7 @@ from flask import (render_template, redirect, session)
 from hotshopper.foodplan import FoodPlan
 from hotshopper.model import Recipe
 from hotshopper.ui import View
-
-from hotshopper import app, db
+from hotshopper import db, create_app
 
 
 class Controller:
@@ -28,11 +27,13 @@ class Controller:
 
 
 def main(web=True):
-    controller = Controller()
-    recipes = controller.get_recipes()
 
     if web:
         port = 5001
+        app = create_app(test=False)
+
+        controller = Controller()
+        recipes = controller.get_recipes()
 
         @app.route("/")
         def show_init_app():
