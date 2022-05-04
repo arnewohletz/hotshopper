@@ -20,14 +20,16 @@
 <div class="content">
     <form method="POST" action="/show_shopping_list">
         <table class="food_plan">
-                <th colspan="4">
-                    Essensplan
-                </th>
+            <th colspan="4">
+                Essensplan
+            </th>
             <tbody class="header">
             <tr>
                 <td colspan="3">Woche</td>
                 <td rowspan="2" class="food_plan_buttons">
-                    <button type="button" class="food_plan_buttons"> Neues Rezept ...</button>
+                    <button type="button" class="food_plan_buttons"> Neues
+                        Rezept ...
+                    </button>
                     <input type="submit" value="Berechne" id="calc_button">
                 </td>
                 </td>
@@ -39,7 +41,9 @@
             </tr>
             </tbody>
             {% for recipe in recipes %}
-            <tr><td>{{ clever_function }}</td></tr>
+            <tr>
+                <td>{{ clever_function }}</td>
+            </tr>
             <tr>
                 <td>
                     {% if recipe.selected == True and 1 in recipe.weeks %}
@@ -76,8 +80,14 @@
                 </td>
                 <td>
                     {{recipe.name}}
-                    <button type="button" name="{{recipe.name}}.edit"><i class="fa-solid fa-pen-to-square"></i></button>
-                    <button type="button" name="{{recipe.name}}.delete"><i class="fa-solid fa-trash-can"></i></button>
+                    <button type="button" id="{{recipe.id}}.edit"
+                            onclick="edit_recipe(this)">
+                        <i class=" fa-solid fa-pen-to-square"></i>
+                    </button>
+                    <button type="button" id="{{recipe.id}}.delete"
+                            onclick="delete_recipe(this)">
+                        <i class=" fa-solid fa-trash-can"></i>
+                    </button>
                 </td>
             </tr>
             {% endfor %}
