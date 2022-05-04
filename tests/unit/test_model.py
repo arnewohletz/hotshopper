@@ -1,7 +1,7 @@
 import pytest
 
 from hotshopper import model, db, create_app
-from hotshopper.model import RecipeIngredient
+from hotshopper.model import Recipe, RecipeIngredient
 from hotshopper.errors import DuplicateRecipeIngredientError
 from tests.unit import helper
 
@@ -64,10 +64,25 @@ class TestRecipe:
         ri = model.RecipeIngredient(ingredient_id=r.id, recipe_id=i.id,
                                     quantity_per_person=100, unit="gram")
         r.add_ingredient(ri)
-        r.remove_ingredient(ri)
-        r.save_recipe()
+        ri.delete()
         result = RecipeIngredient.query.filter_by(ingredient_id=1).all()
         assert len(result) == 0
+
+    def test_delete_recipe(self, app, setup_teardown):
+
+        r_a = model.Recipe(id=1, name="TestRecipeA",
+                         ingredients=[])
+        r_b = model.Recipe(id=2, name="TestRecipeB",
+                         ingredients=[])
+        db.session.add(r_a)
+        db.session.add(r_b)
+        assert len(Recipe.query.all()) == 2
+        r_a.delete()
+        # db.session.query(Recipe).filter(Recipe.id == 1).delete()
+        # db.session.commit()
+        remain_recipe = Recipe.query.all()
+        assert len(remain_recipe) == 1
+        assert remain_recipe[0].id == 2
 
 
 class TestRecipeIngredient:
