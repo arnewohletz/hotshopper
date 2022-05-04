@@ -19,6 +19,11 @@ class Controller:
         self.recipes = db.session.query(Recipe).all()
         return sorted(self.recipes, key=lambda recipe: recipe.name)
 
+    # def get_recipe(self, recipe_id):
+    #     for recipe in self.recipes:
+    #         if recipe.
+    #     return db.session.query(Recipe).filter_by(id=recipe_id)
+
     def display_shopping_lists(self):
         self.foodplan = FoodPlan()
         self.foodplan.set_shopping_lists(self.recipes)
@@ -68,6 +73,16 @@ def main(web=True):
             return render_template("foodplan.html",
                                    recipes=recipes,
                                    food_plan=food_plan)
+
+        @app.route("/delete/<recipe_id>")
+        def delete_recipe(recipe_id):
+            recipe = Recipe.query.filter_by(recipe_id=recipe_id).first()
+            db.session.delete(recipe)
+            db.session.commit()
+
+            # for i in recipes:
+            #     if i.id == int(recipe_id):
+            #         i.delete()
 
         app.run(port=port, debug=True)
 

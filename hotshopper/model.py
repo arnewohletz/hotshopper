@@ -40,6 +40,17 @@ class RecipeIngredient(db.Model):
         if unit:
             self.unit = unit
 
+    def delete(self):
+        ingredient = RecipeIngredient.query.filter_by(
+            ingredient_id=self.ingredient_id).first()
+        if ingredient:
+            db.session.delete(ingredient)
+            db.session.commit()
+            return True
+        raise RecipeIngredientNotFoundError(
+            f"Can't delete ingredient, as it"
+            f" is not found in recipe")
+
 
 class Ingredient(db.Model):
     __tablename__ = "ingredient"
@@ -75,22 +86,28 @@ class Recipe(db.Model):
         print(self.name + " is deselected from week " + str(week))
 
     def add_ingredient(self, ingredient: RecipeIngredient):
-        for existing_ingredient in self.ingredients:
-            if existing_ingredient.ingredient_id == ingredient.ingredient_id:
-                raise DuplicateRecipeIngredientError(
-                    "Ingredient already exists for this recipe")
+        existing = RecipeIngredient.query.filter_by(recipe_id=self.id,
+                                                    ingredient_id=ingredient.ingredient_id).all()
+        if existing:
+            raise DuplicateRecipeIngredientError(
+                "Ingredient already exists for this recipe. Won't add")
         db.session.add(ingredient)
         db.session.commit()
 
-    def remove_ingredient(self, ingredient: RecipeIngredient):
-        self.ingredients = RecipeIngredient.query.filter_by(
-            recipe_id=self.id).all()
-        for existing_ingredient in self.ingredients:
-            if existing_ingredient.ingredient_id == ingredient.ingredient_id:
-                db.session.delete(ingredient)
-                return True
-        raise RecipeIngredientNotFoundError(f"Can't delete ingredient, as it"
-                                            f" is not found in {self.name}")
+    # def remove_ingredient(self, recipe_ingredient: RecipeIngredient):
+    #     ingredient = RecipeIngredient.query.filter_by(
+    #         ingredient_id=recipe_ingredient.ingredient_id).first()
+    #
+    #     if ingredient:
+    #         db.session.delete(ingredient)
+    #         return True
+    #     raise RecipeIngredientNotFoundError(f"Can't delete ingredient, as it"
+    #                                         f" is not found in {self.name}")
+
+    def delete(self):
+        recipe = Recipe.query.filter_by(id=self.id).first()
+        db.session.delete(recipe)
+        db.session.commit()
 
     @staticmethod
     def save_recipe():
