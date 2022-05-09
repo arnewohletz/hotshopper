@@ -1,7 +1,8 @@
 from sqlalchemy import orm
 
 from hotshopper import db
-from hotshopper.errors import (DuplicateRecipeIngredientError,
+from hotshopper.errors import (DuplicateRecipeError,
+                               DuplicateRecipeIngredientError,
                                RecipeIngredientNotFoundError)
 
 
@@ -39,6 +40,17 @@ class RecipeIngredient(db.Model):
             self.quantity_per_person = quantity_per_person
         if unit:
             self.unit = unit
+
+    def add(self):
+        exists = RecipeIngredient.query.filter_by(
+            ingredient_id=self.ingredient_id,
+            recipe_id=self.recipe_id).first()
+        if exists:
+            raise DuplicateRecipeIngredientError("Recipe already uses "
+                                                 "ingredient with same name")
+        else:
+            db.session.add(self)
+            db.session.flush()
 
     def delete(self):
         ingredient = RecipeIngredient.query.filter_by(
@@ -108,6 +120,15 @@ class Recipe(db.Model):
         recipe = Recipe.query.filter_by(id=self.id).first()
         db.session.delete(recipe)
         db.session.commit()
+
+    def add(self):
+        exists = Recipe.query.filter_by(name=self.name).first()
+        if exists:
+            raise DuplicateRecipeError("Recipe with same name already exists")
+        else:
+            db.session.add(self)
+            db.session.flush()
+            return self.id
 
     @staticmethod
     def save_recipe():
