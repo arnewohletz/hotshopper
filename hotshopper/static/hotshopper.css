@@ -46,6 +46,30 @@ h2 table {
     right: 70px;
 }
 
+#add_recipe_screen {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    top: 15%;
+    left: 30%;
+    background-color: white;
+    justify-content: center;
+    border-radius: 10px;
+    border: solid 1px black;
+    padding: 10px;
+}
+
+#cover {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.80;
+    background: #aaa;
+    display: none;
+}
+
 td#no_item {
     text-align: center;
 }

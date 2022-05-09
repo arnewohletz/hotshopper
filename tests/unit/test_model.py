@@ -2,7 +2,10 @@ import pytest
 
 from hotshopper import model, db, create_app
 from hotshopper.model import Recipe, RecipeIngredient
-from hotshopper.errors import DuplicateRecipeIngredientError
+from hotshopper.errors import (
+    DuplicateRecipeIngredientError,
+    DuplicateRecipeError
+)
 from tests.unit import helper
 
 
@@ -25,6 +28,19 @@ def setup_teardown():
 
 class TestRecipe:
     # INCOMING COMMANDS
+
+    def test_add_new_recipe(self, app, setup_teardown):
+        r = model.Recipe(id=1, name="TestRecipe", ingredients=[])
+        r.add()
+        r_added = Recipe.query.filter_by(name="TestRecipe").first()
+        assert r.name == r_added.name
+
+    def test_add_duplicate_recipe(self, app, setup_teardown):
+        r = model.Recipe(id=1, name="TestRecipe", ingredients=[])
+        r.add()
+        r2 = model.Recipe(id=2, name="TestRecipe", ingredients=[])
+        with pytest.raises(DuplicateRecipeError):
+            r2.add()
 
     def test_recipe_select(self, app, setup_teardown):
         r = model.Recipe(id=1, name="TestRecipe", ingredients=[])
