@@ -5,6 +5,7 @@
 <script type="text/javascript">
     recipes = "{{ recipes }}"
     scroll_height = "{{ scroll_height }}"
+    ingredients = "{{ ingredients }}"
 </script>
 <h2>
     <table>
@@ -27,7 +28,8 @@
             <tr>
                 <td colspan="3">Woche</td>
                 <td rowspan="2" class="food_plan_buttons">
-                    <button type="button" class="food_plan_buttons"> Neues
+                    <button type="button" class="food_plan_buttons"
+                    onclick="show_add_recipe_screen()"> Neues
                         Rezept ...
                     </button>
                     <input type="submit" value="Berechne" id="calc_button">
@@ -84,7 +86,8 @@
                             onclick="edit_recipe(this)">
                         <i class=" fa-solid fa-pen-to-square"></i>
                     </button>
-                    <button type="button" id="{{recipe.id}}.delete"
+                    <button type="button" id="delete_recipe/{{recipe.id}}"
+                            name="{{ recipe.id }}"
                             onclick="delete_recipe(this)">
                         <i class=" fa-solid fa-trash-can"></i>
                     </button>
@@ -123,5 +126,9 @@
     </table>
     {% endif %}
 </div>
+
+{% block ontop_screens %}
+
+{% endblock %}
 
 {% endblock %}
