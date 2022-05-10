@@ -83,6 +83,11 @@ class Recipe(db.Model):
     weeks = None
     selected = False
 
+    def __eq__(self, other):
+        if self.name == other.name:
+            return True
+        return False
+
     def select(self, week: int):
         if not self.weeks:
             self.weeks = []
@@ -118,7 +123,11 @@ class Recipe(db.Model):
 
     def delete(self):
         recipe = Recipe.query.filter_by(id=self.id).first()
+        recipe_ingredients = RecipeIngredient.query.filter_by(
+            recipe_id=recipe.id).all()
         db.session.delete(recipe)
+        for ri in recipe_ingredients:
+            db.session.delete(ri)
         db.session.commit()
 
     def add(self):
