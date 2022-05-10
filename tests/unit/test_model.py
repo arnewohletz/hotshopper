@@ -1,12 +1,12 @@
 import pytest
 
+from hotshopper import hotshopper
 from hotshopper import model, db, create_app
 from hotshopper.model import Recipe, RecipeIngredient
 from hotshopper.errors import (
     DuplicateRecipeIngredientError,
     DuplicateRecipeError
 )
-from tests.unit import helper
 
 
 @pytest.fixture
@@ -14,16 +14,30 @@ def app():
     return create_app(test=True)
 
 
-# @pytest.fixture
-# def db(app):
-#     return SQLAlchemy(app)
-
 @pytest.fixture(scope="function")
 def setup_teardown():
     db.create_all()
     yield
     db.session.remove()
     db.drop_all()
+
+
+class TestController:
+
+    def test_get_recipe(self, app, setup_teardown):
+        controller = hotshopper.Controller()
+        r1 = model.Recipe(id=1, name="TestRecipe1", ingredients=[])
+        r2 = model.Recipe(id=2, name="TestRecipe2", ingredients=[])
+        r3 = model.Recipe(id=3, name="TestRecipe3", ingredients=[])
+        r1.add()
+        r2.add()
+        r3.add()
+        r1.delete()
+        db.session.commit()
+        recipes = controller.get_recipes()
+        assert len(recipes) == 2
+        assert recipes[0].name in ["TestRecipe2", "TestRecipe3"]
+        assert recipes[1].name in ["TestRecipe2", "TestRecipe3"]
 
 
 class TestRecipe:
@@ -85,20 +99,25 @@ class TestRecipe:
         assert len(result) == 0
 
     def test_delete_recipe(self, app, setup_teardown):
+        r = model.Recipe(id=1, name="TestRecipeA", ingredients=[])
+        ri = model.RecipeIngredient(recipe_id=r.id, ingredient_id=1,
+                                    amount=100, unit="g")
+        ri_2 = model.RecipeIngredient(recipe_id=1000, ingredient_id=1,
+                                      amount=100, unit="g")
+        db.session.add(r)
+        db.session.add(ri)
+        db.session.add(ri_2)
 
-        r_a = model.Recipe(id=1, name="TestRecipeA",
-                         ingredients=[])
-        r_b = model.Recipe(id=2, name="TestRecipeB",
-                         ingredients=[])
-        db.session.add(r_a)
-        db.session.add(r_b)
-        assert len(Recipe.query.all()) == 2
-        r_a.delete()
-        # db.session.query(Recipe).filter(Recipe.id == 1).delete()
-        # db.session.commit()
+        assert len(Recipe.query.all()) == 1
+        assert len(RecipeIngredient.query.all()) == 2
+
+        r.delete()
+
         remain_recipe = Recipe.query.all()
-        assert len(remain_recipe) == 1
-        assert remain_recipe[0].id == 2
+        remain_recipe_ingredients = RecipeIngredient.query.all()
+
+        assert len(remain_recipe) == 0
+        assert len(remain_recipe_ingredients) == 1
 
 
 class TestRecipeIngredient:
