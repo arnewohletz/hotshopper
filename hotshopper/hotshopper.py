@@ -10,23 +10,25 @@ from hotshopper import db, create_app
 class Controller:
     def __init__(self, view=None):
         self.foodplan = None
-        self.recipes = []
+        self.recipes = []  # make to set() ??
         self.ingredients = []
         if view:
             self.view = view
             self.view.initialize(self, self.get_recipes())
 
     def get_recipes(self):
-        self.recipes = db.session.query(Recipe).all()
+        all_recipes = db.session.query(Recipe).all()
+        for recipe in all_recipes:
+            if recipe not in self.recipes:
+                self.recipes.append(recipe)
+        for recipe in self.recipes:
+            if recipe not in all_recipes:
+                self.recipes.remove(recipe)
         return sorted(self.recipes, key=lambda recipe: recipe.name)
 
     def get_ingredients(self):
         self.ingredients = db.session.query(Ingredient).all()
         return sorted(self.ingredients, key=lambda ingredient: ingredient.name)
-    # def get_recipe(self, recipe_id):
-    #     for recipe in self.recipes:
-    #         if recipe.
-    #     return db.session.query(Recipe).filter_by(id=recipe_id)
 
     def display_shopping_lists(self):
         self.foodplan = FoodPlan()
@@ -51,22 +53,10 @@ def main(web=True):
                 scroll_height = session.pop("scroll_height")
             except KeyError:
                 scroll_height = 0
-            # TODO: Add new recipes to main recipes:
-            #   PROBLEM:
-            #   Adding new recipe requires manual refresh
-            #   SOLUTION:
-            #   Compare 'recipes' and new set 'controller.get_recipes()'
-            #   Don't change existing 'recipes', but only add additional ones
-            #   found in 'controller.get_recipes() if any'
-            #   NOTE:
-            #   Ingredients can refresh via 'controller.get_ingredients()'
-            #   if new ones were added, since those doesn't contain changed
-            #   data
+            # nonlocal recipes, ingredients
             return render_template("ontop_screens.html",
-                                   recipes=recipes,
-                                   ingredients=ingredients,
-                                   # recipes=controller.get_recipes(),
-                                   # ingredients=controller.get_ingredients(),
+                                   recipes=controller.get_recipes(),
+                                   ingredients=controller.get_ingredients(),
                                    scroll_height=scroll_height)
 
         @app.route("/check_recipe/<recipe_id>_<int:week>_<int:scroll_height>")
@@ -94,14 +84,15 @@ def main(web=True):
                                    recipes=recipes,
                                    food_plan=food_plan)
 
-        @app.route("/delete_recipe/<int:recipe_id>")
-        def delete_recipe(recipe_id):
-            recipe = Recipe.query.filter_by(recipe_id=recipe_id).first()
-            db.session.delete(recipe)
-            db.session.commit()
+        @app.route("/delete_recipe/<int:recipe_id>_<int:scroll_height>")
+        def delete_recipe(recipe_id, scroll_height):
+            recipe = Recipe.query.filter_by(id=recipe_id).first()
+            recipe.delete()
+            session["scroll_height"] = scroll_height
+            return redirect("/")
 
-        @app.route("/add_new_recipe/<int:amount_ingredients>", methods=["POST"])
-        def add_new_recipe(amount_ingredients):
+        @app.route("/add_new_recipe/<int:amount_ingredients>_<int:scroll_height>", methods=["POST"])
+        def add_new_recipe(amount_ingredients, scroll_height):
             name = request.form["recipe_name"]
             recipe = Recipe(name=name, ingredients=[])
             r_id = recipe.add()
@@ -117,6 +108,7 @@ def main(web=True):
                 ri.add()
 
             db.session.commit()
+            session["scroll_height"] = scroll_height
             return redirect("/")
 
         app.run(port=port, debug=True)
