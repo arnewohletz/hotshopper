@@ -48,6 +48,7 @@ function confirm_close_recipe_screen() {
     if (!formcheck()) {
         return;
     }
+    let scroll_height = document.documentElement.scrollTop || document.body.scrollTop;
     const name = document.querySelector('#recipe_name').value;
     const ingredients = document.querySelectorAll('.recipe_ingredient');
     // const name = new FormData(document.querySelector('#recipe_name'));
@@ -56,7 +57,7 @@ function confirm_close_recipe_screen() {
     document.getElementById("cover").style.display = "none";
     let url = "/add_new_recipe/" + new_recipe_ingredients_amount;
 
-    const template = new_recipe_ingredients_amount => `/add_new_recipe/${new_recipe_ingredients_amount}`
+    const template = new_recipe_ingredients_amount => `/add_new_recipe/${new_recipe_ingredients_amount}_${scroll_height}`
     document.getElementById('add_recipe_form').addEventListener(
         'submit', function(s) {
             s.preventDefault();
@@ -68,7 +69,18 @@ function confirm_close_recipe_screen() {
 }
 
 function delete_recipe(recipe) {
-    window.location.href = recipe.id;
+    let scroll_height = document.documentElement.scrollTop || document.body.scrollTop;
+    Swal.fire({
+        text: `Rezept "${recipe.name}" wirklich löschen?`,
+        icon: 'warning',
+        showCancelButton: true,
+        cancelButtonText: 'Abbruch',
+        confirmButtonText: 'OK',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = recipe.id + "_" + scroll_height;
+      }
+    })
 }
 
 function edit_recipe(recipe) {
