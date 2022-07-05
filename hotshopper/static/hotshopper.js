@@ -1,7 +1,8 @@
 function init() {
-    document.getElementById("add_recipe_screen").style.display = "none";
-    document.getElementById("cover").style.display = "none";
-    document.getElementById('add_recipe_form').reset();
+    // document.getElementById("add_recipe_screen").style.display = "none";
+    // document.getElementById("EDIT_RECIPE_screen").style.display = "none";
+    // document.getElementById("cover").style.display = "none";
+    // document.getElementById('add_recipe_form').reset();
     window.scroll(0, scroll_height);
 }
 
@@ -10,25 +11,25 @@ function set_selected(checkboxElem) {
     let scroll_height = document.documentElement.scrollTop || document.body.scrollTop;
     if (checkboxElem.checked) {
         window.location.href = "/check_recipe/" + checkboxElem.id + "_" + scroll_height;
-    }
-    else {
+    } else {
         window.location.href = "/uncheck_recipe/" + checkboxElem.id + "_" + scroll_height;
     }
 }
 
-let new_recipe_ingredients_amount = 0;
+let new_ingredient_index = 0;
 
 function show_add_recipe_screen() {
-    new_recipe_ingredients_amount = 1;
-    document.getElementById("cover").style.display = "block";
-    document.getElementById("add_recipe_screen").style.display = "block";
+    new_ingredient_index = 1;
+    // document.getElementById("cover").style.display = "block";
+    // document.getElementById("add_recipe_screen").style.display = "block";
+    window.location.href = "/add_recipe"
 }
 
-function cancel_close_recipe_screen() {
-    document.getElementById("add_recipe_screen").style.display = "none";
-    document.getElementById("cover").style.display = "none";
-    document.getElementById('add_recipe_form').reset();
-}
+// function cancel_close_recipe_screen() {
+//     document.getElementById("add_recipe_screen").style.display = "none";
+//     document.getElementById("cover").style.display = "none";
+//     document.getElementById('add_recipe_form').reset();
+// }
 
 function formcheck() {
     let fields = document.querySelectorAll("select,textarea, input, [required]");
@@ -44,7 +45,7 @@ function formcheck() {
     return complete;
 }
 
-function confirm_close_recipe_screen() {
+function confirm_close_recipe_screen(edit = false) {
     if (!formcheck()) {
         return;
     }
@@ -55,15 +56,27 @@ function confirm_close_recipe_screen() {
     // const recipe = new FormData(document.querySelector('a[id="recipe_name"]'))
     document.getElementById("add_recipe_screen").style.display = "none";
     document.getElementById("cover").style.display = "none";
-    let url = "/add_new_recipe/" + new_recipe_ingredients_amount;
+    // let url = "/add_new_recipe/" + new_recipe_ingredients_amount;
 
-    const template = new_recipe_ingredients_amount => `/add_new_recipe/${new_recipe_ingredients_amount}_${scroll_height}`
-    document.getElementById('add_recipe_form').addEventListener(
-        'submit', function(s) {
-            s.preventDefault();
-            this.action = template(new_recipe_ingredients_amount);
-            this.submit();
-    });
+    const template_add = new_ingredient_index => `/add_new_recipe/${new_ingredient_index}_${scroll_height}`
+    const template_edit = new_ingredient_index => `/edit_recipe/${new_ingredient_index}_${scroll_height}`
+
+    if (edit) {
+        document.getElementById('edit_recipe_form').addEventListener(
+            'submit', function (s) {
+                s.preventDefault();
+                this.action = template_edit(new_ingredient_index);
+                this.submit();
+            });
+    } else {
+        document.getElementById('add_recipe_form').addEventListener(
+            'submit', function (s) {
+                s.preventDefault();
+                this.action = template_add(new_ingredient_index);
+                this.submit();
+            });
+    }
+
     // window.location.href = "/add_new_recipe/" + new_recipe_ingredients_amount;
     // window.location.href = "/add_new_recipe"
 }
@@ -77,28 +90,29 @@ function delete_recipe(recipe) {
         cancelButtonText: 'Abbruch',
         confirmButtonText: 'OK',
     }).then((result) => {
-      if (result.isConfirmed) {
-        window.location.href = recipe.id + "_" + scroll_height;
-      }
+        if (result.isConfirmed) {
+            window.location.href = recipe.id + "_" + scroll_height;
+        }
     })
 }
 
 function edit_recipe(recipe) {
-    window.location.href = "/edit_recipe/" + recipe.id;
+    window.location.href = recipe.id;
 }
 
 function delete_recipe_ingredient(ingredient) {
-    document.getElementById(ingredient);
+    document.getElementById(`recipe_ingredient_${ingredient}`).remove();
 }
 
 function add_recipe_ingredient() {
-    // increment ingredient index
-    new_recipe_ingredients_amount += 1;
+    // get new ingredient index
+    let new_ingredient_index = document.getElementById("recipe_ingredients").getElementsByClassName("recipe_ingredient").length;
 
     // add new recipe ingredients nodes
-    let NewRecipeIngredients = document.getElementById("new_recipe_ingredients");
+    let NewRecipeIngredients = document.getElementById("recipe_ingredients");
     let NewRecipeIngredient = document.createElement("tr");
     NewRecipeIngredient.setAttribute("class", "recipe_ingredient");
+    NewRecipeIngredient.setAttribute("id", `recipe_ingredient_${new_ingredient_index}`);
     let InputQuantityCell = document.createElement("td");
     let UnitCell = document.createElement("td");
     let IngredientCell = document.createElement("td");
@@ -107,13 +121,13 @@ function add_recipe_ingredient() {
     // create quantity node
     let InputQuantity = document.createElement("input");
     InputQuantity.setAttribute('size', "3");
-    InputQuantity.setAttribute('id', `quantity_${new_recipe_ingredients_amount}`);
-    InputQuantity.setAttribute('name', `quantity_${new_recipe_ingredients_amount}`);
+    InputQuantity.setAttribute('id', `quantity_${new_ingredient_index}`);
+    InputQuantity.setAttribute('name', `quantity_${new_ingredient_index}`);
 
     // create unit node
     let SelectUnit = document.createElement("select");
-    SelectUnit.setAttribute("id",`unit_${new_recipe_ingredients_amount}`);
-    SelectUnit.setAttribute("name",`unit_${new_recipe_ingredients_amount}`);
+    SelectUnit.setAttribute("id", `unit_${new_ingredient_index}`);
+    SelectUnit.setAttribute("name", `unit_${new_ingredient_index}`);
     let SelectGram = document.createElement("option");
     SelectGram.setAttribute("value", "g");
     SelectGram.textContent = "g";
@@ -123,15 +137,15 @@ function add_recipe_ingredient() {
 
     // create ingredient node
     let SelectIngredient = document.getElementById("ingredient_0").cloneNode("deep");
-    SelectIngredient.setAttribute("id",`ingredient_${new_recipe_ingredients_amount}`);
-    SelectIngredient.setAttribute("name",`ingredient_${new_recipe_ingredients_amount}`);
+    SelectIngredient.setAttribute("id", `ingredient_${new_ingredient_index}`);
+    SelectIngredient.setAttribute("name", `ingredient_${new_ingredient_index}`);
 
     // create delete button node
     let DeleteButton = document.createElement("button");
-    DeleteButton.setAttribute("id",`delete_${new_recipe_ingredients_amount}`);
-    DeleteButton.setAttribute("type","button");
+    DeleteButton.setAttribute("id", `delete_${new_ingredient_index}`);
+    DeleteButton.setAttribute("type", "button");
     DeleteButton.setAttribute("class", "delete_ingredient");
-    DeleteButton.setAttribute("onclick", "delete_recipe_ingredient(this)");
+    DeleteButton.setAttribute("onclick", `delete_recipe_ingredient(${new_ingredient_index})`);
     let DeleteIcon = document.createElement("i");
     DeleteIcon.setAttribute("class", "fa-solid fa-trash-can");
 
