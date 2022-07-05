@@ -30,6 +30,16 @@ class Controller:
         self.ingredients = db.session.query(Ingredient).all()
         return sorted(self.ingredients, key=lambda ingredient: ingredient.name)
 
+    @staticmethod
+    def get_recipe(recipe_id: int):
+        recipe = Recipe.query.filter_by(id=recipe_id).first()
+        return recipe
+
+    @staticmethod
+    def get_recipe_ingredients(recipe_id: int):
+        ris = RecipeIngredient.query.filter_by(recipe_id=recipe_id).all()
+        return ris
+
     def display_shopping_lists(self):
         self.foodplan = FoodPlan()
         self.foodplan.set_shopping_lists(self.recipes)
@@ -45,7 +55,7 @@ def main(web=True):
 
         controller = Controller()
         recipes = controller.get_recipes()
-        ingredients = controller.get_ingredients()
+        # ingredients = controller.get_ingredients()
 
         @app.route("/", methods=["GET", "POST"])
         def show_init_app():
@@ -54,10 +64,14 @@ def main(web=True):
             except KeyError:
                 scroll_height = 0
             # nonlocal recipes, ingredients
-            return render_template("ontop_screens.html",
+            return render_template("main_screen.html",
                                    recipes=controller.get_recipes(),
-                                   ingredients=controller.get_ingredients(),
+                                   # ingredients=controller.get_ingredients(),
                                    scroll_height=scroll_height)
+            # return render_template("add_recipe_screen.html",
+            #                        recipes=controller.get_recipes(),
+            #                        ingredients=controller.get_ingredients(),
+            #                        scroll_height=scroll_height)
 
         @app.route("/check_recipe/<recipe_id>_<int:week>_<int:scroll_height>")
         def check_recipe(recipe_id, week, scroll_height):
@@ -80,9 +94,26 @@ def main(web=True):
         def show_shopping_list():
             food_plan = FoodPlan()
             food_plan.set_shopping_lists(recipes)
-            return render_template("ontop_screens.html",
+            return render_template("add_recipe_screen.html",
                                    recipes=recipes,
                                    food_plan=food_plan)
+
+        @app.route("/add_recipe")
+        def show_add_recipe_screen():
+            ingredients = controller.get_ingredients()
+            return render_template("add_recipe_screen.html",
+                                   recipes=recipes, # TODO: recipes is required for background recipes list -> find other way than passing it in again
+                                   ingredients=ingredients)
+
+        @app.route("/edit_recipe/<int:recipe_id>")
+        def edit_recipe(recipe_id):
+            recipe = controller.get_recipe(recipe_id)
+            recipe_ingredients = controller.get_recipe_ingredients(recipe_id)
+            return render_template("edit_recipe_screen.html",
+                            recipes=recipes,  # TODO: recipes is required for background recipes list -> find other way than passing it in again
+                            recipe=recipe,
+                            recipe_ingredients=recipe_ingredients,
+                            ingredients=controller.get_ingredients())
 
         @app.route("/delete_recipe/<int:recipe_id>_<int:scroll_height>")
         def delete_recipe(recipe_id, scroll_height):
