@@ -82,7 +82,7 @@
                 </td>
                 <td>
                     {{recipe.name}}
-                    <button type="button" id="{{recipe.id}}.edit"
+                    <button type="button" id="edit_recipe/{{recipe.id}}"
                             onclick="edit_recipe(this)">
                         <i class=" fa-solid fa-pen-to-square"></i>
                     </button>
@@ -127,8 +127,12 @@
     {% endif %}
 </div>
 
-{% block ontop_screens %}
+<div id="cover"></div>
 
+{% block add_recipe_screen %}
+{% endblock %}
+
+{% block edit_recipe_screen %}
 {% endblock %}
 
 {% endblock %}
