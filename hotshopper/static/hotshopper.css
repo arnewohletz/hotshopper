@@ -46,7 +46,7 @@ h2 table {
     right: 70px;
 }
 
-#add_recipe_screen {
+.ontop_screen {
     display: none;
     position: fixed;
     z-index: 10;
