@@ -1,0 +1,99 @@
+{% extends 'main_screen.html' %}
+
+{% block scripts %}
+
+{% endblock %}
+
+{% block edit_recipe_screen %}
+<script type="text/javascript">
+    recipe_ingredients = "{{ recipe_ingredients }}"
+    recipe = "{{ recipe }}"
+    ingredients = "{{ ingredients }}"
+    // function init() {
+    //     document.getElementById("edit_recipe_screen").style.display = "block";
+    //     document.getElementById("cover").style.display = "block";
+    // }
+    // window.onload = init();
+    // window.onload = show_recipe_screen(true, recipe_id=window.location.href.split("/").pop())
+</script>
+<!--<script src="static/edit_recipe_screen.js"></script>-->
+<script src="{{ url_for('static', filename='edit_recipe_screen.js') }}"></script>
+
+<div id="edit_recipe_screen" class="ontop_screen">
+    <form method="POST" id="EDIT_RECIPE_form"
+          action="placeholder">
+        <h2 id="EDIT_RECIPE_screen_title">Rezept bearbeiten</h2>
+        <table>
+            <tr>
+                <td>Name:</td>
+                <td colspan="5">
+                    <input style="width: 100%" type="text" id="EDIT_RECIPE_recipe_name" name="recipe_name" value="{{ recipe.name }} " required>
+                </td>
+            </tr>
+            <tr>
+                <td style="vertical-align: top">Zutaten:</td>
+                <td>
+                    <div id="recipe_ingredients">
+                        <table>
+                            {% for ri in recipe_ingredients %}
+                            <tr class="recipe_ingredient">
+                                <td>
+                                    <input size=3 id="quantity_{{ loop.index0 }}" name="quantity_{{ loop.index0 }}" value="{{ ri.quantity_per_person }}" required>
+                                </td>
+                                <td>
+                                    <select id="unit_{{ loop.index0 }}" name="unit_{{ loop.index0 }}" required>
+                                        {% if ri.unit == "g" %}
+                                            <option value="g" selected>g</option>
+                                            <option value="St.">St.</option>
+                                        {% elif ri.unit == "St." %}
+                                            <option value="g">g</option>
+                                            <option value="St." selected>St.</option>
+                                        {% endif %}
+                                    </select>
+                                </td>
+                                <td>
+                                    <select id="ingredient_{{ loop.index0 }}" name="ingredient_{{ loop.index0 }}" required>
+                                        <option value="">-- Bitte Zutat auswählen --</option>
+                                        {% for ingredient in ingredients %}
+                                            {% if ingredient.name == ri.name %}
+                                                <option selected>{{ ingredient.name }}</option>
+<!--                                                <option value="{{ ingredient.name }}" id="ingredient" selected>-->
+                                            {% else %}
+                                                <option selected>{{ ingredient.name }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td>
+<!--                                    <button type="button" class="delete_ingredient" onclick="delete_recipe_ingredient(this)">-->
+<!--                                        <i class="fa-solid fa-trash-can"></i>-->
+<!--                                    </button>-->
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2"></td>
+                <td>
+                    <button type="button" class="add_ingredient" onclick="add_recipe_ingredient('{{ ingredients }}')">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="button" id="cancel_recipe" onclick="cancel_close_recipe_screen()">
+                    Abbrechen
+                    </button>
+                    <input type="submit" id="EDIT_RECIPE_confirm_recipe"
+                           name="confirm_new_recipe" onclick="confirm_close_recipe_screen(edit=true)" value="OK">
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+{% endblock %}

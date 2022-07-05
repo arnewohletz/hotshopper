@@ -1,14 +1,25 @@
 {% extends 'main_screen.html' %}
 
-{% block ontop_screens %}
+{% block add_recipe_screen %}
 <script type="text/javascript">
     ingredients = "{{ ingredients }}"
+    // recipes = "{{ recipes }}"
+    // recipe = "{{ recipe }}"
+    // {% if recipe %}
+    // recipe = "{{ recipe }}"
+    // recipe_ingredients = "{{ recipe_ingredients }}"
+    // {% else %}
+    // recipe = ""
+    // recipe_ingredients = ""
+    // {% endif %}
+    // ingredients = "{{ ingredients }}"
 </script>
+<script src="{{ url_for('static', filename='add_recipe_screen.js') }}"></script>
 
 <div id="add_recipe_screen" class="ontop_screen">
-    <form method="POST" id="add_recipe_form"
+    <form method="POST" id="ADD_RECIPE_form"
           action="placeholder">
-        <h2>Neues Rezept hinzufügen</h2>
+        <h2 id="ADD_RECIPE_screen_title">Neues Rezept</h2>
         <table>
             <tr>
                 <td>Name:</td>
@@ -19,7 +30,7 @@
             <tr>
                 <td style="vertical-align: top">Zutaten:</td>
                 <td>
-                    <div id="new_recipe_ingredients">
+                    <div id="recipe_ingredients">
                         <table>
                             <tr class="recipe_ingredient">
                                 <td>
@@ -42,18 +53,13 @@
                                         {% endfor %}
                                     </select>
                                 </td>
-                                <td>
-                                    <button type="button" class="delete_ingredient" onclick="delete_recipe_ingredient(this)">
-                                        <i class=" fa-solid fa-trash-can"></i>
-                                    </button>
-                                </td>
                             </tr>
                         </table>
                     </div>
                 </td>
             </tr>
             <tr>
-                <td colspan="3"></td>
+                <td colspan="2"></td>
                 <td>
                     <button type="button" class="add_ingredient" onclick="add_recipe_ingredient('{{ ingredients }}')">
                         <i class="fa-solid fa-plus"></i>
@@ -62,11 +68,11 @@
             </tr>
             <tr>
                 <td>
-                    <button type="button" id="cancel_new_recipe" onclick="cancel_close_recipe_screen()">
+                    <button type="button" id="cancel_recipe" onclick="cancel_close_recipe_screen()">
                     Abbrechen
                     </button>
-                    <input type="submit" id="confirm_new_recipe"
-                           name="confirm_new_recipe" onclick="confirm_close_recipe_screen()" value="OK">
+                    <input type="submit" id="confirm_recipe"
+                           name="confirm_new_recipe" onclick="confirm_close_recipe_screen(edit=false)" value="OK">
                 </td>
             </tr>
         </table>
@@ -77,3 +83,4 @@
 <div id="cover"></div>
 
 {% endblock %}
+
