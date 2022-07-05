@@ -2,10 +2,17 @@
 <html>
 <head>
     <title>Hotshopper</title>
-    <link type="text/css" rel="stylesheet" href="static/hotshopper.css"/>
-    <link rel='stylesheet' href="{{ url_for('static', filename='fontawesome/css/all.css')}}">
-    <script src="static/hotshopper.js"></script>
-    <script src="static/sweetalert2.all.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='hotshopper.css') }}"/>
+<!--    <link type="text/css" rel="stylesheet" href="static/hotshopper.css"/>-->
+    <link rel='stylesheet' href="{{ url_for('static', filename='fontawesome/css/all.css') }}">
+    <script src="{{ url_for('static', filename='hotshopper.js') }}"></script>
+<!--    <script src="{{ url_for('static', filename='recipe_screen.js') }}"></script>-->
+    <script src="{{ url_for('static', filename='sweetalert2.all.min.js') }}"></script>
+<!--    <script src="static/hotshopper.js"></script>-->
+<!--    <script src="static/edit_recipe_screen.js"></script>-->
+<!--    <script src="static/sweetalert2.all.min.js"></script>-->
+    {% block scripts %}
+    {% endblock %}
 </head>
 <body>
 {% block body %}
