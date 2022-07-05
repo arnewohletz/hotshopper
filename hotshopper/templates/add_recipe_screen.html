@@ -1,0 +1,86 @@
+{% extends 'main_screen.html' %}
+
+{% block add_recipe_screen %}
+<script type="text/javascript">
+    ingredients = "{{ ingredients }}"
+    // recipes = "{{ recipes }}"
+    // recipe = "{{ recipe }}"
+    // {% if recipe %}
+    // recipe = "{{ recipe }}"
+    // recipe_ingredients = "{{ recipe_ingredients }}"
+    // {% else %}
+    // recipe = ""
+    // recipe_ingredients = ""
+    // {% endif %}
+    // ingredients = "{{ ingredients }}"
+</script>
+<script src="{{ url_for('static', filename='add_recipe_screen.js') }}"></script>
+
+<div id="add_recipe_screen" class="ontop_screen">
+    <form method="POST" id="ADD_RECIPE_form"
+          action="placeholder">
+        <h2 id="ADD_RECIPE_screen_title">Neues Rezept</h2>
+        <table>
+            <tr>
+                <td>Name:</td>
+                <td colspan="5">
+                    <input style="width: 100%" type="text" id="recipe_name" name="recipe_name" required>
+                </td>
+            </tr>
+            <tr>
+                <td style="vertical-align: top">Zutaten:</td>
+                <td>
+                    <div id="recipe_ingredients">
+                        <table>
+                            <tr class="recipe_ingredient">
+                                <td>
+                                    <input size=3 id="quantity_0" name="quantity_0" required>
+                                </td>
+                                <td>
+                                    <select id="unit_0" name="unit_0" required>
+                                        <option value="g">g</option>
+                                        <option value="St.">St.</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select id="ingredient_0" name="ingredient_0" required>
+                                        <option value="">-- Bitte Zutat auswählen --</option>
+                                        {% for ingredient in ingredients %}
+                                        <option value="{{ ingredient.name }}"
+                                                id="ingredient">
+                                            {{ ingredient.name }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2"></td>
+                <td>
+                    <button type="button" class="add_ingredient" onclick="add_recipe_ingredient('{{ ingredients }}')">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="button" id="cancel_recipe" onclick="cancel_close_recipe_screen()">
+                    Abbrechen
+                    </button>
+                    <input type="submit" id="confirm_recipe"
+                           name="confirm_new_recipe" onclick="confirm_close_recipe_screen(edit=false)" value="OK">
+                </td>
+            </tr>
+        </table>
+    </form>
+
+</div>
+
+<div id="cover"></div>
+
+{% endblock %}
+
