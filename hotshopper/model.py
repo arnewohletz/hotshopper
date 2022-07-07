@@ -30,14 +30,14 @@ class RecipeIngredient(db.Model):
             self.amount_piece = 0
             self.amount = self.quantity_per_person
 
-    def update(self, quantity_per_person: int = None,
+    def update(self, quantity_per_person: float = None,
                unit: str = None,
                ingredient_id: int = None):
         if quantity_per_person is not None:
-            if not isinstance(quantity_per_person, int):
-                raise ValueError("Enter positive integer value")
-            if not 1 <= quantity_per_person <= 999999:
-                raise ValueError("Enter value between 1 and 999999")
+            if not isinstance(quantity_per_person, float):
+                raise ValueError("Enter positive value")
+            if not 0.1 <= quantity_per_person <= 999999.9:
+                raise ValueError("Enter value between 0.1 and 999999.9")
             self.quantity_per_person = quantity_per_person
         if ingredient_id is not None:
             self.ingredient_id = ingredient_id

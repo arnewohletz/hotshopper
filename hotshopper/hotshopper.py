@@ -124,7 +124,7 @@ def main(web=True):
 
             for j in range(amount_ingredients):
                 ri_unit = request.form[f"unit_{j}"]
-                ri_quantity = int(request.form[f"quantity_{j}"])
+                ri_quantity = float(request.form[f"quantity_{j}"])
                 ri_name = request.form[f"ingredient_{j}"]
                 i_id = Ingredient.query.filter_by(name=ri_name).first().id
 
