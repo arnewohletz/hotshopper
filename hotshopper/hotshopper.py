@@ -106,7 +106,7 @@ def main(web=True):
                                    ingredients=ingredients)
 
         @app.route("/edit_recipe/<int:recipe_id>")
-        def edit_recipe(recipe_id):
+        def show_edit_recipe_screen(recipe_id):
             recipe = controller.get_recipe(recipe_id)
             recipe_ingredients = controller.get_recipe_ingredients(recipe_id)
             return render_template("edit_recipe_screen.html",
@@ -115,6 +115,31 @@ def main(web=True):
                             recipe_ingredients=recipe_ingredients,
                             ingredients=controller.get_ingredients())
 
+        @app.route("/confirm_edit_recipe/<int:recipe_id>_<int:amount_ingredients>_<int:scroll_height>", methods=["POST"])
+        def edit_recipe(recipe_id, amount_ingredients, scroll_height):
+
+            all_ingredients = RecipeIngredient.query.filter_by(recipe_id=recipe_id).all()
+            for ingredient in all_ingredients:
+                ingredient.delete()
+
+            for j in range(amount_ingredients):
+                ri_unit = request.form[f"unit_{j}"]
+                ri_quantity = int(request.form[f"quantity_{j}"])
+                ri_name = request.form[f"ingredient_{j}"]
+                i_id = Ingredient.query.filter_by(name=ri_name).first().id
+
+                ri = RecipeIngredient(recipe_id=recipe_id,
+                                      ingredient_id=i_id,
+                                      quantity_per_person=ri_quantity,
+                                      unit=ri_unit)
+                ri.add()
+
+            db.session.commit()
+            # TODO: Make HTML show correct recipe ingredient on opening
+
+            session["scroll_height"] = scroll_height
+            return redirect("/")
+
         @app.route("/delete_recipe/<int:recipe_id>_<int:scroll_height>")
         def delete_recipe(recipe_id, scroll_height):
             recipe = Recipe.query.filter_by(id=recipe_id).first()
@@ -122,7 +147,7 @@ def main(web=True):
             session["scroll_height"] = scroll_height
             return redirect("/")
 
-        @app.route("/add_new_recipe/<int:amount_ingredients>_<int:scroll_height>", methods=["POST"])
+        @app.route("/confirm_new_recipe/<int:amount_ingredients>_<int:scroll_height>", methods=["POST"])
         def add_new_recipe(amount_ingredients, scroll_height):
             name = request.form["recipe_name"]
             recipe = Recipe(name=name, ingredients=[])

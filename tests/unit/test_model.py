@@ -129,7 +129,7 @@ class TestRecipeIngredient:
         ri = model.RecipeIngredient(ingredient_id=r.id, recipe_id=i.id,
                                     quantity_per_person=100, unit="gram")
         r.add_ingredient(ri)
-        ri.update_quantity(quantity_per_person=2, unit="St.")
+        ri.update(quantity_per_person=2, unit="St.")
         result = RecipeIngredient.query.filter_by(ingredient_id=1).first()
         assert result.quantity_per_person == 2
         assert result.unit == "St."
@@ -138,4 +138,4 @@ class TestRecipeIngredient:
 
         for value in illegal_quantities:
             with pytest.raises(ValueError):
-                ri.update_quantity(quantity_per_person=value)
+                ri.update(quantity_per_person=value)

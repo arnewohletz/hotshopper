@@ -20,14 +20,14 @@
 <script src="{{ url_for('static', filename='edit_recipe_screen.js') }}"></script>
 
 <div id="edit_recipe_screen" class="ontop_screen">
-    <form method="POST" id="EDIT_RECIPE_form"
+    <form method="POST" id="edit_recipe_form"
           action="placeholder">
-        <h2 id="EDIT_RECIPE_screen_title">Rezept bearbeiten</h2>
+        <h2 id="edit_recipe_screen_title">Rezept bearbeiten</h2>
         <table>
             <tr>
                 <td>Name:</td>
                 <td colspan="5">
-                    <input style="width: 100%" type="text" id="EDIT_RECIPE_recipe_name" name="recipe_name" value="{{ recipe.name }} " required>
+                    <input style="width: 100%" type="text" id="recipe_name" name="recipe_name" value="{{ recipe.name }} " required>
                 </td>
             </tr>
             <tr>
@@ -55,11 +55,10 @@
                                     <select id="ingredient_{{ loop.index0 }}" name="ingredient_{{ loop.index0 }}" required>
                                         <option value="">-- Bitte Zutat auswählen --</option>
                                         {% for ingredient in ingredients %}
-                                            {% if ingredient.name == ri.name %}
+                                            {% if ingredient.id == ri.ingredient_id %}
                                                 <option selected>{{ ingredient.name }}</option>
-<!--                                                <option value="{{ ingredient.name }}" id="ingredient" selected>-->
                                             {% else %}
-                                                <option selected>{{ ingredient.name }}</option>
+                                                <option>{{ ingredient.name }}</option>
                                             {% endif %}
                                         {% endfor %}
                                     </select>
