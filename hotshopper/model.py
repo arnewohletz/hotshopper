@@ -144,6 +144,10 @@ class Recipe(db.Model):
             db.session.flush()
             return self.id
 
+    def update(self, name: str = None):
+        self.name = name
+        db.session.commit()
+
     @staticmethod
     def save_recipe():
         db.session.commit()

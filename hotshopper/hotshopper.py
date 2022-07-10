@@ -118,6 +118,10 @@ def main(web=True):
         @app.route("/confirm_edit_recipe/<int:recipe_id>_<int:amount_ingredients>_<int:scroll_height>", methods=["POST"])
         def edit_recipe(recipe_id, amount_ingredients, scroll_height):
 
+            r_name = request.form[f"recipe_name"]
+            recipe = Recipe.query.filter_by(id=recipe_id).first()
+            recipe.update(r_name)
+
             all_ingredients = RecipeIngredient.query.filter_by(recipe_id=recipe_id).all()
             for ingredient in all_ingredients:
                 ingredient.delete()
@@ -135,7 +139,6 @@ def main(web=True):
                 ri.add()
 
             db.session.commit()
-            # TODO: Make HTML show correct recipe ingredient on opening
 
             session["scroll_height"] = scroll_height
             return redirect("/")
