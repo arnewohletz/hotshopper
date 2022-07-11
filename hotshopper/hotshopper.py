@@ -54,7 +54,10 @@ def main(web=True):
         app = create_app(test=False)
 
         controller = Controller()
-        recipes = controller.get_recipes()
+        # if "recipes" not in session:
+        #     session["recipes"] = controller.get_recipes()
+        # recipes = controller.get_recipes()
+
         # ingredients = controller.get_ingredients()
 
         @app.route("/", methods=["GET", "POST"])
@@ -75,7 +78,7 @@ def main(web=True):
 
         @app.route("/check_recipe/<recipe_id>_<int:week>_<int:scroll_height>")
         def check_recipe(recipe_id, week, scroll_height):
-            for r in recipes:
+            for r in controller.get_recipes():
                 if r.id == int(recipe_id):
                     r.select(week)
                     session["scroll_height"] = scroll_height
@@ -84,7 +87,7 @@ def main(web=True):
         @app.route(
             "/uncheck_recipe/<recipe_id>_<int:week>_<int:scroll_height>")
         def uncheck_recipe(recipe_id, week, scroll_height):
-            for i in recipes:
+            for i in controller.get_recipes():
                 if i.id == int(recipe_id):
                     i.unselect(week)
                     session["scroll_height"] = scroll_height
@@ -92,6 +95,7 @@ def main(web=True):
 
         @app.route("/show_shopping_list", methods=["POST"])
         def show_shopping_list():
+            recipes = controller.get_recipes()
             food_plan = FoodPlan()
             food_plan.set_shopping_lists(recipes)
             return render_template("add_recipe_screen.html",
@@ -101,12 +105,14 @@ def main(web=True):
         @app.route("/add_recipe")
         def show_add_recipe_screen():
             ingredients = controller.get_ingredients()
+            recipes = controller.get_recipes()
             return render_template("add_recipe_screen.html",
                                    recipes=recipes, # TODO: recipes is required for background recipes list -> find other way than passing it in again
                                    ingredients=ingredients)
 
         @app.route("/edit_recipe/<int:recipe_id>")
         def show_edit_recipe_screen(recipe_id):
+            recipes = controller.get_recipes()
             recipe = controller.get_recipe(recipe_id)
             recipe_ingredients = controller.get_recipe_ingredients(recipe_id)
             return render_template("edit_recipe_screen.html",
@@ -139,9 +145,10 @@ def main(web=True):
                 ri.add()
 
             db.session.commit()
-
+            # session["recipes"] = controller.get_recipes()
+            recipes = controller.get_recipes()
             session["scroll_height"] = scroll_height
-            return redirect("/")
+            return redirect("/", recipes)
 
         @app.route("/delete_recipe/<int:recipe_id>_<int:scroll_height>")
         def delete_recipe(recipe_id, scroll_height):
@@ -168,6 +175,7 @@ def main(web=True):
 
             db.session.commit()
             session["scroll_height"] = scroll_height
+            # session["recipes"] = controller.get_recipes()
             return redirect("/")
 
         app.run(port=port, debug=True)
