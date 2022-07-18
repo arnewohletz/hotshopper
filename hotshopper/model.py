@@ -38,8 +38,6 @@ class RecipeIngredient(db.Model):
             if not isinstance(quantity_per_person, (int, float)) \
              or not 1.0 <= quantity_per_person <= 10000:
                 raise ValueError("Enter value between 1.0 and 10000.0")
-            # # if not 0.1 <= quantity_per_person <= 999999.9:
-            #     raise ValueError("Enter value between 0.1 and 999999.9")
             self.quantity_per_person = quantity_per_person
         if ingredient_id is not None:
             self.ingredient_id = ingredient_id
@@ -57,7 +55,7 @@ class RecipeIngredient(db.Model):
                                                  "ingredient with same name")
         else:
             db.session.add(self)
-            db.session.flush()  # Use flush because
+            db.session.flush()
 
     def delete(self):
         ingredient = RecipeIngredient.query.filter_by(
@@ -120,16 +118,6 @@ class Recipe(db.Model):
         db.session.add(ingredient)
         db.session.commit()
 
-    # def remove_ingredient(self, recipe_ingredient: RecipeIngredient):
-    #     ingredient = RecipeIngredient.query.filter_by(
-    #         ingredient_id=recipe_ingredient.ingredient_id).first()
-    #
-    #     if ingredient:
-    #         db.session.delete(ingredient)
-    #         return True
-    #     raise RecipeIngredientNotFoundError(f"Can't delete ingredient, as it"
-    #                                         f" is not found in {self.name}")
-
     def delete(self):
         recipe = Recipe.query.filter_by(id=self.id).first()
         recipe_ingredients = RecipeIngredient.query.filter_by(
@@ -155,10 +143,6 @@ class Recipe(db.Model):
     @staticmethod
     def save_recipe():
         db.session.commit()
-
-    # @staticmethod
-    # def cancel_recipe_changes():
-    #     db.session.rollback()
 
 
 class ShoppingListIngredient:

@@ -9,14 +9,7 @@
     recipe_ingredients = "{{ recipe_ingredients }}"
     recipe = "{{ recipe }}"
     ingredients = "{{ ingredients }}"
-    // function init() {
-    //     document.getElementById("edit_recipe_screen").style.display = "block";
-    //     document.getElementById("cover").style.display = "block";
-    // }
-    // window.onload = init();
-    // window.onload = show_recipe_screen(true, recipe_id=window.location.href.split("/").pop())
 </script>
-<!--<script src="static/edit_recipe_screen.js"></script>-->
 <script src="{{ url_for('static', filename='edit_recipe_screen.js') }}"></script>
 
 <div id="edit_recipe_screen" class="ontop_screen">

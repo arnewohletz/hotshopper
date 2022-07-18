@@ -52,13 +52,7 @@ def main(web=True):
     if web:
         port = 5001
         app = create_app(test=False)
-
         controller = Controller()
-        # if "recipes" not in session:
-        #     session["recipes"] = controller.get_recipes()
-        recipes = controller.get_recipes()
-
-        # ingredients = controller.get_ingredients()
 
         @app.route("/", methods=["GET", "POST"])
         def show_init_app():
@@ -66,15 +60,9 @@ def main(web=True):
                 scroll_height = session.pop("scroll_height")
             except KeyError:
                 scroll_height = 0
-            # nonlocal recipes, ingredients
             return render_template("main_screen.html",
                                    recipes=controller.get_recipes(),
-                                   # ingredients=controller.get_ingredients(),
                                    scroll_height=scroll_height)
-            # return render_template("add_recipe_screen.html",
-            #                        recipes=controller.get_recipes(),
-            #                        ingredients=controller.get_ingredients(),
-            #                        scroll_height=scroll_height)
 
         @app.route("/check_recipe/<recipe_id>_<int:week>_<int:scroll_height>")
         def check_recipe(recipe_id, week, scroll_height):
@@ -95,13 +83,11 @@ def main(web=True):
 
         @app.route("/show_shopping_list", methods=["POST"])
         def show_shopping_list():
-            # recipes = controller.recipes
-            r = controller.get_recipes()
+            recipes = controller.get_recipes()
             food_plan = FoodPlan()
-            food_plan.set_shopping_lists(r)
+            food_plan.set_shopping_lists(recipes)
             return render_template("main_screen.html",
-                                   recipes=r,
-                                   # recipes=controller.get_recipes(),
+                                   recipes=recipes,
                                    food_plan=food_plan)
 
         @app.route("/add_recipe")
@@ -148,8 +134,6 @@ def main(web=True):
 
             db.session.expire_on_commit = False
             db.session.commit()
-            # session["recipes"] = controller.get_recipes()
-            # recipes = controller.get_recipes()
             session["scroll_height"] = scroll_height
             return redirect("/")
 
@@ -179,7 +163,6 @@ def main(web=True):
             db.session.expire_on_commit = False
             db.session.commit()
             session["scroll_height"] = scroll_height
-            # session["recipes"] = controller.get_recipes()
             return redirect("/")
 
         app.run(port=port, debug=True)
