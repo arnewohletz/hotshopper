@@ -1,4 +1,5 @@
 from sqlalchemy import orm
+from typing import Union
 
 from hotshopper import db
 from hotshopper.errors import (DuplicateRecipeError,
@@ -30,14 +31,15 @@ class RecipeIngredient(db.Model):
             self.amount_piece = 0
             self.amount = self.quantity_per_person
 
-    def update(self, quantity_per_person: float = None,
+    def update(self, quantity_per_person: Union[float, int] = None,
                unit: str = None,
                ingredient_id: int = None):
         if quantity_per_person is not None:
-            if not isinstance(quantity_per_person, float):
-                raise ValueError("Enter positive value")
-            if not 0.1 <= quantity_per_person <= 999999.9:
-                raise ValueError("Enter value between 0.1 and 999999.9")
+            if not isinstance(quantity_per_person, (int, float)) \
+             or not 1.0 <= quantity_per_person <= 10000:
+                raise ValueError("Enter value between 1.0 and 10000.0")
+            # # if not 0.1 <= quantity_per_person <= 999999.9:
+            #     raise ValueError("Enter value between 0.1 and 999999.9")
             self.quantity_per_person = quantity_per_person
         if ingredient_id is not None:
             self.ingredient_id = ingredient_id
@@ -76,7 +78,8 @@ class Ingredient(db.Model):
     order_id = db.Column("order_id", db.Integer)
     where = db.Column("where", db.String)
     recipes = db.relationship("RecipeIngredient",
-                              backref="ingredient")
+                              backref=db.backref("ingredient", lazy=False),
+                              lazy="subquery")
 
 
 class Recipe(db.Model):
@@ -84,7 +87,8 @@ class Recipe(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     ingredients = db.relationship("RecipeIngredient",
-                                  backref="recipe")
+                                  backref=db.backref("recipe", lazy=False),
+                                  lazy="joined")
     weeks = None
     selected = False
 

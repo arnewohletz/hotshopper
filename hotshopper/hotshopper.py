@@ -56,7 +56,7 @@ def main(web=True):
         controller = Controller()
         # if "recipes" not in session:
         #     session["recipes"] = controller.get_recipes()
-        # recipes = controller.get_recipes()
+        recipes = controller.get_recipes()
 
         # ingredients = controller.get_ingredients()
 
@@ -95,11 +95,13 @@ def main(web=True):
 
         @app.route("/show_shopping_list", methods=["POST"])
         def show_shopping_list():
-            recipes = controller.get_recipes()
+            # recipes = controller.recipes
+            r = controller.get_recipes()
             food_plan = FoodPlan()
-            food_plan.set_shopping_lists(recipes)
-            return render_template("add_recipe_screen.html",
-                                   recipes=recipes,
+            food_plan.set_shopping_lists(r)
+            return render_template("main_screen.html",
+                                   recipes=r,
+                                   # recipes=controller.get_recipes(),
                                    food_plan=food_plan)
 
         @app.route("/add_recipe")
@@ -107,16 +109,16 @@ def main(web=True):
             ingredients = controller.get_ingredients()
             recipes = controller.get_recipes()
             return render_template("add_recipe_screen.html",
-                                   recipes=recipes, # TODO: recipes is required for background recipes list -> find other way than passing it in again
+                                   recipes=recipes,
                                    ingredients=ingredients)
 
-        @app.route("/edit_recipe/<int:recipe_id>")
+        @app.route("/edit_recipe/<int:recipe_id>", methods=["POST", "GET"])
         def show_edit_recipe_screen(recipe_id):
             recipes = controller.get_recipes()
             recipe = controller.get_recipe(recipe_id)
             recipe_ingredients = controller.get_recipe_ingredients(recipe_id)
             return render_template("edit_recipe_screen.html",
-                            recipes=recipes,  # TODO: recipes is required for background recipes list -> find other way than passing it in again
+                            recipes=recipes,
                             recipe=recipe,
                             recipe_ingredients=recipe_ingredients,
                             ingredients=controller.get_ingredients())
@@ -144,11 +146,12 @@ def main(web=True):
                                       unit=ri_unit)
                 ri.add()
 
+            db.session.expire_on_commit = False
             db.session.commit()
             # session["recipes"] = controller.get_recipes()
-            recipes = controller.get_recipes()
+            # recipes = controller.get_recipes()
             session["scroll_height"] = scroll_height
-            return redirect("/", recipes)
+            return redirect("/")
 
         @app.route("/delete_recipe/<int:recipe_id>_<int:scroll_height>")
         def delete_recipe(recipe_id, scroll_height):
@@ -157,7 +160,7 @@ def main(web=True):
             session["scroll_height"] = scroll_height
             return redirect("/")
 
-        @app.route("/confirm_new_recipe/<int:amount_ingredients>_<int:scroll_height>", methods=["POST"])
+        @app.route("/confirm_new_recipe/<int:amount_ingredients>_<int:scroll_height>", methods=["POST", "GET"])
         def add_new_recipe(amount_ingredients, scroll_height):
             name = request.form["recipe_name"]
             recipe = Recipe(name=name, ingredients=[])
@@ -173,6 +176,7 @@ def main(web=True):
                                       unit=ri_unit)
                 ri.add()
 
+            db.session.expire_on_commit = False
             db.session.commit()
             session["scroll_height"] = scroll_height
             # session["recipes"] = controller.get_recipes()

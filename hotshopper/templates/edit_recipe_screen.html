@@ -38,7 +38,7 @@
                             {% for ri in recipe_ingredients %}
                             <tr id="recipe_ingredient_{{ loop.index0 }}" class="recipe_ingredient">
                                 <td>
-                                    <input size=3 id="quantity_{{ loop.index0 }}" name="quantity_{{ loop.index0 }}" value="{{ ri.quantity_per_person }}" required>
+                                    <input type="number" step="1.0" size=3 id="quantity_{{ loop.index0 }}" name="quantity_{{ loop.index0 }}" class="quantity" value="{{ ri.quantity_per_person }}" min="0.0" max="10000" required>
                                 </td>
                                 <td>
                                     <select id="unit_{{ loop.index0 }}" name="unit_{{ loop.index0 }}" required>
@@ -65,7 +65,7 @@
                                 </td>
                                 <td>
                                     {% if loop.index > 1 %}
-                                    <button type="button" class="delete_ingredient" onclick="delete_recipe_ingredient()">
+                                    <button type="button" class="delete_ingredient" data-i-index="{{ loop.index }}" onclick="delete_recipe_ingredient(this.dataset.iIndex - 1)">
                                         <i class="fa-solid fa-trash-can"></i>
                                     </button>
                                     {% endif %}

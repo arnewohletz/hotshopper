@@ -32,7 +32,7 @@ function show_add_recipe_screen() {
 // }
 
 function formcheck() {
-    let fields = document.querySelectorAll("select,textarea, input, [required]");
+    let fields = document.querySelectorAll("select,textarea, input, [required]")
     let complete = true;
     for (let field of fields) {
         if (!field.value) {
@@ -41,13 +41,17 @@ function formcheck() {
         } else {
             field.style.borderColor = "black";
         }
+        if (field.className === "quantity" && (field.value < 0.1 || field.value > 99999.9)) {
+            field.style.borderColor = "red";
+            complete = false;
+        }
     }
     return complete;
 }
 
 function confirm_close_recipe_screen(edit = false) {
     if (!formcheck()) {
-        return;
+        return false;
     }
     let scroll_height = document.documentElement.scrollTop || document.body.scrollTop;
     const name = document.querySelector('#recipe_name').value;
@@ -57,9 +61,6 @@ function confirm_close_recipe_screen(edit = false) {
     // const recipe = new FormData(document.querySelector('a[id="recipe_name"]'))
     document.getElementById("cover").style.display = "none";
     // let url = "/add_new_recipe/" + new_recipe_ingredients_amount;
-
-    // TODO: Ingredient ID must be passed for edit recipe URL
-
     let recipe_id = window.location.href.substring(window.location.href.lastIndexOf('/') + 1);
     const template_add = new_ingredient_index => `/confirm_new_recipe/${new_ingredient_index}_${scroll_height}`
     const template_edit = new_ingredient_index => `/confirm_edit_recipe/${recipe_id}_${new_ingredient_index}_${scroll_height}`
@@ -125,9 +126,14 @@ function add_recipe_ingredient() {
 
     // create quantity node
     let InputQuantity = document.createElement("input");
+    InputQuantity.setAttribute('type', "number");
     InputQuantity.setAttribute('size', "3");
     InputQuantity.setAttribute('id', `quantity_${new_ingredient_index}`);
     InputQuantity.setAttribute('name', `quantity_${new_ingredient_index}`);
+    InputQuantity.setAttribute('class', 'quantity');
+    InputQuantity.setAttribute('min', '0.0');
+    InputQuantity.setAttribute('max', '10000.0');
+    InputQuantity.setAttribute('required', "");
 
     // create unit node
     let SelectUnit = document.createElement("select");
