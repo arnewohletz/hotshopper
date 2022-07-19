@@ -21,7 +21,7 @@
 <div class="content">
     <form method="POST" action="/show_shopping_list">
         <table class="food_plan">
-            <th colspan="4">
+            <th class="list_header" colspan="4">
                 Essensplan
             </th>
             <tbody class="header">
@@ -42,10 +42,11 @@
                 <td>3</td>
             </tr>
             </tbody>
+            <tbody class="recipes">
             {% for recipe in recipes %}
-            <tr>
-                <td>{{ clever_function }}</td>
-            </tr>
+<!--            <tr>-->
+<!--                <td>{{ clever_function }}</td>-->
+<!--            </tr>-->
             <tr>
                 <td>
                     {% if recipe.selected == True and 1 in recipe.weeks %}
@@ -94,12 +95,13 @@
                 </td>
             </tr>
             {% endfor %}
+            </tbody>
         </table>
     </form>
     {% if food_plan %}
     <table class="shopping_list">
         <tr>
-            <th colspan="2">Einkaufsliste</th>
+            <th class="list_header" colspan="2">Einkaufsliste</th>
         </tr>
         {% for list in food_plan.get_shopping_lists() %}
         <th colspan="2" class="shopping_list_header">

@@ -1,107 +1,130 @@
-body {
-    font-family: 'Consolas', 'Deja Vu Sans Mono', 'Bitstream Vera Sans Mono', monospace;
+body h2 {
+    background-color: #9c9c9c;
+    margin: 18px 10px 10px;
+    padding: 5px 5px 5px 10px;
 }
 
-body h2 {
-    margin: 18px 10px 10px 10px;
-    padding: 5px 5px 5px 10px;
-    background-color: darkgrey;
+body {
+    background-color: #e1e1e1;
+    font-family: \'Consolas\', \'Deja Vu Sans Mono\', \'Bitstream Vera Sans Mono\', monospace;
+}
+
+h2 {
+    border-radius: 15px;
+}
+
+.food_plan tr {
+    line-height: 24px;
+}
+.food_plan .header tr {
+    background: #57a162;
+}
+
+.food_plan .recipes tr:nth-child(even) {
+    background: #76c081;
+}
+
+.food_plan .recipes tr:nth-child(odd) {
+    background: #57a162;
 }
 
 h2 table {
     width: 100%;
 }
 
-.content {
-    display: flex;
-}
-
-.content th {
-    font-size: 14pt;
-}
-
-.shopping_list {
-    display: flex;
-    max-width: max-content;
-    background-color: red;
-    padding: 5px;
-    margin: 0 10px 10px 0;
-}
-
-.shopping_list table {
-    flex: 1;
-}
-
-.food_plan {
-    min-width: max-content;
-    margin: 0 10px 10px 10px;
-    background-color: green;
-    padding: 5px;
-}
-
-.buttons {
-    z-index: 1;
-    position: relative;
-    max-width: 0;
-    right: 70px;
-}
-
-.ontop_screen {
-    display: none;
-    position: fixed;
-    z-index: 10;
-    top: 15%;
-    left: 30%;
-    background-color: white;
-    justify-content: center;
-    border-radius: 10px;
-    border: solid 1px black;
-    padding: 10px;
-}
-
-#cover {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    opacity: 0.80;
-    background: #aaa;
-    display: none;
-}
-
-td#no_item {
-    text-align: center;
-}
-
 td#header_buttons {
+    padding-right: 5px;
     text-align: right;
-    padding-right: 10px;
 }
 
-#header_buttons button,
-button.food_plan_buttons,
-#calc_button {
-    vertical-align: middle;
-    padding: 5px 10px 5px 10px;
+td.food_plan_buttons {
+    padding-right: 10px;
+    text-align: right;
 }
 
 td.shopping_list_item_name {
     padding-left: 10px;
 }
 
-td.food_plan_buttons {
-    text-align: right;
-    padding-right: 5px;
-}
-
-
-tbody.header {
-    text-align: center;
+th.list_header {
+    font-size: 14pt;
+    text-decoration: underline;
 }
 
 th.shopping_list_header {
-    padding-top: 10px;
-    padding-bottom: 5px;
     font-size: 12pt;
+    text-transform: uppercase;
+    color: #1e1e1e;
+    padding-bottom: 5px;
+    padding-top: 10px;
+}
+/*tr.food_plan {*/
+/*    border-collapse:collapse;*/
+/*}*/
+
+
+.buttons {
+    max-width: 0;
+    position: relative;
+    right: 70px;
+    z-index: 1;
+}
+
+.content {
+    display: flex;
+}
+
+.food_plan {
+    background-color: #57a162;
+    border-radius: 15px;
+    border-spacing: 0px;
+    margin: 0 10px 10px;
+    min-width: max-content;
+    padding: 10px;
+}
+
+.ontop_screen {
+    background-color: #FFF;
+    border: solid 1px #000;
+    border-radius: 10px;
+    display: none;
+    justify-content: center;
+    left: 30%;
+    padding: 10px;
+    position: fixed;
+    top: 15%;
+    z-index: 10;
+}
+
+.shopping_list table {
+    flex: 1;
+}
+
+.shopping_list {
+    background-color: #ff8989;
+    border-radius: 15px;
+    display: flex;
+    margin: 0 10px 10px 0;
+    max-width: max-content;
+    padding: 10px;
+}
+
+#cover {
+    background: #aaa;
+    bottom: 0;
+    display: none;
+    left: 0;
+    opacity: 0.80;
+    position: fixed;
+    right: 0;
+    top: 0;
+}
+
+#header_buttons button, button.food_plan_buttons, #calc_button {
+    padding: 5px 10px;
+    vertical-align: middle;
+}
+
+tbody.header, td#no_item {
+    text-align: center;
 }
