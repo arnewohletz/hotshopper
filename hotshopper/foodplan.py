@@ -17,9 +17,15 @@ class ShoppingList(list):
         return self.name
 
     def add(self, ingredient):
+        if ingredient.unit == "st.":
+            ingredient.amount_piece = ingredient.quantity_per_person
+        else:
+            ingredient.amount = ingredient.quantity_per_person
+
         for existing_ingredient in self:
             if ingredient.ingredient.name == existing_ingredient.name:
                 if ingredient.unit == "st.":
+                    # TODO: Add multiplied by 'persons' once added to recipe
                     existing_ingredient.amount_piece += ingredient.amount_piece
                 else:
                     existing_ingredient.amount += ingredient.amount
