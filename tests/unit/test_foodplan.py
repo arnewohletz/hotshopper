@@ -3,6 +3,7 @@ import random
 import string
 
 from hotshopper import db, create_app
+from hotshopper.constants import Location, Unit
 from hotshopper.foodplan import FoodPlan
 from tests.unit import helper
 
@@ -41,8 +42,8 @@ class TestFoodPlan:
 
     def test_add_selected_recipe(self, app, setup_teardown, td):
         r_id = td.create_recipe()
-        i1_id = td.create_ingredient(where="market")
-        i2_id = td.create_ingredient(where="supermarket")
+        i1_id = td.create_ingredient(where=Location.MARKET)
+        i2_id = td.create_ingredient(where=Location.SUPERMARKET)
         td.create_recipe_ingredient(recipe_id=r_id, ingredient_id=i1_id)
         td.create_recipe_ingredient(recipe_id=r_id, ingredient_id=i2_id)
 
@@ -61,7 +62,7 @@ class TestFoodPlan:
 
     def test_omit_unselected_recipe(self, app, setup_teardown, td):
         r_id = td.create_recipe()
-        i1_id = td.create_ingredient(where="market")
+        i1_id = td.create_ingredient(where=Location.MARKET)
         td.create_recipe_ingredient(recipe_id=r_id, ingredient_id=i1_id)
         recipe = td.get_recipe(recipe_id=r_id)
 
@@ -80,24 +81,24 @@ class TestShoppingList:
     def test_same_ingredients_are_added(self, app, setup_teardown, td):
         r1_id = td.create_recipe()
         r2_id = td.create_recipe()
-        i1_id = td.create_ingredient(where="market", name="ABC")
-        i2_id = td.create_ingredient(where="supermarket", name="CBA")
+        i1_id = td.create_ingredient(where=Location.MARKET, name="ABC")
+        i2_id = td.create_ingredient(where=Location.SUPERMARKET, name="CBA")
         td.create_recipe_ingredient(recipe_id=r1_id,
                                     ingredient_id=i1_id,
                                     quantity_per_person=100,
-                                    unit="g")
+                                    unit=Unit.GRAM)
         td.create_recipe_ingredient(recipe_id=r2_id,
                                     ingredient_id=i1_id,
                                     quantity_per_person=100,
-                                    unit="g")
+                                    unit=Unit.GRAM)
         td.create_recipe_ingredient(recipe_id=r1_id,
                                     ingredient_id=i2_id,
                                     quantity_per_person=10,
-                                    unit="st.")
+                                    unit=Unit.PIECE)
         td.create_recipe_ingredient(recipe_id=r2_id,
                                     ingredient_id=i2_id,
                                     quantity_per_person=10,
-                                    unit="st.")
+                                    unit=Unit.PIECE)
         r1 = td.get_recipe(recipe_id=r1_id)
         r2 = td.get_recipe(recipe_id=r2_id)
         r1.select(week=1)
@@ -117,15 +118,15 @@ class TestShoppingList:
                                                      td):
         r1_id = td.create_recipe()
         r2_id = td.create_recipe()
-        i1_id = td.create_ingredient(where="supermarket", name="ABC")
+        i1_id = td.create_ingredient(where=Location.SUPERMARKET, name="ABC")
         td.create_recipe_ingredient(recipe_id=r1_id,
                                     ingredient_id=i1_id,
                                     quantity_per_person=100,
-                                    unit="g")
+                                    unit=Unit.GRAM)
         td.create_recipe_ingredient(recipe_id=r2_id,
                                     ingredient_id=i1_id,
                                     quantity_per_person=1,
-                                    unit="st.")
+                                    unit=Unit.PIECE)
 
         r1 = td.get_recipe(recipe_id=r1_id)
         r2 = td.get_recipe(recipe_id=r2_id)
@@ -144,15 +145,15 @@ class TestShoppingList:
                                                            td):
         r1_id = td.create_recipe()
         r2_id = td.create_recipe()
-        i1_id = td.create_ingredient(where="supermarket", name="ABC")
+        i1_id = td.create_ingredient(where=Location.SUPERMARKET, name="ABC")
         td.create_recipe_ingredient(recipe_id=r1_id,
                                     ingredient_id=i1_id,
                                     quantity_per_person=100,
-                                    unit="g")
+                                    unit=Unit.GRAM)
         td.create_recipe_ingredient(recipe_id=r2_id,
                                     ingredient_id=i1_id,
                                     quantity_per_person=100,
-                                    unit="g.")
+                                    unit=Unit.GRAM)
         r1 = td.get_recipe(recipe_id=r1_id)
         r2 = td.get_recipe(recipe_id=r2_id)
         r1.select(week=1)

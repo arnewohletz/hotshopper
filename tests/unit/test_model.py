@@ -2,12 +2,12 @@ import pytest
 
 from hotshopper import hotshopper
 from hotshopper import model, db, create_app
-from hotshopper.model import Recipe, RecipeIngredient
+from hotshopper.constants import Unit
 from hotshopper.errors import (
     DuplicateRecipeIngredientError,
     DuplicateRecipeError
 )
-
+from hotshopper.model import Recipe, RecipeIngredient
 
 @pytest.fixture
 def app():
@@ -78,7 +78,7 @@ class TestRecipe:
         assert len(result) == 0
         i = model.Ingredient(id=1, name="TestIngredient")
         ri = model.RecipeIngredient(ingredient_id=r.id, recipe_id=i.id,
-                                    quantity_per_person=100, unit="gram")
+                                    quantity_per_person=100, unit=Unit.GRAM)
         r.add_ingredient(ri)
         db.session.commit()
         result = RecipeIngredient.query.filter_by(ingredient_id=1).all()
@@ -92,7 +92,7 @@ class TestRecipe:
                          ingredients=[])
         i = model.Ingredient(id=1, name="TestIngredient")
         ri = model.RecipeIngredient(ingredient_id=r.id, recipe_id=i.id,
-                                    quantity_per_person=100, unit="gram")
+                                    quantity_per_person=100, unit=Unit.GRAM)
         r.add_ingredient(ri)
         ri.delete()
         result = RecipeIngredient.query.filter_by(ingredient_id=1).all()
@@ -101,9 +101,9 @@ class TestRecipe:
     def test_delete_recipe(self, app, setup_teardown):
         r = model.Recipe(id=1, name="TestRecipeA", ingredients=[])
         ri = model.RecipeIngredient(recipe_id=r.id, ingredient_id=1,
-                                    amount=100, unit="g")
+                                    amount=100, unit=Unit.GRAM)
         ri_2 = model.RecipeIngredient(recipe_id=1000, ingredient_id=1,
-                                      amount=100, unit="g")
+                                      amount=100, unit=Unit.GRAM)
         db.session.add(r)
         db.session.add(ri)
         db.session.add(ri_2)
@@ -127,12 +127,12 @@ class TestRecipeIngredient:
         db.session.add(r)
         i = model.Ingredient(id=1, name="TestIngredient")
         ri = model.RecipeIngredient(ingredient_id=r.id, recipe_id=i.id,
-                                    quantity_per_person=100, unit="gram")
+                                    quantity_per_person=100, unit=Unit.GRAM)
         r.add_ingredient(ri)
-        ri.update(quantity_per_person=2, unit="St.")
+        ri.update(quantity_per_person=2, unit=Unit.PIECE)
         result = RecipeIngredient.query.filter_by(ingredient_id=1).first()
         assert result.quantity_per_person == 2
-        assert result.unit == "St."
+        assert result.unit == Unit.PIECE
 
         illegal_quantities = ["100", -100, 1000000, 0]
 

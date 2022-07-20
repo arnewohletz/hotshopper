@@ -1,3 +1,4 @@
+from hotshopper.constants import Unit, Location
 from hotshopper.model import Recipe, ShoppingListIngredient
 
 
@@ -17,14 +18,14 @@ class ShoppingList(list):
         return self.name
 
     def add(self, ingredient):
-        if ingredient.unit == "st.":
+        if ingredient.unit == Unit.PIECE:
             ingredient.amount_piece = ingredient.quantity_per_person
         else:
             ingredient.amount = ingredient.quantity_per_person
 
         for existing_ingredient in self:
             if ingredient.ingredient.name == existing_ingredient.name:
-                if ingredient.unit == "st.":
+                if ingredient.unit == Unit.PIECE:
                     # TODO: Add multiplied by 'persons' once added to recipe
                     existing_ingredient.amount_piece += ingredient.amount_piece
                 else:
@@ -51,10 +52,10 @@ class FoodPlan:
         self.recipes.append(recipe)
 
         for ri in recipe.ingredients:
-            if ri.ingredient.where == "supermarket":
+            if ri.ingredient.where == Location.SUPERMARKET:
                 for i in range(len(recipe.weeks)):
                     self.shopping_list_supermarket.add(ri)
-            elif ri.ingredient.where == "market":
+            elif ri.ingredient.where == Location.MARKET:
                 if 1 in recipe.weeks:
                     self.shopping_list_market_week1.add(ri)
                 if 2 in recipe.weeks:
