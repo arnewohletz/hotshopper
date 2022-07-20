@@ -1,54 +1,48 @@
 import random
 import string
 
-from hotshopper.model import Recipe, RecipeIngredient, Ingredient
+from hotshopper.model import Recipe, Ingredient, RecipeIngredient
 
 
-def _get_random_string(length: int):
+def get_random_string(length: int):
     # choose from all lowercase letter
     letters = string.ascii_lowercase
     result_str = ''.join(random.choice(letters) for i in range(length))
     return result_str
 
 
-def _get_random_int(min: int, max: int):
-    return random.randint(min, max)
+class TestDataGenerator:
 
+    def __init__(self, db):
+        self.db = db
+        self.next_recipe_id = 0
+        self.next_ingredient_id = 0
 
-def dummy_recipe(weeks: list = None):
-    """Create dummy Recipe instance"""
-    recipe = Recipe()
-    # recipe.id = _get_random_int(0, 1000)
-    recipe.name = _get_random_string(10)
-    recipe.ingredients = []
-    if weeks:
-        recipe.weeks = weeks
-        recipe.selected = True
-    return recipe
+    def create_recipe(self):
+        r = Recipe(id=self.next_recipe_id,  name=get_random_string(10))
+        self.next_recipe_id += 1
+        self.db.session.add(r)
 
+        return r.id
 
-def dummy_recipe_ingredient(where: str = "market",
-                            quantity_per_person: int = 1,
-                            unit: str = "gram",
-                            id: int = -1,
-                            name: str = None):
-    """Create dummy RecipeIngredient"""
-    recipe_ingredient = RecipeIngredient()
-    recipe_ingredient.ingredient = Ingredient()
-    # recipe_ingredient.ingredient.id = _get_random_int(0, 1000)
-    recipe_ingredient.ingredient.where = where
-    if name:
-        recipe_ingredient.ingredient.name = name
-    else:
-        recipe_ingredient.ingredient.name = _get_random_string(10)
-    recipe_ingredient.id = id
-    recipe_ingredient.quantity_per_person = quantity_per_person
-    recipe_ingredient.unit = unit
-    if recipe_ingredient.unit == "gram":
-        recipe_ingredient.amount = quantity_per_person
-        recipe_ingredient.amount_piece = 0
-    else:
-        recipe_ingredient.amount_piece = quantity_per_person
-        recipe_ingredient.amount = 0
+    def create_ingredient(self, where, name=None):
+        if not name:
+            name = get_random_string(10)
+        i = Ingredient(id=self.next_ingredient_id, name=name,
+                       order_id=random.randint(1,10000), where=where)
+        self.db.session.add(i)
+        self.next_ingredient_id += 1
 
-    return recipe_ingredient
+        return i.id
+
+    def create_recipe_ingredient(self, recipe_id, ingredient_id,
+                                 quantity_per_person=100, unit="gram"):
+        ri = RecipeIngredient(recipe_id=recipe_id,
+                              ingredient_id=ingredient_id,
+                              quantity_per_person=quantity_per_person,
+                              unit=unit)
+        self.db.session.add(ri)
+        return None
+
+    def get_recipe(self, recipe_id):
+        return self.db.session.query(Recipe).filter_by(id=recipe_id).first()
