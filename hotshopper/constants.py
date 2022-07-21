@@ -1,13 +1,21 @@
+import json
+import pathlib
+
 from dataclasses import dataclass
+
+
+json_file = pathlib.Path(__file__).resolve().parent / "constants.json"
+location = json.load(open(json_file))['Location']
+unit = json.load(open(json_file))['Unit']
 
 
 @dataclass
 class Location:
-    SUPERMARKET = "supermarket"
-    MARKET = "market"
+    SUPERMARKET = location['SUPERMARKET']
+    MARKET = location['MARKET']
 
 
 @dataclass
 class Unit:
-    PIECE = "st."
-    GRAM = "g"
+    GRAM = unit['GRAM']
+    PIECE = unit['PIECE']

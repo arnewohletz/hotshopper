@@ -1,6 +1,7 @@
 """Main module."""
 from flask import render_template, redirect, session, request
 
+from hotshopper.constants import Unit
 from hotshopper.foodplan import FoodPlan
 from hotshopper.model import Recipe, Ingredient, RecipeIngredient
 from hotshopper.ui import View
@@ -48,7 +49,6 @@ class Controller:
 
 
 def main(web=True):
-
     if web:
         port = 5001
         app = create_app(test=False)
@@ -96,7 +96,8 @@ def main(web=True):
             recipes = controller.get_recipes()
             return render_template("add_recipe_screen.html",
                                    recipes=recipes,
-                                   ingredients=ingredients)
+                                   ingredients=ingredients,
+                                   unit=Unit)
 
         @app.route("/edit_recipe/<int:recipe_id>", methods=["POST", "GET"])
         def show_edit_recipe_screen(recipe_id):
@@ -104,19 +105,24 @@ def main(web=True):
             recipe = controller.get_recipe(recipe_id)
             recipe_ingredients = controller.get_recipe_ingredients(recipe_id)
             return render_template("edit_recipe_screen.html",
-                            recipes=recipes,
-                            recipe=recipe,
-                            recipe_ingredients=recipe_ingredients,
-                            ingredients=controller.get_ingredients())
+                                   recipes=recipes,
+                                   recipe=recipe,
+                                   recipe_ingredients=recipe_ingredients,
+                                   ingredients=controller.get_ingredients(),
+                                   unit=Unit
+                                   )
 
-        @app.route("/confirm_edit_recipe/<int:recipe_id>_<int:amount_ingredients>_<int:scroll_height>", methods=["POST"])
+        @app.route(
+            "/confirm_edit_recipe/<int:recipe_id>_<int:amount_ingredients>_<int:scroll_height>",
+            methods=["POST"])
         def edit_recipe(recipe_id, amount_ingredients, scroll_height):
 
             r_name = request.form[f"recipe_name"]
             recipe = Recipe.query.filter_by(id=recipe_id).first()
             recipe.update(r_name)
 
-            all_ingredients = RecipeIngredient.query.filter_by(recipe_id=recipe_id).all()
+            all_ingredients = RecipeIngredient.query.filter_by(
+                recipe_id=recipe_id).all()
             for ingredient in all_ingredients:
                 ingredient.delete()
 
@@ -144,7 +150,9 @@ def main(web=True):
             session["scroll_height"] = scroll_height
             return redirect("/")
 
-        @app.route("/confirm_new_recipe/<int:amount_ingredients>_<int:scroll_height>", methods=["POST", "GET"])
+        @app.route(
+            "/confirm_new_recipe/<int:amount_ingredients>_<int:scroll_height>",
+            methods=["POST", "GET"])
         def add_new_recipe(amount_ingredients, scroll_height):
             name = request.form["recipe_name"]
             recipe = Recipe(name=name, ingredients=[])
