@@ -18,18 +18,18 @@ class RecipeIngredient(db.Model):
     amount_piece = 0
     amount = 0
 
-    @orm.reconstructor  # called after object was loaded from database
-    def assign_amount(self):
-        """
-        Maps per person quantity to total quantity
-        :return: None
-        """
-        if self.unit == "st.":
-            self.amount = 0
-            self.amount_piece = self.quantity_per_person
-        else:
-            self.amount_piece = 0
-            self.amount = self.quantity_per_person
+    # @orm.reconstructor  # called after object was loaded from database
+    # def assign_amount(self):
+    #     """
+    #     Maps per person quantity to total quantity
+    #     :return: None
+    #     """
+    #     if self.unit == "st.":
+    #         self.amount = 0
+    #         self.amount_piece = self.quantity_per_person
+    #     else:
+    #         self.amount_piece = 0
+    #         self.amount = self.quantity_per_person
 
     def update(self, quantity_per_person: Union[float, int] = None,
                unit: str = None,
