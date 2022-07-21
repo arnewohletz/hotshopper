@@ -114,6 +114,7 @@ function add_recipe_ingredient() {
     // get new ingredient index
     new_ingredient_index = document.getElementById("recipe_ingredients").getElementsByClassName("recipe_ingredient").length;
 
+
     // add new recipe ingredients nodes
     let NewRecipeIngredients = document.getElementById("recipe_ingredients");
     let NewRecipeIngredient = document.createElement("tr");
@@ -148,6 +149,9 @@ function add_recipe_ingredient() {
 
     // create ingredient node
     let SelectIngredient = document.getElementById("ingredient_0").cloneNode("deep");
+    const $default_select = SelectIngredient.querySelector("#no_ingredient");
+    SelectIngredient.value = $default_select.value;
+    SelectIngredient.firstElementChild.setAttribute("selected", "")
     SelectIngredient.setAttribute("id", `ingredient_${new_ingredient_index}`);
     SelectIngredient.setAttribute("name", `ingredient_${new_ingredient_index}`);
 

@@ -37,16 +37,16 @@
                                     <select id="unit_{{ loop.index0 }}" name="unit_{{ loop.index0 }}" required>
                                         {% if ri.unit == "g" %}
                                             <option value="g" selected>g</option>
-                                            <option value="St.">St.</option>
-                                        {% elif ri.unit == "St." %}
+                                            <option value="st.">St.</option>
+                                        {% elif ri.unit == "st." %}
                                             <option value="g">g</option>
-                                            <option value="St." selected>St.</option>
+                                            <option value="st." selected>St.</option>
                                         {% endif %}
                                     </select>
                                 </td>
                                 <td>
                                     <select id="ingredient_{{ loop.index0 }}" name="ingredient_{{ loop.index0 }}" required>
-                                        <option value="">-- Bitte Zutat auswählen --</option>
+                                        <option id="no_ingredient">-- Bitte Zutat auswählen --</option>
                                         {% for ingredient in ingredients %}
                                             {% if ingredient.id == ri.ingredient_id %}
                                                 <option selected>{{ ingredient.name }}</option>

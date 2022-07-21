@@ -29,12 +29,12 @@
                                 <td>
                                     <select id="unit_0" name="unit_0" required>
                                         <option value="g">g</option>
-                                        <option value="St.">St.</option>
+                                        <option value="st.">St.</option>
                                     </select>
                                 </td>
                                 <td>
                                     <select id="ingredient_0" name="ingredient_0" required>
-                                        <option value="">-- Bitte Zutat auswählen --</option>
+                                        <option id="no_ingredient">-- Bitte Zutat auswählen --</option>
                                         {% for ingredient in ingredients %}
                                         <option value="{{ ingredient.name }}"
                                                 id="ingredient">
