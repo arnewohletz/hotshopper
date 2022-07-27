@@ -10,11 +10,12 @@ from pathlib import Path
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
-db = SQLAlchemy()
+app = Flask(__name__)
+db = SQLAlchemy(app)
 
 
 def create_app(test=False):
-    app = Flask(__name__)
+    # app = Flask(__name__)
     if test:
         app.testing = True
         app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
@@ -26,7 +27,8 @@ def create_app(test=False):
                 f"sqlite:///{path}?check_same_thread=False"
             app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
         app.secret_key = secrets.token_hex()
-    db.init_app(app)
+    # db.init_app(app)
+    db.create_all()
     app.app_context().push()
     return app
 
