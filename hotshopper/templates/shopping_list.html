@@ -1,0 +1,63 @@
+{% extends 'main_screen.html' %}
+
+{% block shopping_list_screen %}
+<script type="text/javascript">
+    ingredients = "{{ ingredients }}"
+    locations = "{{ locations }}"
+
+</script>
+<script src="{{ url_for('static', filename='shopping_list.js') }}"></script>
+
+<div id="shopping_list_screen" class="ontop_screen">
+    <h2>
+        <table>
+            <tr>
+                <td>Einkaufliste</td>
+                <td class="spacer"></td>
+                <td id="header_buttons">
+                    <button type="button" id="show_new_location_screen"
+                            onclick="open_new_location_screen()">Neuer Ort ...
+                    </button>
+                    <button type="button" id="show_new_section_screen"
+                            onclick="open_new_section_screen()">Neue Sektion ...
+                    </button>
+                    <button type="button" id="close_ingredients_screen"
+                            onclick="close_ingredients_screen()">X
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </h2>
+    <table id="shopping_list_template" class="noselect">
+        {% for location in locations %}
+        <tr>
+            <td>
+                <table class="location">
+                    <tr>
+                        <td class="location_header">{{ location.name }}</td>
+                    </tr>
+                    {% for section in location.sections %}
+                    <tr>
+                        <td>
+                            <table id="{{ section.name }}">
+                                <tr>
+                                    <td class="section_header">{{ section.name }}</td>
+                                </tr>
+                                {% for ingredient in section.ingredients %}
+                                <tr>
+                                    <td class="ingredient">{{ ingredient.name }}</td>
+                                </tr>
+                                {% endfor %}
+                            </table>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <!--    </table>-->
+    </h2>
+</div>
+{% endblock %}

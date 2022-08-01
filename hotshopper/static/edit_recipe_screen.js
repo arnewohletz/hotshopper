@@ -1,7 +1,6 @@
-
 function init() {
-        document.getElementById("cover").style.display = "block";
-        document.getElementById("edit_recipe_screen").style.display = "block";
+    document.getElementById("cover").style.display = "block";
+    document.getElementById("edit_recipe_screen").style.display = "block";
 }
 
 function cancel_close_recipe_screen() {
@@ -11,7 +10,7 @@ function cancel_close_recipe_screen() {
 }
 
 
-function show_recipe_screen(edit=false, recipe_id=null) {
+function show_recipe_screen(edit = false, recipe_id = null) {
     // let scroll_height = document.documentElement.scrollTop || document.body.scrollTop;
     //
     // let recipe_screen = document.getElementById("recipe_screen");

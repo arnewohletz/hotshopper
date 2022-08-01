@@ -25,6 +25,14 @@ function show_add_recipe_screen() {
     window.location.href = "/add_recipe"
 }
 
+function show_ingredients_screen() {
+    window.location.href = "/ingredients"
+}
+
+function show_shopping_list_screen() {
+    window.location.href = "/shopping_list"
+}
+
 // function cancel_close_recipe_screen() {
 //     document.getElementById("add_recipe_screen").style.display = "none";
 //     document.getElementById("cover").style.display = "none";

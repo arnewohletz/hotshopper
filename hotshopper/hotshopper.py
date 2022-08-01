@@ -3,7 +3,7 @@ from flask import render_template, redirect, session, request
 
 from hotshopper.constants import Unit
 from hotshopper.foodplan import FoodPlan
-from hotshopper.model import Recipe, Ingredient, RecipeIngredient
+from hotshopper.model import Recipe, Ingredient, RecipeIngredient, Location
 from hotshopper.ui import View
 from hotshopper import db, create_app
 
@@ -25,11 +25,12 @@ class Controller:
         for recipe in self.recipes:
             if recipe not in all_recipes:
                 self.recipes.remove(recipe)
-        return sorted(self.recipes, key=lambda recipe: recipe.name)
+        return sorted(self.recipes, key=lambda recipe: recipe.name.lower())
 
     def get_ingredients(self):
         self.ingredients = db.session.query(Ingredient).all()
-        return sorted(self.ingredients, key=lambda ingredient: ingredient.name)
+        return sorted(self.ingredients,
+                      key=lambda ingredient: ingredient.name.lower())
 
     @staticmethod
     def get_recipe(recipe_id: int):
@@ -40,6 +41,11 @@ class Controller:
     def get_recipe_ingredients(recipe_id: int):
         ris = RecipeIngredient.query.filter_by(recipe_id=recipe_id).all()
         return ris
+
+    @staticmethod
+    def get_locations():
+        ls = Location.query.all()
+        return ls
 
     def display_shopping_lists(self):
         self.foodplan = FoodPlan()
@@ -63,6 +69,23 @@ def main(web=True):
             return render_template("main_screen.html",
                                    recipes=controller.get_recipes(),
                                    scroll_height=scroll_height)
+
+        @app.route("/ingredients")
+        def show_ingredients():
+            ingredients = controller.get_ingredients()
+            recipes = controller.get_recipes()
+            return render_template("ingredients.html", ingredients=ingredients,
+                                   recipes=recipes)
+
+        @app.route("/shopping_list")
+        def show_shopping_list_screen():
+            ingredients = controller.get_ingredients()
+            recipes = controller.get_recipes()
+            locations = controller.get_locations()
+            return render_template("shopping_list.html",
+                                   locations=locations,
+                                   ingredients=ingredients,
+                                   recipes=recipes)
 
         @app.route("/check_recipe/<recipe_id>_<int:week>_<int:scroll_height>")
         def check_recipe(recipe_id, week, scroll_height):

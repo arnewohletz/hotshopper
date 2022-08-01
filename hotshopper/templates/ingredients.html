@@ -1,0 +1,51 @@
+{% extends 'main_screen.html' %}
+
+{% block ingredients_screen %}
+<script type="text/javascript">
+    ingredients = "{{ ingredients }}"
+</script>
+<script src="{{ url_for('static', filename='ingredients_screen.js') }}"></script>
+
+<div id="ingredients_screen" class="ontop_screen">
+    <h2>
+        <table>
+            <tr>
+                <td>Zutaten</td>
+                <td id="header_buttons">
+                    <button type="button" id="show_ingredients_screen"
+                            onclick="open_new_ingredient_screen()">Neue Zutat ...
+                    </button>
+                    <button type="button" id="close_ingredients_screen"
+                            onclick="close_ingredients_screen()">X
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </h2>
+
+    <div class="scroll">
+        <table>
+            {% for i in ingredients %}
+            <tr>
+                <td>
+                    {{ i.name }}
+                    <button type="button" id="edit_ingredient/{{i.id}}"
+                            onclick="edit_ingredient(this)">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                    <button type="button" id="delete_ingredient/{{i.id}}"
+                            name="{{ i.name }}"
+                            onclick="delete_ingredient(this)">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </td>
+                <td>
+                    <div class="invisible">AAA</div>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+{% endblock %}

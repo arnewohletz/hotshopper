@@ -12,8 +12,12 @@
         <tr>
             <td>Hotshopper</td>
             <td id="header_buttons">
-                <button>Zutaten ...</button>
-                <button>Einkaufsliste ...</button>
+                <button type="button" id="show_ingredients_screen"
+                        onclick="show_ingredients_screen()">Zutaten ...
+                </button>
+                <button type="button" id="show_shopping_list_screen"
+                        onclick="show_shopping_list_screen()">Einkaufsliste ...
+                </button>
             </td>
         </tr>
     </table>
@@ -27,7 +31,7 @@
                 <td colspan="3">Woche</td>
                 <td rowspan="2" class="food_plan_buttons">
                     <button type="button" class="food_plan_buttons"
-                    onclick="show_add_recipe_screen()"> Neues
+                            onclick="show_add_recipe_screen()"> Neues
                         Rezept ...
                     </button>
                     <input type="submit" value="Berechne" id="calc_button">
@@ -42,9 +46,9 @@
             </tbody>
             <tbody class="recipes">
             {% for recipe in recipes %}
-<!--            <tr>-->
-<!--                <td>{{ clever_function }}</td>-->
-<!--            </tr>-->
+            <!--            <tr>-->
+            <!--                <td>{{ clever_function }}</td>-->
+            <!--            </tr>-->
             <tr>
                 <td>
                     {% if recipe.selected == True and 1 in recipe.weeks %}
@@ -131,6 +135,12 @@
 {% endblock %}
 
 {% block edit_recipe_screen %}
+{% endblock %}
+
+{% block ingredients_screen %}
+{% endblock %}
+
+{% block shopping_list_screen %}
 {% endblock %}
 
 {% endblock %}
