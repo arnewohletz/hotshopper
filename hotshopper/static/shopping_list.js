@@ -213,9 +213,6 @@ function init() {
         isDraggingStarted = false;
 
         // Remove the `list` element
-        // TODO: list remains empty, if element is clicked on, released then dragged,
-        //  because list element is created during mouseMoveHandler is executed
-        //  (release mouse before moving it causes this error)
         // if (list === undefined) {
         //     cloneTable();
         // }
@@ -242,6 +239,21 @@ function init() {
         // Remove the handlers of `mousemove` and `mouseup`
         document.removeEventListener('mouseup', mouseUpHandler);
         document.removeEventListener('mousemove', mouseMoveHandler);
+
+        table = document.getElementById("Kühlteigwaren");
+
+        const location_id = table.dataset.indexNumber.split("_")[0]
+        const section_id = table.dataset.indexNumber.split("_")[1]
+        let new_order = "";
+        table.querySelectorAll("#Kühlteigwaren tr").forEach(function (row, index) {
+            if (index === 0) {
+            return;
+        }
+            new_order += `${row.dataset.indexNumber.split("_")[2]}_`
+        });
+        new_order = new_order.substring(0, new_order.length - 1)
+
+        window.location.href = `/update_order/${location_id}/${section_id}/${new_order}`
 
     };
     table.querySelectorAll("#Kühlteigwaren tr").forEach(function (row, index) {

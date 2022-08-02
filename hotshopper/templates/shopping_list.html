@@ -32,19 +32,19 @@
         {% for location in locations %}
         <tr>
             <td>
-                <table class="location">
+                <table class="location" data-index-number="{{ location.id }}">
                     <tr>
                         <td class="location_header">{{ location.name }}</td>
                     </tr>
                     {% for section in location.sections %}
                     <tr>
                         <td>
-                            <table id="{{ section.name }}">
+                            <table id="{{ section.name }}" data-index-number="{{ location.id }}_{{ section.id }}">
                                 <tr>
                                     <td class="section_header">{{ section.name }}</td>
                                 </tr>
-                                {% for ingredient in section.ingredients %}
-                                <tr>
+                                {% for ingredient in section.get_ingredients() %}
+                                <tr data-index-number="{{ location.id }}_{{ section.id }}_{{ ingredient.id }}">
                                     <td class="ingredient">{{ ingredient.name }}</td>
                                 </tr>
                                 {% endfor %}

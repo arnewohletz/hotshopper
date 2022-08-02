@@ -123,6 +123,11 @@ th.shopping_list_header {
     color: transparent;
 }
 
+.placeholder {
+    border: solid #ff253a;
+    background: #ff8989;
+}
+
 #shopping_list_screen {
     color: #1e1e1e;
 }

@@ -1,4 +1,4 @@
-from sqlalchemy import orm
+from sqlalchemy import update
 from typing import Union, NewType
 
 from hotshopper import db
@@ -22,6 +22,12 @@ class Ingredient(db.Model):
     section_id = db.Column(db.Integer, db.ForeignKey("section.id"))
     always_on_list = db.Column("always_on_list", db.Integer)
     non_food = db.Column("non_food", db.Integer)
+
+    def update_order_id(self, order_id):
+        self.order_id = order_id
+        # db.session.commit()
+        # db.session.add(self)
+        # db.session.flush()
 
 
 # class NonFoodItem(db.Model):
@@ -129,7 +135,7 @@ class RecipeIngredient(db.Model):
                ingredient_id: int = None):
         if quantity_per_person is not None:
             if not isinstance(quantity_per_person, (int, float)) \
-             or not 1.0 <= quantity_per_person <= 10000:
+                or not 1.0 <= quantity_per_person <= 10000:
                 raise ValueError("Enter value between 1.0 and 10000.0")
             self.quantity_per_person = quantity_per_person
         if ingredient_id is not None:
@@ -180,6 +186,10 @@ class Section(db.Model):
     location_id = db.Column(db.Integer, db.ForeignKey("location.id"))
     ingredients = db.relationship("Ingredient", backref="section")
     # non_food_items = db.relationship("NonFoodItem", backref="sectionNonFood")
+
+    def get_ingredients(self):
+        return sorted(self.ingredients,
+                      key=lambda ingredient: ingredient.order_id)
 
 
 class ShoppingListIngredient:

@@ -3,7 +3,8 @@ from flask import render_template, redirect, session, request
 
 from hotshopper.constants import Unit
 from hotshopper.foodplan import FoodPlan
-from hotshopper.model import Recipe, Ingredient, RecipeIngredient, Location
+from hotshopper.model import Recipe, Ingredient, RecipeIngredient, Location, \
+    Section
 from hotshopper.ui import View
 from hotshopper import db, create_app
 
@@ -82,6 +83,7 @@ def main(web=True):
             ingredients = controller.get_ingredients()
             recipes = controller.get_recipes()
             locations = controller.get_locations()
+            # TODO: Ingredients must be sorted via order_id (also sections and locations)
             return render_template("shopping_list.html",
                                    locations=locations,
                                    ingredients=ingredients,
@@ -195,6 +197,48 @@ def main(web=True):
             db.session.commit()
             session["scroll_height"] = scroll_height
             return redirect("/")
+
+        @app.route(
+            "/update_order/<int:location_id>/<int:section_id>/<string:new_ingr_id_order>")
+        def set_new_recipe_order(location_id, section_id, new_ingr_id_order):
+            new_ingr_id_order = new_ingr_id_order.split("_")
+            section = Section.query.filter_by(location_id=location_id,
+                                              id=section_id).first()
+            ingredients = section.get_ingredients()
+            current_ingr_id_order = [i.id for i in ingredients]
+            # ingredients = Ingredient.query.filter_by(
+            #     section_id=section_id).all()
+            for i in range(len(new_ingr_id_order)):
+                if new_ingr_id_order[i] == current_ingr_id_order[i]:
+                    continue
+                else:
+                    Ingredient.query.filter_by(id=new_ingr_id_order[i]).first().update_order_id(i)
+
+            # for i, new in enumerate(new_ingr_id_order):
+            #     if int(new) == current_ingr_id_order[i]:
+            #         continue
+            #     else:
+            #         Ingredient.query.filter_by(section_id=section_id,
+            #                                    order_id=i).first().update_order_id(
+            #             int(new))
+
+            # for i, ingredient in enumerate(ingredients, start=0):
+            #     if ingredient.order_id == int(new_ingr_id_order[i]):
+            #         continue
+            #     else:
+            #         Ingredient.query.filter_by(section_id=section_id,
+            #                                    order_id=ingredient.order_id).first().update_order_id(
+            #             new_ingr_id_order[i])
+            # db.session.query(Ingredient).filter(
+            #     Ingredient.section_id == int(section_id),
+            #     Ingredient.order_id == int(current_order_id)).update(
+            #     {"order_id": new_order_id}, synchronize_session=False)
+            # ingredients = Ingredient.query.filter_by(
+            #     section_id=section_id).all()
+            db.session.commit()
+
+            # TODO: Find another way to end function -> refresh /shopping_list sucks
+            return redirect("/shopping_list")
 
         app.run(port=port, debug=True)
 
