@@ -46,7 +46,7 @@ class Controller:
     @staticmethod
     def get_locations():
         ls = Location.query.all()
-        return ls
+        return sorted(ls, key=lambda location: location.order_id)
 
     def display_shopping_lists(self):
         self.foodplan = FoodPlan()
@@ -85,6 +85,16 @@ def main(web=True):
             locations = controller.get_locations()
             # TODO: Ingredients must be sorted via order_id (also sections and locations)
             return render_template("shopping_list.html",
+                                   locations=locations,
+                                   ingredients=ingredients,
+                                   recipes=recipes)
+
+        @app.route("/shopping_list/edit")
+        def show_shopping_list_edit_screen():
+            locations = controller.get_locations()
+            ingredients = controller.get_ingredients()
+            recipes = controller.get_recipes()
+            return render_template("edit_shopping_list.html",
                                    locations=locations,
                                    ingredients=ingredients,
                                    recipes=recipes)
@@ -199,8 +209,8 @@ def main(web=True):
             return redirect("/")
 
         @app.route(
-            "/update_order/<int:location_id>/<int:section_id>/<string:new_ingr_id_order>")
-        def set_new_recipe_order(location_id, section_id, new_ingr_id_order):
+            "/update_ingredient_order/<int:location_id>/<int:section_id>/<string:new_ingr_id_order>")
+        def set_new_ingredient_order(location_id, section_id, new_ingr_id_order):
             new_ingr_id_order = new_ingr_id_order.split("_")
             section = Section.query.filter_by(location_id=location_id,
                                               id=section_id).first()
@@ -213,6 +223,21 @@ def main(web=True):
                     continue
                 else:
                     Ingredient.query.filter_by(id=new_ingr_id_order[i]).first().update_order_id(i)
+            return redirect("/shopping_list")
+
+        @app.route("/update_location_order/<string:new_loc_id_order>")
+        def set_new_location_order(new_loc_id_order):
+            new_loc_id_order = new_loc_id_order.split("_")
+            locations = controller.get_locations()
+            current_loc_id_order = [i.id for i in locations]
+
+            for i in range(len(new_loc_id_order)):
+                if new_loc_id_order[i] == current_loc_id_order[i]:
+                    continue
+                else:
+                    Location.query.filter_by(id=new_loc_id_order[i]).first().update_order_id(i)
+
+            return redirect("/shopping_list/edit")
 
             # for i, new in enumerate(new_ingr_id_order):
             #     if int(new) == current_ingr_id_order[i]:

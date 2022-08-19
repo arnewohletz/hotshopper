@@ -25,7 +25,7 @@ class Ingredient(db.Model):
 
     def update_order_id(self, order_id):
         self.order_id = order_id
-        # db.session.commit()
+        db.session.commit()
         # db.session.add(self)
         # db.session.flush()
 
@@ -176,6 +176,10 @@ class Location(db.Model):
     sections = db.relationship("Section", backref="location")
     # ingredients = db.relationship("Ingredient", backref="locationIngredients")
     # non_food_items = db.relationship("NonFoodItem", backref="locationNonFood")
+
+    def update_order_id(self, order_id):
+        self.order_id = order_id
+        db.session.commit()
 
 
 class Section(db.Model):

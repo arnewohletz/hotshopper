@@ -1,0 +1,86 @@
+{% extends 'shopping_list.html' %}
+
+{% block edit_shopping_list %}
+<script type="text/javascript">
+    locations = "{{ locations }}"
+    recipes = "{{ recipes }}"
+    ingredients = "{{ ingredients }}"
+</script>
+<script src="{{ url_for('static', filename='edit_shopping_list.js') }}"></script>
+<!--<script src="{{ url_for('static', filename='drag_table_elements.js') }}"></script>-->
+<div id="edit_shopping_list_screen" class="ontop_screen">
+    <h2>
+        <table>
+            <tr>
+                <td>
+                    Einkaufsliste bearbeiten
+                </td>
+                <td class="spacer"></td>
+                <td class="header_buttons">
+                    <button type="button" id="close_ingredients_screen" class="header_button"
+                            onclick="close_edit_shopping_list_screen()">X
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </h2>
+    <table id="shopping_list_parameters" class="rows_draggable">
+        <tr>
+            <th class="list_header">Einkaufsorte</th>
+            <th class="column_spacer"></th>
+            <th class="list_header">Sektionen</th>
+        </tr>
+        <tr>
+            <td>
+                <div id="edit_locations" class="10px_margin">
+                    <table class="selection">
+                        <tr></tr>
+                        {% for location in locations %}
+                        <tr class="location" data-index-number="{{ location.id }}">
+                            <td>{{ location.name }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </td>
+            <td class="column_spacer"></td>
+            <td>
+                <div id="edit_sections">
+                    <table class="selection">
+                        {% for section in location %}
+                        <tr>
+                            <td>{{ section.name }} </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </td>
+        <tr>
+            <td>
+                <button type="button">
+                    +
+                </button>
+                <button type="button">
+                    Bearb
+                </button>
+                <button type="button">
+                    Lösch
+                </button>
+            </td>
+            <td class="column_spacer"></td>
+            <td>
+                <button type="button">
+                    +
+                </button>
+                <button type="button">
+                    Bearb
+                </button>
+                <button type="button">
+                    Lösch
+                </button>
+            </td>
+        </tr>
+    </table>
+</div>
+
+{% endblock %}
