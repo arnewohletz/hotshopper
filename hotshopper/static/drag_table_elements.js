@@ -1,5 +1,6 @@
 let draggingEle; // The dragging element
 let draggingRowIndex; // The index of dragging row
+let clickedEle;
 let placeholder;
 let isDraggingStarted = false;
 let table;
@@ -111,10 +112,17 @@ const mouseDownHandler = function (e) {
     // Attach the listeners to `document`
     document.addEventListener('mouseup', mouseUpHandler);
     document.addEventListener('mousemove', mouseMoveHandler);
+    document.addEventListener('click', mouseClickHandler);
 
 };
 
+const mouseClickHandler = function (e) {
+    clickedEle = [].slice.call(list.children)[draggingRowIndex];
+    clickedEle.style.backgroundColor = "green";
+}
+
 const mouseMoveHandler = function (e) {
+
     if (!isDraggingStarted) {
         isDraggingStarted = true;
 
@@ -183,7 +191,7 @@ const mouseUpHandler = function () {
     // Remove the placeholder
     // placeholder && placeholder.parentNode.removeChild(placeholder);
 
-    placeholder.remove()
+    placeholder.remove();
     // NOTE: commented out due to draggingEle is undefined error - seems OK
     // draggingEle.classList.remove('dragging');
     // draggingEle.style.removeProperty('top');

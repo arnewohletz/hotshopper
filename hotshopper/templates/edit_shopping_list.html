@@ -3,6 +3,7 @@
 {% block edit_shopping_list %}
 <script type="text/javascript">
     locations = "{{ locations }}"
+    selected_location = "{{ location }}"
     recipes = "{{ recipes }}"
     ingredients = "{{ ingredients }}"
 </script>
@@ -38,20 +39,44 @@
                         {% for location in locations %}
                         <tr class="location" data-index-number="{{ location.id }}">
                             <td>{{ location.name }}</td>
+                            <td class="show_sections">
+                                <button onclick="display_sections('{{ location.id }}')">>></button>
+                            </td>
                         </tr>
                         {% endfor %}
                     </table>
                 </div>
             </td>
+<!--            <td>-->
+<!--                <table style="float: right">-->
+<!--                    <tr></tr>-->
+<!--                    {% for location in locations %}-->
+<!--                    <tr>-->
+<!--                        <td>-->
+<!--                            <button>>></button>-->
+<!--                        </td>-->
+<!--                    </tr>-->
+<!--                    {% endfor %}-->
+<!--                </table>-->
+<!--            </td>-->
             <td class="column_spacer"></td>
             <td>
                 <div id="edit_sections">
-                    <table class="selection">
-                        {% for section in location %}
-                        <tr>
-                            <td>{{ section.name }} </td>
+<!--                <div id="edit_sections_{{ selected_location.id }}">-->
+                    <table id="sections" class="selection" data-index-number="{{ selected_location.id }}">
+                        {% if selected_location is not none %}
+                        <tr></tr>
+                        {% for section in selected_location.sections %}
+                        <tr class="section" data-index-number="{{ section.id }}">
+                            <td>{{ section.name }}</td>
                         </tr>
                         {% endfor %}
+                        {% if selected_location.sections == [] %}
+                        <tr>
+                            <td>-</td>
+                        </tr>
+                        {% endif %}
+                        {% endif %}
                     </table>
                 </div>
             </td>

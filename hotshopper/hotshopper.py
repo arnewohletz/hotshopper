@@ -48,6 +48,11 @@ class Controller:
         ls = Location.query.all()
         return sorted(ls, key=lambda location: location.order_id)
 
+    @staticmethod
+    def get_location(location_id):
+        loc = Location.query.filter_by(id=location_id).first()
+        return loc
+
     def display_shopping_lists(self):
         self.foodplan = FoodPlan()
         self.foodplan.set_shopping_lists(self.recipes)
@@ -96,6 +101,19 @@ def main(web=True):
             recipes = controller.get_recipes()
             return render_template("edit_shopping_list.html",
                                    locations=locations,
+                                   ingredients=ingredients,
+                                   selected_location=None,
+                                   recipes=recipes)
+
+        @app.route("/shopping_list/edit/<int:location_id>")
+        def show_section_edit_screen(location_id):
+            locations = controller.get_locations()
+            selected_location = controller.get_location(location_id)
+            ingredients = controller.get_ingredients()
+            recipes = controller.get_recipes()
+            return render_template("edit_shopping_list.html",
+                                   locations=locations,
+                                   selected_location=selected_location,
                                    ingredients=ingredients,
                                    recipes=recipes)
 
@@ -238,6 +256,11 @@ def main(web=True):
                     Location.query.filter_by(id=new_loc_id_order[i]).first().update_order_id(i)
 
             return redirect("/shopping_list/edit")
+
+        @app.route("/update_section_order/<int:location_id>/<string:new_sec_id_order>")
+        def set_new_section_order(location_id, new_sec_id_order):
+            # TODO: Implement update section order
+            return redirect(f"/shopping_list/edit/{location_id}")
 
             # for i, new in enumerate(new_ingr_id_order):
             #     if int(new) == current_ingr_id_order[i]:

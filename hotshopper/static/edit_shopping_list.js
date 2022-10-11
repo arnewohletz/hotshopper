@@ -15,7 +15,7 @@ function init() {
     let tables = document.getElementsByClassName("rows_draggable")
     // table = document.getElementById("edit_locations");
     for (let i = 0; i < tables.length; i++) {
-        tables[i].querySelectorAll("tr.location").forEach(function (row, index) {
+        tables[i].querySelectorAll("tr.location, tr.section").forEach(function (row, index) {
             // if (index === 0) {
             //     return;
             // }
@@ -36,6 +36,10 @@ function close_edit_shopping_list_screen() {
     window.location.href = "/shopping_list";
 }
 
+function display_sections(location_id) {
+    window.location.href = `/shopping_list/edit/${location_id}`
+}
+
 function post_drag_action(table) {
     const location_id = table.dataset.indexNumber
     // const section_id = table.dataset.indexNumber.split("_")[1]
@@ -48,7 +52,13 @@ function post_drag_action(table) {
     });
     new_order = new_order.substring(0, new_order.length - 1)
 
-    window.location.href = `/update_location_order/${new_order}`
+    if (table.id === "locations") {
+        window.location.href = `/update_location_order/${new_order}`
+    }
+    if (table.id === "sections") {
+        window.location.href = `/update_section_order/${location_id}/${new_order}`
+    }
+
 }
 
 window.onload = init;

@@ -143,14 +143,14 @@ div#edit_locations {
     min-width: 100%;
     background: #e1e1e1;
     border: solid black;
-    height: 10em;
+    min-height: 10em;
 }
 
 div#edit_sections {
     min-width: 100%;
     background: #e1e1e1;
     border: solid black;
-    height: 10em;
+    min-height: 10em;
 }
 
 table#shopping_list_parameters {
@@ -212,6 +212,7 @@ td.header_buttons {
 
 table.selection {
     padding: 5px;
+    min-width: 100%;
 }
 
 button.header_button, button.food_plan_buttons, #calc_button {
@@ -222,4 +223,8 @@ button.header_button, button.food_plan_buttons, #calc_button {
 
 tbody.header, td#no_item {
     text-align: center;
+}
+
+td.show_sections {
+    float: right;
 }
