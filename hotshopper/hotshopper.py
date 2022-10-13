@@ -226,6 +226,13 @@ def main(web=True):
             session["scroll_height"] = scroll_height
             return redirect("/")
 
+        @app.route("/add_ingredient")
+        def add_ingredient():
+            return render_template("add_ingredient_screen.html",
+                                   ingredients=controller.get_ingredients(),
+                                   locations=controller.get_locations(),
+                                   )
+
         @app.route(
             "/update_ingredient_order/<int:location_id>/<int:section_id>/<string:new_ingr_id_order>")
         def set_new_ingredient_order(location_id, section_id, new_ingr_id_order):

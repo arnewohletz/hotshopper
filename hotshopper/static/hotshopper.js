@@ -25,6 +25,10 @@ function show_add_recipe_screen() {
     window.location.href = "/add_recipe"
 }
 
+function show_add_ingredient_screen() {
+    window.location.href ="/add_ingredient"
+}
+
 function show_ingredients_screen() {
     window.location.href = "/ingredients"
 }
@@ -93,6 +97,10 @@ function confirm_close_recipe_screen(edit = false) {
 
     // window.location.href = "/add_new_recipe/" + new_recipe_ingredients_amount;
     // window.location.href = "/add_new_recipe"
+}
+
+function add_ingredient() {
+
 }
 
 function delete_recipe(recipe) {

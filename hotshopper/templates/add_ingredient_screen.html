@@ -1,0 +1,78 @@
+{% extends 'main_screen.html' %}
+
+{% block add_ingredient_screen %}
+<script type="text/javascript">
+    ingredients = "{{ ingredients }}"
+    locations = "{{ locations }}"
+</script>
+<script src="{{ url_for('static', filename='add_ingredient_screen.js') }}"></script>
+
+<div id="add_ingredient_screen" class="ontop_screen">
+    <h2>
+        <table>
+            <tr>
+                <td>Neue Zutat</td>
+            </tr>
+        </table>
+    </h2>
+
+    <div>
+        <table>
+            <tr>
+                <td>
+                    Name:
+                </td>
+                <td colspan="5">
+                    <input style="width: 100%" type="text" id="ingredient_name" name="ingredient_name" required>
+                </td>
+            </tr>
+            <tr>
+                <td>Einkaufsort:</td>
+                <td>
+                    <select id="location_0" name="location_0" onchange="set_location(this.location_id)" required>
+                        <option id="no_location">-- Bitte Ort auswählen --</option>
+                        {% for location in locations %}
+                        <option value="{{ location.name }}" location_id="{{ location.id }}" id="location_{{ location.id }}">{{ location.name }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            {% if location.sections %}
+            <tr>
+                <td>
+                    <select id="section_0" name="section_0" required>
+                        <option id="no_section">-- Bitte Sektion auswählen --</option>
+                        {% for section in location.sections %}
+                        <option value="{{ location.name }}" id="location">{{ location.name }}</option>
+                    </select>
+                </td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td>Immer auf Einkaufsliste</td>
+                <td>
+                    <menuitem type="radio" radiogroup="1">Ja</menuitem>
+                    <menuitem type="radio" radiogroup="2">Nein</menuitem>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="non_food">Non-Food</label>
+                    <input type="checkbox" id="non_food" name="non_food">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="button" id="cancel_ingredient" onclick="cancel_close_add_ingredient()">X</button>
+                </td>
+                <td>
+                    <input type="submit" id="confirm_ingredient" onclick="add_ingredient()" value="OK">
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div id="cover"></div>
+
+{% endblock %}
