@@ -1,5 +1,6 @@
 from hotshopper.ingredients import (AgaveSyrup, Ajvar, ApplePuree, Asparagus,
-                                    Avocado, Baguette, BakedFishFrozen,
+                                    Avocado, AlmondBlanched, Baguette,
+                                    BakedFishFrozen,
                                     BakingPowder, Banana,
                                     BarbecueMeat, BasilFrozen, BeefCuts,
                                     BroccoliFrozen, Buckwheat, Butter,
@@ -8,25 +9,30 @@ from hotshopper.ingredients import (AgaveSyrup, Ajvar, ApplePuree, Asparagus,
                                     CauliflowerFrozen,
                                     CauliflowerWithCreamFrozen, CeleryRoot,
                                     Champignon, CheeseSlices, CherryTomato,
-                                    ChickenCuts, Chicory, ChiliPepper,
-                                    ChiliSausage, Coleslaw,
+                                    ChickenCuts, Chicory, ChivesFrozen,
+                                    CeleryBunch,
+                                    ChiliPepper,
+                                    ChiliSausage, Coleslaw, CorianderBunch,
                                     CoconutMilk, Cream, CreamCheese,
                                     CremeFraiche, CroquettesFrozen, Cucumber,
                                     DillFrozen, Egg, EightHerbsFrozen,
-                                    FetaCheese, Fishsticks, FriesFrozen,
+                                    FetaCheese, Fishsticks, FlakyPastry,
+                                    FriesFrozen,
                                     Garlic, Ginger, GlassNoodles, Gnocchi,
                                     Gorgonzola, GoudaSlices, GratinCheese,
+                                    GreenBeansFrozen,
                                     GreenCurryPaste, GroundMeat, HamCooked,
                                     HamCubes, HamSlices, HazelnutFlakes,
-                                    HazelnutMilled, HokkaidoPumpkin,
+                                    HazelnutMilled, HokkaidoPumpkin, Kohlrabi,
                                     Leek, Lemon, Lettuce, Lime,
                                     LowStarchPotatoe, MacadamiaNut,
                                     Macaroni, MaggiFixLasagna,
                                     MaggiFixPepperCreamSchnitzel,
-                                    Mascarpone, Maultaschen, Milk,
-                                    MungbeanSproute, NoodlesSpiral, Onion,
-                                    OnionRed, Orange, ParmesanCheese,
-                                    ParsleyFrozen, ParsleyRoot,
+                                    Mascarpone, Maultaschen, Milk, MisoPaste,
+                                    MungbeanSproute, NoodlesLinguine,
+                                    NoodlesTagliatelle, NoodlesSpiral, Onion,
+                                    OnionRed, Orange, ParmesanCheese, Parsley,
+                                    ParsleyFrozen, Parsley, ParsleyRoot,
                                     PeasAndCarrotsFrozen, PeasFrozen,
                                     PepperGreen, PepperRed, PepperRoasted,
                                     PepperYellow, PestoGenovese, Pickles,
@@ -35,15 +41,18 @@ from hotshopper.ingredients import (AgaveSyrup, Ajvar, ApplePuree, Asparagus,
                                     PotatoePancankesFrozen,
                                     PrimarilyWaxyPotato, Remoulade,
                                     RiceBasmati,
-                                    RicePudding, SaladSauce, Salami,
-                                    SandwichCheese, SausageStripes,
+                                    RicePudding, Rucola, SaladSauce, Salami,
+                                    SandwichCheese, SausageStripes, Savoy,
+                                    ScallionBunch,
                                     Schupfnudeln, Smetana, SourCream,
                                     Sourcrout, SoySauce, SpaetzleCheese,
                                     SpaetzleNoodles, SpaghettiNoodles,
-                                    SpinachCreamed, Sprout, StarchyPotato,
-                                    Swede, Tagliatelle,
+                                    SpinachCreamed, SpinachLeafFrozen, Sprout,
+                                    StarchyPotato, SunflowerSeed,
+                                    Swede,
                                     ToastbreadSandwich, ToastbreadWheatSlice,
-                                    ToastbreadWholemeal, Tomato, TomatoPaste,
+                                    ToastbreadWholemeal, Tofu, Tomato,
+                                    TomatoPaste,
                                     TomatoPickled, TomatoSauce,
                                     TortelliniDried, Tortilla, TurkeySchnitzel,
                                     Tzatziki, VanillaSugar, VegetablesFrozen,
@@ -238,7 +247,7 @@ class LeekNoodles(Recipe):
         self.name = "Lauchnudeln (S.85 EX)"
         self.ingredients = [
             Leek(piece, 1),
-            Tagliatelle(gram, 300),
+            NoodlesTagliatelle(gram, 300),
             OnionRed(piece, 2),
             Smetana(piece, 1),
             Pistachios(gram, 40),
@@ -707,5 +716,227 @@ class ChiliSausagesInBread(Recipe):
             Tzatziki(piece, 1),
             Coleslaw(gram, 300),
             Baguette(piece, 2)
+        ]
 
+
+class FriedMushroomPanWithPumpkin(Recipe):
+    def __init__(self):
+        super().__init__()
+        self.name = "Pilzpfanne mit Kürbis (MB S.101, September - November)"
+        self.ingredients = [
+            Champignon(gram, 400),
+            HokkaidoPumpkin(gram, 600),
+            Savoy(gram, 200),
+            SoySauce(gram, 5),
+            Parsley(piece, 1)
+        ]
+
+
+class FriedPotatoeBroccoliMushroom(Recipe):
+    def __init__(self):
+        super().__init__()
+        self.name = "Kartoffel-Brokkoli-Pfanne (MB S.96)"
+        self.ingredients = [
+            LowStarchPotatoe(gram, 600),
+            BroccoliFrozen(piece, 1),
+            Onion(piece, 2),
+            Champignon(gram, 500)
+        ]
+
+
+class FriedPotatoeWithLeek(Recipe):
+    def __init__(self):
+        super().__init__()
+        self.name = "Kartoffelpfanne mit Porree (MB S.97)"
+        self.ingredients = [
+            LowStarchPotatoe(gram, 700),
+            Leek(piece, 2),
+            OnionRed(piece, 2)
+        ]
+
+
+class SpaghettiAlkalic(Recipe):
+    def __init__(self):
+        super().__init__()
+        self.name = "Spaghetti (Basisch) (MB S.107)"
+        self.ingredients = [
+            Zucchini(piece, 4),
+            Onion(piece, 2),
+            Carrot(piece, 2),
+            CherryTomato(gram, 100),
+            AlmondBlanched(gram, 20)
+        ]
+
+
+class PotatoeGrantinWithSpinach(Recipe):
+    def __init__(self):
+        super().__init__()
+        self.name = "Kartoffelgratin mit Blattspinat (nur WE, SBK S.98)"
+        self.ingredients = [
+            SpinachLeafFrozen(gram, 300),
+            Onion(piece, 2),
+            Garlic(piece, 4),
+            LowStarchPotatoe(gram, 600),
+            Milk(gram, 200),
+            Cream(piece, 1)
+        ]
+
+
+class VegetableDishWithFlakyPastry(Recipe):
+    def __init__(self):
+        super().__init__()
+        self.name = "Gemüseauflauf mit Blätterteigkruste (nur WE, SBK S.99)"
+        self.ingredients = [
+            LowStarchPotatoe(gram, 500),
+            CauliflowerFrozen(gram, 300),
+            GreenBeansFrozen(gram, 250),
+            Garlic(piece, 1),
+            FetaCheese(gram, 100),
+            FlakyPastry(piece, 1)
+        ]
+
+
+class VegetableSkewerWithSHerbCream(Recipe):
+    def __init__(self):
+        super().__init__()
+        self.name = "Gemüsespieße mit Kräutersahne (SBK S.104)"
+        self.ingredients = [
+            CauliflowerFrozen(gram, 300),
+            Onion(piece, 1),
+            Champignon(piece, 8),
+            Zucchini(piece, 1),
+            EightHerbsFrozen(piece, 0.5),
+            SourCream(piece, 1)
+        ]
+
+
+class VegetableNoodlesWithSpinachSauce(Recipe):
+    def __init__(self):
+        super().__init__()
+        self.name = "Gemüse-Linguine mit Spinatsauce (EBK S.109)"
+        self.ingredients = [
+            NoodlesLinguine(gram, 400),
+            CeleryBunch(piece, 1),
+            Zucchini(piece, 1),
+            SpinachLeafFrozen(gram, 200),
+            Tomato(piece, 4),
+            Onion(piece, 2)
+        ]
+
+
+class ZucchiniRucolaSoup(Recipe):
+    def __init__(self):
+        super().__init__()
+        self.name = "Zucchini-Rucola-Suppe mit gebratenen " \
+                    "Kirschtomaten (MB S.78) (März - November)"
+        self.ingredients = [
+            StarchyPotato(gram, 200),
+            CherryTomato(piece, 12),
+            Zucchini(piece, 2),
+            Rucola(gram, 30),
+            Onion(piece, 1),
+            Garlic(piece, 2),
+            Cream(gram, 50)
+        ]
+
+
+class PotatoesWithAvocadoCreme(Recipe):
+    def __init__(self):
+        super().__init__()
+        self.name = "Pellkartoffeln mit Avocadocreme (MB S.95)"
+        self.ingredients = [
+            LowStarchPotatoe(gram, 1000),
+            Avocado(piece, 2),
+            PepperRed(piece, 2),
+            Lemon(piece, 1),
+            Garlic(piece, 2),
+            OnionRed(piece, 2),
+            CorianderBunch(piece, 1),
+            SoySauce(gram, 10),
+        ]
+
+
+class AvocadoPotatoeSalad(Recipe):
+    def __init__(self):
+        super().__init__()
+        self.name = "Kartofelsalat mit Avocado (MB S.102)"
+        self.ingredients = [
+            LowStarchPotatoe(gram, 1000),
+            Avocado(piece, 2),
+            Lemon(piece, 1),
+            ScallionBunch(piece, 0.5),
+            CherryTomato(piece, 8),
+            SunflowerSeed(gram, 30)
+        ]
+
+
+class WokVegetableDish(Recipe):
+    def __init__(self):
+        super().__init__()
+        self.name = "Wok-Gemüsepfanne (MB S.103)"
+        self.ingredients = [
+            BroccoliFrozen(piece, 1),
+            Carrot(piece, 6),
+            PepperRed(piece, 2),
+            PepperYellow(piece, 2),
+            ScallionBunch(piece, 1),
+            Garlic(piece, 2),
+            Ginger(gram, 20),
+            ChiliPepper(piece, 2),
+            SoySauce(gram, 10),
+            MisoPaste(gram, 5)
+        ]
+
+
+class PotatoesWithAvocadoSalsa(Recipe):
+    def __init__(self):
+        super().__init__()
+        self.name = "Bircher-Kartoffeln mit Avocado-Salsa (SBK S.101)"
+        self.ingredients = [
+            LowStarchPotatoe(gram, 600),
+            Avocado(piece, 2),
+            Lemon(piece, 1),
+            SourCream(piece, 1)
+        ]
+
+
+class RandomVegetablesWithTofu(Recipe):
+    def __init__(self):
+        super().__init__()
+        self.name = "Bunte Gemüsepfanne mit Tofu (SBK S.102)"
+        self.ingredients = [
+            LowStarchPotatoe(gram, 600),
+            Carrot(piece, 4),
+            Zucchini(piece, 1),
+            Leek(piece, 1),
+            PepperRed(piece, 1),
+            Tofu(gram, 400),
+            Parsley(piece, 1),
+            ChivesFrozen(gram, 50),
+            Lemon(piece, 1),
+            Champignon(gram, 300)
+        ]
+
+
+class GardenerSoup(Recipe):
+    def __init__(self):
+        super().__init__()
+        self.name = "Gärtnersuppe (SBK S.70)"
+        self.ingredients = [
+            CauliflowerFrozen(gram, 400),
+            Kohlrabi(piece, 1),
+            CeleryBunch(piece, 0.5),
+            Carrot(piece, 1),
+            Savoy(piece, 1),
+            Onion(piece, 1),
+            LowStarchPotatoe(gram, 200)
+        ]
+
+
+class PotatoeSalad(Recipe):
+    def __init__(self):
+        super().__init__()
+        self.name = "Kartoffelsalat (2-3 Portionen)"
+        self.ingredients = [
+            LowStarchPotatoe(gram, 800)
         ]

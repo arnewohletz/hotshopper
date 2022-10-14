@@ -98,6 +98,12 @@ class Ajvar(Ingredient):
     id = 8030
 
 
+class AlmondBlanched(Ingredient):
+    name = "Mandeln (blank)"
+    where = SUPERMARKET
+    id = 4023
+
+
 class ApplePuree(Ingredient):
     name = "Apfelmus"
     where = SUPERMARKET
@@ -238,6 +244,18 @@ class Chicory(Ingredient):
     id = 14120
 
 
+class ChivesFrozen(Ingredient):
+    name = "TK-Schnittlauch"
+    where = SUPERMARKET
+    id = 11105
+
+
+class CeleryBunch(Ingredient):
+    name = "Stangensellerie (Bund)"
+    where = MARKET
+    id = 14141
+
+
 class CeleryRoot(Ingredient):
     name = "Knollensellerie"
     where = MARKET
@@ -278,6 +296,12 @@ class Coleslaw(Ingredient):
     name = "Krautsalat"
     where = SUPERMARKET
     id = 5105
+
+
+class CorianderBunch(Ingredient):
+    name = "Koriander (Bund)"
+    where = MARKET
+    id = 14065
 
 
 class Cream(Ingredient):
@@ -340,6 +364,12 @@ class Fishsticks(Ingredient):
     id = 11110
 
 
+class FlakyPastry(Ingredient):
+    name = "Blätterteig"
+    where = SUPERMARKET
+    id = 1040
+
+
 class FriesFrozen(Ingredient):
     name = "Pommes frittes"
     where = SUPERMARKET
@@ -386,6 +416,12 @@ class GratinCheese(Ingredient):
     name = "Gratinkäse"
     where = SUPERMARKET
     id = 5200
+
+
+class GreenBeansFrozen(Ingredient):
+    name = "TK-Grüne-Bohnen"
+    where = SUPERMARKET
+    id = 11085
 
 
 class GreenCurryPaste(Ingredient):
@@ -436,6 +472,12 @@ class HokkaidoPumpkin(Ingredient):
     id = 2500
 
 
+class Kohlrabi(Ingredient):
+    name = "Kohlrabi"
+    where = MARKET
+    id = 14142
+
+
 class Leek(Ingredient):
     name = "Lauch"
     where = MARKET
@@ -457,7 +499,7 @@ class Lettuce(Ingredient):
 class Lime(Ingredient):
     name = "Limette(n)"
     where = MARKET
-    id = 2010
+    id = 14220
 
 
 class MacadamiaNut(Ingredient):
@@ -502,16 +544,34 @@ class Milk(Ingredient):
     id = 5010
 
 
+class MisoPaste(Ingredient):
+    name = "Miso-Paste"
+    where = SUPERMARKET
+    id = 8510
+
+
 class MungbeanSproute(Ingredient):
     name = "Mungobohnensprossen"
     where = SUPERMARKET
     id = 8150
 
 
+class NoodlesLinguine(Ingredient):
+    name = "Linguine-Nudeln"
+    where = SUPERMARKET
+    id = 4075
+
+
 class NoodlesSpiral(Ingredient):
     name = "Fussili-Nudeln"
     where = SUPERMARKET
     id = 4072
+
+
+class NoodlesTagliatelle(Ingredient):
+    name = "Bandnudeln"
+    where = SUPERMARKET
+    id = 4074
 
 
 class Onion(Ingredient):
@@ -536,6 +596,12 @@ class ParmesanCheese(Ingredient):
     name = "Parmesankäse"
     where = SUPERMARKET
     id = 5190
+
+
+class Parsley(Ingredient):
+    name = "Petersilie"
+    where = MARKET
+    id = 14115
 
 
 class ParsleyFrozen(Ingredient):
@@ -646,6 +712,12 @@ class RiceBasmati(Ingredient):
     id = 4090
 
 
+class Rucola(Ingredient):
+    name = "Rucola"
+    where = Market
+    id = 14095
+
+
 class SaladSauce(Ingredient):
     name = "Salatsauce"
     where = SUPERMARKET
@@ -668,6 +740,18 @@ class SausageStripes(Ingredient):
     name = "Streifen f. Wurstsalat"
     where = SUPERMARKET
     id = 6030
+
+
+class Savoy(Ingredient):
+    name = "Wirsing"
+    where = MARKET
+    id = 14055
+
+
+class ScallionBunch(Ingredient):
+    name = "Frühlingszwiebel (Bund)"
+    where = MARKET
+    id = 14082
 
 
 class Schupfnudeln(Ingredient):
@@ -724,22 +808,28 @@ class SpinachCreamed(Ingredient):
     id = 11091
 
 
+class SpinachLeafFrozen(Ingredient):
+    name = "TK-Blattspinat"
+    where = SUPERMARKET
+    id = 11075
+
+
 class Sprout(Ingredient):
     name = "Rosenkohl"
     where = SUPERMARKET
     id = 11092
 
 
+class SunflowerSeed(Ingredient):
+    name = "Sonnenblumenkerne"
+    where = SUPERMARKET
+    id = 4024
+
+
 class Swede(Ingredient):
     name = "Steckrübe"
     where = MARKET
     id = 14504
-
-
-class Tagliatelle(Ingredient):
-    name = "Bandnudeln"
-    where = SUPERMARKET
-    id = 4074
 
 
 class ToastbreadSandwich(Ingredient):
@@ -758,6 +848,12 @@ class ToastbreadWholemeal(Ingredient):
     name = "Toastbrot (Vollkorn)"
     where = SUPERMARKET
     id = 7042
+
+
+class Tofu(Ingredient):
+    name = "Tofu"
+    where = SUPERMARKET
+    id = 5220
 
 
 class Tomato(Ingredient):
