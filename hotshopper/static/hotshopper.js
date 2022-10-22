@@ -26,7 +26,7 @@ function show_add_recipe_screen() {
 }
 
 function show_add_ingredient_screen() {
-    window.location.href ="/add_ingredient"
+    window.location.href ="/add_ingredient/-1"
 }
 
 function show_ingredients_screen() {

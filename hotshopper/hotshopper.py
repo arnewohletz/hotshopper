@@ -34,6 +34,12 @@ class Controller:
                       key=lambda ingredient: ingredient.name.lower())
 
     @staticmethod
+    def get_sections(location_id):
+        sections = db.session.query(Section).filter_by(
+            location_id=location_id).all()
+        return sorted(sections, key=lambda section: section.order_id)
+
+    @staticmethod
     def get_recipe(recipe_id: int):
         recipe = Recipe.query.filter_by(id=recipe_id).first()
         return recipe
@@ -226,16 +232,19 @@ def main(web=True):
             session["scroll_height"] = scroll_height
             return redirect("/")
 
-        @app.route("/add_ingredient")
-        def add_ingredient():
+        @app.route("/add_ingredient/<int:location_id>")
+        def add_ingredient(location_id):
             return render_template("add_ingredient_screen.html",
                                    ingredients=controller.get_ingredients(),
                                    locations=controller.get_locations(),
+                                   sections=controller.get_sections(
+                                       location_id)
                                    )
 
         @app.route(
             "/update_ingredient_order/<int:location_id>/<int:section_id>/<string:new_ingr_id_order>")
-        def set_new_ingredient_order(location_id, section_id, new_ingr_id_order):
+        def set_new_ingredient_order(location_id, section_id,
+                                     new_ingr_id_order):
             new_ingr_id_order = new_ingr_id_order.split("_")
             section = Section.query.filter_by(location_id=location_id,
                                               id=section_id).first()
@@ -247,7 +256,8 @@ def main(web=True):
                 if new_ingr_id_order[i] == current_ingr_id_order[i]:
                     continue
                 else:
-                    Ingredient.query.filter_by(id=new_ingr_id_order[i]).first().update_order_id(i)
+                    Ingredient.query.filter_by(
+                        id=new_ingr_id_order[i]).first().update_order_id(i)
             return redirect("/shopping_list")
 
         @app.route("/update_location_order/<string:new_loc_id_order>")
@@ -260,11 +270,13 @@ def main(web=True):
                 if new_loc_id_order[i] == current_loc_id_order[i]:
                     continue
                 else:
-                    Location.query.filter_by(id=new_loc_id_order[i]).first().update_order_id(i)
+                    Location.query.filter_by(
+                        id=new_loc_id_order[i]).first().update_order_id(i)
 
             return redirect("/shopping_list/edit")
 
-        @app.route("/update_section_order/<int:location_id>/<string:new_sec_id_order>")
+        @app.route(
+            "/update_section_order/<int:location_id>/<string:new_sec_id_order>")
         def set_new_section_order(location_id, new_sec_id_order):
             # TODO: Implement update section order
             return redirect(f"/shopping_list/edit/{location_id}")

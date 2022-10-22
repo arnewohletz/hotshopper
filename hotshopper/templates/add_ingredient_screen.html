@@ -1,9 +1,10 @@
-{% extends 'main_screen.html' %}
+{% extends 'ingredients.html' %}
 
 {% block add_ingredient_screen %}
 <script type="text/javascript">
     ingredients = "{{ ingredients }}"
     locations = "{{ locations }}"
+    selected_location_id = "{{ location }}"
 </script>
 <script src="{{ url_for('static', filename='add_ingredient_screen.js') }}"></script>
 
@@ -29,30 +30,35 @@
             <tr>
                 <td>Einkaufsort:</td>
                 <td>
-                    <select id="location_0" name="location_0" onchange="set_location(this.location_id)" required>
+                    <select id="location_0" name="location_0" onchange="set_location()" required>
                         <option id="no_location">-- Bitte Ort auswählen --</option>
                         {% for location in locations %}
-                        <option value="{{ location.name }}" location_id="{{ location.id }}" id="location_{{ location.id }}">{{ location.name }}</option>
+                        <option value="{{ location.name }}" location_id="{{ location.id }}"
+                                id="location_{{ location.id }}">{{ location.name }}
+                        </option>
                         {% endfor %}
                     </select>
                 </td>
             </tr>
-            {% if location.sections %}
+            <script>
+                $("#location_0").find("option:selected")
+            </script>
             <tr>
+                <td>Sektion</td>
                 <td>
-                    <select id="section_0" name="section_0" required>
+                    <select id="section" disabled>
                         <option id="no_section">-- Bitte Sektion auswählen --</option>
-                        {% for section in location.sections %}
-                        <option value="{{ location.name }}" id="location">{{ location.name }}</option>
+                        {% for section in sections %}
+                        <option id="section_{{ section.id }}">{{ section.name }}</option>
+                        {% endfor %}
                     </select>
                 </td>
             </tr>
-            {% endif %}
             <tr>
                 <td>Immer auf Einkaufsliste</td>
                 <td>
-                    <menuitem type="radio" radiogroup="1">Ja</menuitem>
-                    <menuitem type="radio" radiogroup="2">Nein</menuitem>
+                    <input type="radio" name="alwaysOnList" value="Yes">Ja</input>
+                    <input type="radio" name="alwaysOnList" value="No">Nein</input>
                 </td>
             </tr>
             <tr>
