@@ -722,7 +722,7 @@ class ChiliSausagesInBread(Recipe):
 class FriedMushroomPanWithPumpkin(Recipe):
     def __init__(self):
         super().__init__()
-        self.name = "Pilzpfanne mit Kürbis (MB S.101, September - November)"
+        self.name = "Pilzpfanne mit Kürbis (MB S.101, Sep - Nov)"
         self.ingredients = [
             Champignon(gram, 400),
             HokkaidoPumpkin(gram, 600),
@@ -827,8 +827,8 @@ class VegetableNoodlesWithSpinachSauce(Recipe):
 class ZucchiniRucolaSoup(Recipe):
     def __init__(self):
         super().__init__()
-        self.name = "Zucchini-Rucola-Suppe mit gebratenen " \
-                    "Kirschtomaten (MB S.78) (März - November)"
+        self.name = "Zucchini-Rucola-Suppe m. " \
+                    "Kirschtomaten (MB S.78) (Mrz - Nov)"
         self.ingredients = [
             StarchyPotato(gram, 200),
             CherryTomato(piece, 12),
