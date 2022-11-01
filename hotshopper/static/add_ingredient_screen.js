@@ -1,17 +1,26 @@
+let SELECTED_LOCATION_ID;
+
 function init() {
     document.getElementById("add_ingredient_screen").style.display = "block";
     document.getElementById("ingredients_screen").style.display = "none";
     document.getElementById("cover").style.display = "block";
+    SELECTED_LOCATION_ID = document.getElementById("selected_location_id").childNodes[0].nodeValue;
+
+    if (SELECTED_LOCATION_ID >= 0) {
+        decide_display_section(SELECTED_LOCATION_ID)
+    }
+
+    let sections = document.getElementsByClassName("section");
+    for (let i = 0; i < sections.length; i++) {
+        if (sections[i].id !== "section_placeholder") {
+            let section = sections[i];
+            sections[i].style.display = "none";
+        }
+    }
     document.getElementById("location_0").addEventListener("selectionchange",
-    (event) => {
-        document.getElementById("location_0").disabled = !event.target.id
-        // if (document.getElementById("location_0").getSelection().id === "no_location") {
-        //     document.getElementById("location_0").disabled;
-        // } else {
-        //     document.getElementById("location_0").;
-        // }
-        // document.getElementById("section").disabled = !event.target.checked;
-    }, false);
+        (event) => {
+            document.getElementById("location_0").disabled = !event.target.id
+        }, false);
 }
 
 function cancel_close_add_ingredient() {
@@ -21,20 +30,39 @@ function cancel_close_add_ingredient() {
     window.location.href = "/ingredients"
 }
 
+function decide_display_section(location_id) {
+    let section_rows = document.getElementsByClassName("section");
+    for (let i = 0; i < section_rows.length; i++) {
+        if (section_rows[i].id === `section_${location_id}`) {
+            section_rows[i].style.display = "contents";
+        } else if (location_id === 0 && section_rows[i].id === "section_placeholder") {
+            section_rows[i].style.display = "contents";
+        } else {
+            section_rows[i].style.display = "none";
+        }
+    }
+}
 
 
 function set_location() {
-    let location = document.getElementById("location_0");
-    if (location.options.selectedIndex === 0) {
-        document.getElementById("section").disabled = true;
 
-    } else {
-        document.getElementById("section").disabled = false;
-        console.log("Sections are available again");
+    let section_lists = document.getElementsByClassName("section_list");
+    for (let i = 0; i < section_lists.length; i++) {
+        section_lists[i].disabled = true;
     }
-    window.location.href = `/add_ingredient/${location.options.selectedIndex}`
+    document.getElementById("selected_location_id").childNodes[0].nodeValue = document.getElementById("location_0").selectedIndex;
+    SELECTED_LOCATION_ID = document.getElementById("location_0").selectedIndex;
 
 
+    if (SELECTED_LOCATION_ID >= 0) {
+        decide_display_section(SELECTED_LOCATION_ID);
+        let available_sections = document.getElementById(`location_${SELECTED_LOCATION_ID}_sections`);
+
+        if (available_sections.length > 1) {
+            available_sections.disabled = false;
+        }
+    }
 }
+
 
 window.onload = init;

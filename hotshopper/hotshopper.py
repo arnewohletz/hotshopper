@@ -233,12 +233,21 @@ def main(web=True):
             return redirect("/")
 
         @app.route("/add_ingredient/<int:location_id>")
-        def add_ingredient(location_id):
+        def add_ingredient_old(location_id):
             return render_template("add_ingredient_screen.html",
                                    ingredients=controller.get_ingredients(),
                                    locations=controller.get_locations(),
                                    sections=controller.get_sections(
                                        location_id)
+                                   )
+
+        @app.route("/add_ingredient")
+        def add_ingredient():
+            return render_template("add_ingredient_screen.html",
+                                   recipes=controller.get_recipes(),
+                                   ingredients=controller.get_ingredients(),
+                                   locations=controller.get_locations(),
+                                   location=None
                                    )
 
         @app.route(
