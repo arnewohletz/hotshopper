@@ -44,7 +44,7 @@ function show_shopping_list_screen() {
 // }
 
 function formcheck() {
-    let fields = document.querySelectorAll("select,textarea, input, [required]")
+    let fields = document.querySelectorAll("select, textarea, input, [required]")
     let complete = true;
     for (let field of fields) {
         if (!field.value) {

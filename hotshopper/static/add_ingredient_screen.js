@@ -30,6 +30,32 @@ function cancel_close_add_ingredient() {
     window.location.href = "/ingredients"
 }
 
+function confirm_add_ingredient() {
+    if (!formcheck()) {
+        return false;
+    }
+}
+
+function formcheck() {
+    let fields = $("select").filter(":visible")
+    let complete = true;
+    for (let field of fields) {
+        let has_children = field.childElementCount > 0
+        let is_enabled = !field.disabled
+        if (!field.value) {
+            field.style.borderColor = "red";
+            complete = false;
+        }
+        if (has_children && is_enabled) {
+            if (field.children.item(0).nodeName === "OPTION") {
+                field.style.borderColor = "red";
+                complete = false
+            }
+        }
+    }
+    return complete;
+}
+
 function decide_display_section(location_id) {
     let section_rows = document.getElementsByClassName("section");
     for (let i = 0; i < section_rows.length; i++) {
