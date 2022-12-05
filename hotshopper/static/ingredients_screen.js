@@ -9,5 +9,9 @@ function close_ingredients_screen() {
     window.location.href = "/"
 }
 
+function delete_ingredient() {
+
+}
+
 
 window.onload = init;

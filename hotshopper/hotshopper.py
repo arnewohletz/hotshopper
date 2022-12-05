@@ -1,12 +1,14 @@
 """Main module."""
 from flask import render_template, redirect, session, request
+from sqlalchemy import func
+from werkzeug.routing import IntegerConverter
 
+from hotshopper import db, create_app
 from hotshopper.constants import Unit
 from hotshopper.foodplan import FoodPlan
 from hotshopper.model import Recipe, Ingredient, RecipeIngredient, Location, \
     Section
 from hotshopper.ui import View
-from hotshopper import db, create_app
 
 
 class Controller:
@@ -65,11 +67,31 @@ class Controller:
         shopping_lists = self.foodplan.get_shopping_lists()
         self.view.display_shopping_lists(shopping_lists)
 
+    @staticmethod
+    def get_highest_order_id(model: db.Model, **filters):
+        return \
+        db.session.query(model, func.max(model.order_id)).filter_by(**filters)[
+            0][1]
+
+    @staticmethod
+    def get_section_id(location_id, order_id):
+        if order_id == -1:
+            return order_id
+        result = Section.query.filter_by(location_id=location_id,
+                                         order_id=order_id).first()
+        return result.id
+
+
+
+class SignedIntConverter(IntegerConverter):
+    regex = r'-?\d+'
+
 
 def main(web=True):
     if web:
         port = 5001
         app = create_app(test=False)
+        app.url_map.converters['signed_int'] = SignedIntConverter
         controller = Controller()
 
         @app.route("/", methods=["GET", "POST"])
@@ -232,23 +254,56 @@ def main(web=True):
             session["scroll_height"] = scroll_height
             return redirect("/")
 
-        @app.route("/add_ingredient/<int:location_id>")
-        def add_ingredient_old(location_id):
-            return render_template("add_ingredient_screen.html",
-                                   ingredients=controller.get_ingredients(),
-                                   locations=controller.get_locations(),
-                                   sections=controller.get_sections(
-                                       location_id)
-                                   )
+        # @app.route("/add_ingredient/<int:location_id>")
+        # def add_ingredient_old(location_id):
+        #     return render_template("add_ingredient_screen.html",
+        #                            ingredients=controller.get_ingredients(),
+        #                            locations=controller.get_locations(),
+        #                            sections=controller.get_sections(
+        #                                location_id)
+        #                            )
 
         @app.route("/add_ingredient")
-        def add_ingredient():
+        def show_add_ingredient_screen():
             return render_template("add_ingredient_screen.html",
                                    recipes=controller.get_recipes(),
                                    ingredients=controller.get_ingredients(),
                                    locations=controller.get_locations(),
                                    location=None
                                    )
+
+        @app.route(
+            "/confirm_new_ingredient/<int:location_id>_<signed_int:section_order_id>_<string:non_food>",
+            methods=["POST", "GET"])
+        def add_ingredient(location_id, section_order_id, non_food):
+
+            def bool_to_int(s: str) -> int:
+                if s.lower() == "true":
+                    return 1
+                elif s.lower() == "false":
+                    return 0
+                else:
+                    var_name = f'{s=}'.split('=')[0]
+                    raise ValueError(f"'{var_name}' has illegal value: ${s}")
+
+            name = request.form["ingredient_name"]
+            always_on_list = bool_to_int(request.form["always_on_list"])
+            section_id = controller.get_section_id(location_id,
+                                                   section_order_id)
+            current_max_order_id = controller.get_highest_order_id(Ingredient,
+                                                                   section_id=section_id)
+
+            i = Ingredient(name=name, always_on_list=always_on_list,
+                           where="",
+                           section_id=section_id, non_food=bool_to_int(non_food),
+                           order_id=current_max_order_id + 1)
+            i.add()
+
+            return redirect("/ingredients")
+
+        @app.route("/edit_ingredient")
+        def show_edit_ingredient_screen():
+            raise NotImplementedError
 
         @app.route(
             "/update_ingredient_order/<int:location_id>/<int:section_id>/<string:new_ingr_id_order>")

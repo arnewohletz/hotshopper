@@ -29,6 +29,26 @@ class Ingredient(db.Model):
         # db.session.add(self)
         # db.session.flush()
 
+    def add(self):
+        exists = Ingredient.query.filter_by(
+            name=self.name).first()
+        if exists:
+            raise DuplicateRecipeIngredientError("Ingredient with the same"
+                                                 "name already exists. Choose"
+                                                 "different name!")
+        else:
+            db.session.add(self)
+            db.session.commit()
+
+    def delete(self):
+        ingredient = Ingredient.query.filter_by(id=self.id).first()
+        db.session.delete(ingredient)
+        recipe_ingredients = RecipeIngredient.query.filter_by(
+            ingredient_id=self.id).all()
+        for ri in recipe_ingredients:
+            db.session.delete(ri)
+        db.session.commit()
+
 
 # class NonFoodItem(db.Model):
 #     __tablename__ = "nonfood_item"
@@ -174,6 +194,7 @@ class Location(db.Model):
     name = db.Column(db.String)
     order_id = db.Column(db.String)
     sections = db.relationship("Section", backref="location")
+
     # ingredients = db.relationship("Ingredient", backref="locationIngredients")
     # non_food_items = db.relationship("NonFoodItem", backref="locationNonFood")
 
@@ -189,6 +210,7 @@ class Section(db.Model):
     order_id = db.Column(db.Integer)
     location_id = db.Column(db.Integer, db.ForeignKey("location.id"))
     ingredients = db.relationship("Ingredient", backref="section")
+
     # non_food_items = db.relationship("NonFoodItem", backref="sectionNonFood")
 
     def get_ingredients(self):

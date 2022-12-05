@@ -13,13 +13,12 @@ function init() {
     let sections = document.getElementsByClassName("section");
     for (let i = 0; i < sections.length; i++) {
         if (sections[i].id !== "section_placeholder") {
-            let section = sections[i];
             sections[i].style.display = "none";
         }
     }
-    document.getElementById("location_0").addEventListener("selectionchange",
+    document.getElementById("location").addEventListener("selectionchange",
         (event) => {
-            document.getElementById("location_0").disabled = !event.target.id
+            document.getElementById("location").disabled = !event.target.id
         }, false);
 }
 
@@ -30,9 +29,44 @@ function cancel_close_add_ingredient() {
     window.location.href = "/ingredients"
 }
 
-function confirm_add_ingredient() {
+function confirm_add_ingredient(edit = false) {
     if (!formcheck()) {
         return false;
+    }
+    // const name = document.getElementById("ingredient_name").value;
+    const location_index = document.getElementById("location").selectedIndex;
+    let section_index = document.getElementById(`location_${location_index}_sections`).selectedIndex;
+    if (section_index === 0) {
+        section_index = -1;
+    }
+
+    let elem_always_on_list = document.getElementById("always_on_shopping_list");
+    let always_on_list;
+    let non_food;
+    // always_on_list = elem_always_on_list.selectedIndex === 1;
+    let elem_non_food = document.getElementById("non_food");
+    non_food = !!elem_non_food.checked;
+
+    const template_add = (location_index) => `/confirm_new_ingredient/${location_index}_${section_index}_${non_food}`;
+    const template_edit = (location_index) => `/confirm_edit_ingredient/${location_index}_${section_index}_${non_food}`;
+    if (edit) {
+        document.getElementById("edit_ingredient_screen").display = "none";
+        document.getElementById("edit_ingredient_form").addEventListener(
+            "submit", function (s) {
+                s.preventDefault();
+                this.action = template_edit(location_index);
+                this.submit();
+            }
+        );
+    } else {
+        document.getElementById("add_ingredient_screen").style.display = "none";
+        document.getElementById("add_ingredient_form").addEventListener(
+            "submit", function (s) {
+                s.preventDefault();
+                this.action = template_add(location_index);
+                this.submit();
+            }
+        );
     }
 }
 
@@ -42,14 +76,12 @@ function formcheck() {
     for (let field of fields) {
         let has_children = field.childElementCount > 0
         let is_enabled = !field.disabled
-        if (!field.value) {
-            field.style.borderColor = "red";
-            complete = false;
-        }
         if (has_children && is_enabled) {
-            if (field.children.item(0).nodeName === "OPTION") {
+            if (field.selectedIndex === 0) {
                 field.style.borderColor = "red";
-                complete = false
+                complete = false;
+            } else {
+                field.style.borderColor = "black";
             }
         }
     }
@@ -76,8 +108,8 @@ function set_location() {
     for (let i = 0; i < section_lists.length; i++) {
         section_lists[i].disabled = true;
     }
-    document.getElementById("selected_location_id").childNodes[0].nodeValue = document.getElementById("location_0").selectedIndex;
-    SELECTED_LOCATION_ID = document.getElementById("location_0").selectedIndex;
+    document.getElementById("selected_location_id").childNodes[0].nodeValue = document.getElementById("location").selectedIndex;
+    SELECTED_LOCATION_ID = document.getElementById("location").selectedIndex;
 
 
     if (SELECTED_LOCATION_ID >= 0) {

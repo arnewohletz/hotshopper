@@ -16,7 +16,7 @@ function set_selected(checkboxElem) {
     }
 }
 
-let new_ingredient_index = 0;
+let amount_ingredients = 0;
 
 function show_add_recipe_screen() {
     // new_ingredient_index = 1;
@@ -66,9 +66,9 @@ function confirm_close_recipe_screen(edit = false) {
         return false;
     }
     let scroll_height = document.documentElement.scrollTop || document.body.scrollTop;
-    const name = document.querySelector('#recipe_name').value;
-    const ingredients = document.querySelectorAll('.recipe_ingredient');
-    new_ingredient_index = document.getElementById("recipe_ingredients").getElementsByClassName("recipe_ingredient").length;
+    // const name = document.querySelector('#recipe_name').value;
+    // const ingredients = document.querySelectorAll('.recipe_ingredient');
+    amount_ingredients = document.getElementById("recipe_ingredients").getElementsByClassName("recipe_ingredient").length;
     // const name = new FormData(document.querySelector('#recipe_name'));
     // const recipe = new FormData(document.querySelector('a[id="recipe_name"]'))
     document.getElementById("cover").style.display = "none";
@@ -79,18 +79,18 @@ function confirm_close_recipe_screen(edit = false) {
 
     if (edit) {
         document.getElementById("edit_recipe_screen").style.display = "none";
-        document.getElementById('edit_recipe_form').addEventListener(
-            'submit', function (s) {
+        document.getElementById("edit_recipe_form").addEventListener(
+            "submit", function (s) {
                 s.preventDefault();
-                this.action = template_edit(new_ingredient_index);
+                this.action = template_edit(amount_ingredients);
                 this.submit();
             });
     } else {
         document.getElementById("add_recipe_screen").style.display = "none";
-        document.getElementById('add_recipe_form').addEventListener(
-            'submit', function (s) {
+        document.getElementById("add_recipe_form").addEventListener(
+            "submit", function (s) {
                 s.preventDefault();
-                this.action = template_add(new_ingredient_index);
+                this.action = template_add(amount_ingredients);
                 this.submit();
             });
     }
@@ -128,14 +128,14 @@ function delete_recipe_ingredient(ingredient) {
 
 function add_recipe_ingredient() {
     // get new ingredient index
-    new_ingredient_index = document.getElementById("recipe_ingredients").getElementsByClassName("recipe_ingredient").length;
+    amount_ingredients = document.getElementById("recipe_ingredients").getElementsByClassName("recipe_ingredient").length;
 
 
     // add new recipe ingredients nodes
     let NewRecipeIngredients = document.getElementById("recipe_ingredients");
     let NewRecipeIngredient = document.createElement("tr");
     NewRecipeIngredient.setAttribute("class", "recipe_ingredient");
-    NewRecipeIngredient.setAttribute("id", `recipe_ingredient_${new_ingredient_index}`);
+    NewRecipeIngredient.setAttribute("id", `recipe_ingredient_${amount_ingredients}`);
     let InputQuantityCell = document.createElement("td");
     let UnitCell = document.createElement("td");
     let IngredientCell = document.createElement("td");
@@ -145,8 +145,8 @@ function add_recipe_ingredient() {
     let InputQuantity = document.createElement("input");
     InputQuantity.setAttribute('type', "number");
     InputQuantity.setAttribute('size', "3");
-    InputQuantity.setAttribute('id', `quantity_${new_ingredient_index}`);
-    InputQuantity.setAttribute('name', `quantity_${new_ingredient_index}`);
+    InputQuantity.setAttribute('id', `quantity_${amount_ingredients}`);
+    InputQuantity.setAttribute('name', `quantity_${amount_ingredients}`);
     InputQuantity.setAttribute('class', 'quantity');
     InputQuantity.setAttribute('min', '0.0');
     InputQuantity.setAttribute('max', '10000.0');
@@ -154,8 +154,8 @@ function add_recipe_ingredient() {
 
     // create unit node
     let SelectUnit = document.createElement("select");
-    SelectUnit.setAttribute("id", `unit_${new_ingredient_index}`);
-    SelectUnit.setAttribute("name", `unit_${new_ingredient_index}`);
+    SelectUnit.setAttribute("id", `unit_${amount_ingredients}`);
+    SelectUnit.setAttribute("name", `unit_${amount_ingredients}`);
     let SelectGram = document.createElement("option");
     SelectGram.setAttribute("value", "g");
     SelectGram.textContent = "g";
@@ -168,15 +168,15 @@ function add_recipe_ingredient() {
     const $default_select = SelectIngredient.querySelector("#no_ingredient");
     SelectIngredient.value = $default_select.value;
     SelectIngredient.firstElementChild.setAttribute("selected", "")
-    SelectIngredient.setAttribute("id", `ingredient_${new_ingredient_index}`);
-    SelectIngredient.setAttribute("name", `ingredient_${new_ingredient_index}`);
+    SelectIngredient.setAttribute("id", `ingredient_${amount_ingredients}`);
+    SelectIngredient.setAttribute("name", `ingredient_${amount_ingredients}`);
 
     // create delete button node
     let DeleteButton = document.createElement("button");
-    DeleteButton.setAttribute("id", `delete_${new_ingredient_index}`);
+    DeleteButton.setAttribute("id", `delete_${amount_ingredients}`);
     DeleteButton.setAttribute("type", "button");
     DeleteButton.setAttribute("class", "delete_ingredient");
-    DeleteButton.setAttribute("onclick", `delete_recipe_ingredient(${new_ingredient_index})`);
+    DeleteButton.setAttribute("onclick", `delete_recipe_ingredient(${amount_ingredients})`);
     let DeleteIcon = document.createElement("i");
     DeleteIcon.setAttribute("class", "fa-solid fa-trash-can");
 
