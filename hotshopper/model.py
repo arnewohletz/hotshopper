@@ -33,8 +33,8 @@ class Ingredient(db.Model):
         exists = Ingredient.query.filter_by(
             name=self.name).first()
         if exists:
-            raise DuplicateRecipeIngredientError("Ingredient with the same"
-                                                 "name already exists. Choose"
+            raise DuplicateRecipeIngredientError("Ingredient with the same "
+                                                 "name already exists. Choose "
                                                  "different name!")
         else:
             db.session.add(self)
@@ -48,6 +48,15 @@ class Ingredient(db.Model):
         for ri in recipe_ingredients:
             db.session.delete(ri)
         db.session.commit()
+
+    def used_by(self) -> list:
+        result = []
+        ris = RecipeIngredient.query.filter_by(ingredient_id=self.id).all()
+        for ri in ris:
+            r = Recipe.query.filter_by(id=ri.recipe_id).first()
+            result.append(r.name)
+
+        return result
 
 
 # class NonFoodItem(db.Model):

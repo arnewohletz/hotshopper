@@ -224,6 +224,12 @@ def main(web=True):
             session["scroll_height"] = scroll_height
             return redirect("/")
 
+        @app.route("/delete_ingredient/<int:ingredient_id>")
+        def delete_ingredient(ingredient_id):
+            ingredient = Ingredient.query.filter_by(id=ingredient_id).first()
+            ingredient.delete()
+            return redirect("/ingredients")
+
         @app.route("/delete_recipe/<int:recipe_id>_<int:scroll_height>")
         def delete_recipe(recipe_id, scroll_height):
             recipe = Recipe.query.filter_by(id=recipe_id).first()
