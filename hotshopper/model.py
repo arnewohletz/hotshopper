@@ -49,6 +49,15 @@ class Ingredient(db.Model):
             db.session.delete(ri)
         db.session.commit()
 
+    def get(self, ingredient_id):
+        ingredients = Ingredient.query.filter_by(id=ingredient_id).all()
+        if len(ingredients) > 1:
+            raise DuplicateIndexError(f"Index '{id}' is used more than once."
+                                      f"Also used by {[i.name for i in ingredients]}")
+        else:
+            return ingredients[0]
+
+
     def used_by(self) -> list:
         result = []
         ris = RecipeIngredient.query.filter_by(ingredient_id=self.id).all()

@@ -3,6 +3,11 @@ class UnsupportedUnitError(Exception):
         pass
 
 
+class DuplicateIndexError(Exception):
+    def __init__(self, *args, **kwargs):
+        pass
+
+
 class DuplicateRecipeError(Exception):
     def __init__(self, *args, **kwargs):
         pass

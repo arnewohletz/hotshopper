@@ -3,6 +3,8 @@ from flask import render_template, redirect, session, request
 from sqlalchemy import func
 from werkzeug.routing import IntegerConverter
 
+
+from errors import DuplicateIndexError
 from hotshopper import db, create_app
 from hotshopper.constants import Unit
 from hotshopper.foodplan import FoodPlan
@@ -307,9 +309,19 @@ def main(web=True):
 
             return redirect("/ingredients")
 
-        @app.route("/edit_ingredient")
+        @app.route("/edit_ingredient/<int:ingredient_id>")
         def show_edit_ingredient_screen():
-            raise NotImplementedError
+            ingredients = Ingredient.query.filter_by(id=ingredient_id).all()
+            if len(ingredients) > 1:
+                raise DuplicateIndexError(
+                    f"Index '{id}' is used more than once."
+                    f"Also used by {[i.name for i in ingredients]}")
+            result = ingredients[0]
+            return render_template("add_edit_ingredients_screen.html",
+                                   recipes = controller.get_recipes(),
+                                   ingredients=controller.get_ingredients(),
+                                   locations=controller.get_locations(),
+                                   ingredient=result)
 
         @app.route(
             "/update_ingredient_order/<int:location_id>/<int:section_id>/<string:new_ingr_id_order>")
