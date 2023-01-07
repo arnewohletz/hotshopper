@@ -1,5 +1,8 @@
 let SELECTED_LOCATION_ID;
+let SELECTED_SECTION_ID;
 
+
+// function init(edit=false) {
 function init() {
     document.getElementById("add_ingredient_screen").style.display = "block";
     document.getElementById("ingredients_screen").style.display = "none";
@@ -108,9 +111,9 @@ function set_location() {
     for (let i = 0; i < section_lists.length; i++) {
         section_lists[i].disabled = true;
     }
-    document.getElementById("selected_location_id").childNodes[0].nodeValue = document.getElementById("location").selectedIndex;
-    SELECTED_LOCATION_ID = document.getElementById("location").selectedIndex;
-
+    let location_select = document.querySelector("#location");
+    SELECTED_LOCATION_ID = location_select.options[location_select.selectedIndex].getAttribute('location_id');
+// TODO: False location_id is saved -> probably again the SelectedIndex instead of real id
 
     if (SELECTED_LOCATION_ID >= 0) {
         decide_display_section(SELECTED_LOCATION_ID);
@@ -121,6 +124,9 @@ function set_location() {
         }
     }
 }
-
-
+// const urlParams = new URLSearchParams(window.location.search);
+// const edit = urlParams.get("edit") === "true";
+// window.onload = function () {
+//     init(edit);
+// }
 window.onload = init;

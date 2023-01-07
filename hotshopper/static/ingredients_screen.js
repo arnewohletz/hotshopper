@@ -29,21 +29,25 @@ function apply_scroll_height(element, scroll_height) {
     }
 }
 
+function edit_ingredient(defer_url) {
+    window.location.href = `${defer_url}`;
+}
+
 function delete_ingredient(ingredient) {
     let table = document.getElementById("ingredients_table");
     sessionStorage.setItem("scroll_height_ingredients", `${table.scrollTop}`);
     // let scroll_height = table.scrollTop;
     let text = `Zutat "${ingredient.name}" wirklich löschen?`;
-    let recipes = ingredient.getAttribute("data-uses-recipes")
+    let recipes = ingredient.getAttribute("data-uses-recipes");
     let recipes_array = recipes.slice(2, recipes.length - 2).split("', '");
     if (recipes_array[0].length > 0) {
         text = text + "\n\nZutat wird aktuell verwendet in:"
         for ( let i = 0; i < recipes_array.length; i++) {
-            text = text + `\n${recipes_array[i]}`
+            text = text + `\n${recipes_array[i]}`;
         }
         text = text + "\n\n(Zutat wird aus genannten Rezepten entfernt)";
     } else {
-        text = text + "\n\n Zutat wird aktuell nicht verwendet."
+        text = text + "\n\n Zutat wird aktuell nicht verwendet.";
     }
     Swal.fire({
         html: '<pre>' + text + '</pre>',
@@ -57,6 +61,5 @@ function delete_ingredient(ingredient) {
         }
     })
 }
-
 
 window.onload = init;

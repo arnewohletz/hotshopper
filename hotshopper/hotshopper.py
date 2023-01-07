@@ -3,8 +3,7 @@ from flask import render_template, redirect, session, request
 from sqlalchemy import func
 from werkzeug.routing import IntegerConverter
 
-
-from errors import DuplicateIndexError
+from hotshopper.errors import DuplicateIndexError
 from hotshopper import db, create_app
 from hotshopper.constants import Unit
 from hotshopper.foodplan import FoodPlan
@@ -71,9 +70,13 @@ class Controller:
 
     @staticmethod
     def get_highest_order_id(model: db.Model, **filters):
-        return \
+        result = \
         db.session.query(model, func.max(model.order_id)).filter_by(**filters)[
             0][1]
+        if result:
+            return result
+        else:
+            return 0
 
     @staticmethod
     def get_section_id(location_id, order_id):
@@ -82,7 +85,6 @@ class Controller:
         result = Section.query.filter_by(location_id=location_id,
                                          order_id=order_id).first()
         return result.id
-
 
 
 class SignedIntConverter(IntegerConverter):
@@ -226,12 +228,6 @@ def main(web=True):
             session["scroll_height"] = scroll_height
             return redirect("/")
 
-        @app.route("/delete_ingredient/<int:ingredient_id>")
-        def delete_ingredient(ingredient_id):
-            ingredient = Ingredient.query.filter_by(id=ingredient_id).first()
-            ingredient.delete()
-            return redirect("/ingredients")
-
         @app.route("/delete_recipe/<int:recipe_id>_<int:scroll_height>")
         def delete_recipe(recipe_id, scroll_height):
             recipe = Recipe.query.filter_by(id=recipe_id).first()
@@ -271,14 +267,53 @@ def main(web=True):
         #                                location_id)
         #                            )
 
-        @app.route("/add_ingredient")
+        @app.route("/ingredients/new")
         def show_add_ingredient_screen():
+            # edit = bool(request.args.get("edit"))
+            # if edit:
+            #     ingredients = Ingredient.query.filter_by(
+            #         id=ingredient_id).all()
+            #     if len(ingredients) > 1:
+            #         raise DuplicateIndexError(
+            #             f"Index '{id}' is used more than once."
+            #             f"Also used by {[i.name for i in ingredients]}")
+            #     result = ingredients[0]
+            #     return render_template("add_ingredient_screen.html",
+            #                            recipes=controller.get_recipes(),
+            #                            ingredients=controller.get_ingredients(),
+            #                            locations=controller.get_locations(),
+            #                            ingredient=result)
             return render_template("add_ingredient_screen.html",
                                    recipes=controller.get_recipes(),
                                    ingredients=controller.get_ingredients(),
                                    locations=controller.get_locations(),
                                    location=None
                                    )
+
+        @app.route("/ingredients/edit/<int:ingredient_id>")
+        def show_edit_ingredient_screen(ingredient_id):
+            ingredients = Ingredient.query.filter_by(id=ingredient_id).all()
+            if len(ingredients) > 1:
+                raise DuplicateIndexError(
+                    f"Index '{id}' is used more than once."
+                    f"Also used by {[i.name for i in ingredients]}")
+            ingredient = ingredients[0]
+            section = Section.query.filter_by(id=ingredient.section_id).first()
+            location = Location.query.filter_by(id=section.location_id).first()
+            return render_template("edit_ingredient_screen.html",
+                                   recipes=controller.get_recipes(),
+                                   ingredients=controller.get_ingredients(),
+                                   locations=controller.get_locations(),
+                                   ingredient=ingredient,
+                                   location=location,
+                                   section=section
+                                   )
+
+        @app.route("/ingredients/delete/<int:ingredient_id>")
+        def delete_ingredient(ingredient_id):
+            ingredient = Ingredient.query.filter_by(id=ingredient_id).first()
+            ingredient.delete()
+            return redirect("/ingredients")
 
         @app.route(
             "/confirm_new_ingredient/<int:location_id>_<signed_int:section_order_id>_<string:non_food>",
@@ -303,25 +338,12 @@ def main(web=True):
 
             i = Ingredient(name=name, always_on_list=always_on_list,
                            where="",
-                           section_id=section_id, non_food=bool_to_int(non_food),
+                           section_id=section_id,
+                           non_food=bool_to_int(non_food),
                            order_id=current_max_order_id + 1)
             i.add()
 
             return redirect("/ingredients")
-
-        @app.route("/edit_ingredient/<int:ingredient_id>")
-        def show_edit_ingredient_screen():
-            ingredients = Ingredient.query.filter_by(id=ingredient_id).all()
-            if len(ingredients) > 1:
-                raise DuplicateIndexError(
-                    f"Index '{id}' is used more than once."
-                    f"Also used by {[i.name for i in ingredients]}")
-            result = ingredients[0]
-            return render_template("add_edit_ingredients_screen.html",
-                                   recipes = controller.get_recipes(),
-                                   ingredients=controller.get_ingredients(),
-                                   locations=controller.get_locations(),
-                                   ingredient=result)
 
         @app.route(
             "/update_ingredient_order/<int:location_id>/<int:section_id>/<string:new_ingr_id_order>")

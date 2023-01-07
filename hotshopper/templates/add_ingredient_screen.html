@@ -4,7 +4,7 @@
 <script type="text/javascript">
     ingredients = "{{ ingredients }}"
     locations = "{{ locations }}"
-    selected_location = "{{ location }}"
+    selected_location_id = "{{ location.id }}"
 </script>
 <script src="{{ url_for('static', filename='add_ingredient_screen.js') }}"></script>
 
@@ -31,11 +31,11 @@
                             <option id="location_placeholder">-- Bitte Ort auswählen --</option>
                             {% for l in locations %}
                             {% if location.id == l.id %}
-                            <option value="{{ location.name }}" location_id="{{ l.id }}"
+                            <option value="{{ l.name }}" location_id="{{ l.id }}"
                                     id="location_{{ l.id }}">{{ l.name }}
                             </option>
                             {% else %}
-                            <option value="{{ location.name }}" location_id="{{ l.id }}"
+                            <option value="{{ l.name }}" location_id="{{ l.id }}"
                                     id="location_{{ l.id }}" selected>{{ l.name }}
                             </option>
                             {% endif %}
@@ -43,7 +43,7 @@
                             {% else %}
                             <option id="location_placeholder" selected>-- Bitte Ort auswählen --</option>
                             {% for l in locations %}
-                            <option value="{{ location.name }}" location_id="{{ l.id }}"
+                            <option value="{{ l.name }}" location_id="{{ l.id }}"
                                     id="location_{{ l.id }}">{{ l.name }}
                             </option>
                             {% endfor %}
@@ -54,7 +54,7 @@
                 {% if locations|length == 0 or location == None %}
                 <div id="selected_location_id" style="display: none;">-1</div>
                 {% else %}
-                <div id="selected_location_id" style="display: none;">{{ selected_location.id }}</div>
+                <div id="selected_location_id" style="display: none;">{{ selected_location_id }}</div>
                 {% endif %}
                 <tr id="section_placeholder" class="section">
                     <td>Sektion:</td>
@@ -71,7 +71,9 @@
                         <select id="location_{{ location.id }}_sections" class="section_list" disabled>
                             <option>-- Bitte Sektion auswählen --</option>
                             {% for section in location.sections %}
+                            {% if section.id > 0 %}
                             <option id="section_{{ section.id }}">{{ section.name }}</option>
+                            {% endif %}
                             {% endfor %}
                         </select>
                     </td>
