@@ -1,10 +1,10 @@
 let SELECTED_LOCATION_ID;
 let SELECTED_SECTION_ID;
-
+let submit_request = new XMLHttpRequest();
 
 // function init(edit=false) {
 function init() {
-    document.getElementById("add_ingredient_screen").style.display = "block";
+    document.getElementById("ingredient_screen").style.display = "block";
     document.getElementById("ingredients_screen").style.display = "none";
     document.getElementById("cover").style.display = "block";
     SELECTED_LOCATION_ID = document.getElementById("selected_location_id").childNodes[0].nodeValue;
@@ -23,6 +23,9 @@ function init() {
         (event) => {
             document.getElementById("location").disabled = !event.target.id
         }, false);
+
+    // Register DuplicateIngredientErrorHandlerListener
+    window.addEventListener(XMLHttpRequest, submit_request);
 }
 
 function cancel_close_add_ingredient() {
@@ -52,24 +55,72 @@ function confirm_add_ingredient(edit = false) {
 
     const template_add = (location_index) => `/confirm_new_ingredient/${location_index}_${section_index}_${non_food}`;
     const template_edit = (location_index) => `/confirm_edit_ingredient/${location_index}_${section_index}_${non_food}`;
-    if (edit) {
-        document.getElementById("edit_ingredient_screen").display = "none";
-        document.getElementById("edit_ingredient_form").addEventListener(
-            "submit", function (s) {
-                s.preventDefault();
-                this.action = template_edit(location_index);
-                this.submit();
+
+    let form = document.getElementById("ingredient_form");
+    const form_data = new Map(new FormData(form).entries());
+
+    try {
+        if (edit) {
+            document.getElementById("ingredient_screen").display = "none";
+            form.addEventListener(
+                "submit", async function (s) {
+                    s.preventDefault();
+                    const response = await fetch(template_edit(location_index), {
+                        method: "POST",
+                        header: {"Content-Type": "application/json"},
+                        body: JSON.stringify(Object.fromEntries(form_data))
+                    });
+                    const result = await response.json();
+                    console.log(result);
+                    // this.action = template_edit(location_index);
+                    // submit_request.open("POST", template_edit(location_index),
+                    //     {"Content-Type": "application/json"},
+                    //     JSON.stringify(Object.fromEntries(form_data)));
+                    // submit_request.send(this);
+                    // this.submit();
+                }
+            );
+        } else {
+
+            form.addEventListener(
+                "submit", async function (s) {
+                    s.preventDefault();
+                    const response = await fetch(template_add(location_index), {
+                        method: "POST",
+                        header: {"Content-Type": "application/json"},
+                        body: JSON.stringify(Object.fromEntries(form_data))
+                    })
+                    const result = await response.json();
+                    if (result === "400") {
+                        // TODO: Add pop-up "Duplicate Ingredient"
+                    } else {
+                        document.getElementById("ingredient_screen").style.display = "none";
+                    }
+
+                    console.log(result);
+                    // this.action = template_add(location_index);
+                    // submit_request.open("POST", template_add(location_index));
+                    // submit_request.send(this);
+                    // this.submit();
+                }
+            );
+        }
+
+        if (submit_request.status === 507) {
+            alert(`Duplicate ingredient: ${this.name}`);
+        }
+    } catch (err) {
+        Swal.fire({
+            text: `Zutat ${form_data["ingredient_name"]} bereits vorhanden. Bitte wählen einen anderen Namen`,
+            icon: 'warning',
+            showCancelButton: true,
+            cancelButtonText: 'Abbruch',
+            confirmButtonText: 'OK',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = recipe.id + "_" + scroll_height;
             }
-        );
-    } else {
-        document.getElementById("add_ingredient_screen").style.display = "none";
-        document.getElementById("add_ingredient_form").addEventListener(
-            "submit", function (s) {
-                s.preventDefault();
-                this.action = template_add(location_index);
-                this.submit();
-            }
-        );
+        })
     }
 }
 
@@ -124,6 +175,7 @@ function set_location() {
         }
     }
 }
+
 // const urlParams = new URLSearchParams(window.location.search);
 // const edit = urlParams.get("edit") === "true";
 // window.onload = function () {

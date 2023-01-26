@@ -2,7 +2,8 @@ from sqlalchemy import update
 from typing import Union, NewType
 
 from hotshopper import db
-from hotshopper.errors import (DuplicateRecipeError,
+from hotshopper.errors import (DuplicateIngredientError,
+                               DuplicateRecipeError,
                                DuplicateRecipeIngredientError,
                                RecipeIngredientNotFoundError)
 
@@ -33,9 +34,9 @@ class Ingredient(db.Model):
         exists = Ingredient.query.filter_by(
             name=self.name).first()
         if exists:
-            raise DuplicateRecipeIngredientError("Ingredient with the same "
-                                                 "name already exists. Choose "
-                                                 "different name!")
+            raise DuplicateIngredientError("Ingredient with the same "
+                                           "name already exists. Choose "
+                                           "different name!")
         else:
             db.session.add(self)
             db.session.commit()

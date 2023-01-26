@@ -1,9 +1,13 @@
 """Main module."""
-from flask import render_template, redirect, session, request
+from flask import render_template, redirect, session, request, make_response
+import json
 from sqlalchemy import func
 from werkzeug.routing import IntegerConverter
 
-from hotshopper.errors import DuplicateIndexError
+from hotshopper.errors import (
+    DuplicateIndexError,
+    DuplicateIngredientError
+    )
 from hotshopper import db, create_app
 from hotshopper.constants import Unit
 from hotshopper.foodplan import FoodPlan
@@ -329,8 +333,10 @@ def main(web=True):
                     var_name = f'{s=}'.split('=')[0]
                     raise ValueError(f"'{var_name}' has illegal value: ${s}")
 
-            name = request.form["ingredient_name"]
-            always_on_list = bool_to_int(request.form["always_on_list"])
+            # data = request
+            form = json.loads(str(request.data, "utf-8"))
+            name = form["ingredient_name"]
+            always_on_list = bool_to_int(form["always_on_list"])
             section_id = controller.get_section_id(location_id,
                                                    section_order_id)
             current_max_order_id = controller.get_highest_order_id(Ingredient,
@@ -341,7 +347,14 @@ def main(web=True):
                            section_id=section_id,
                            non_food=bool_to_int(non_food),
                            order_id=current_max_order_id + 1)
-            i.add()
+
+            try:
+                i.add()
+            except DuplicateIngredientError:
+                response = make_response()
+                response.status = 409
+                response.header = "Duplicate Ingredient Error"
+                return response
 
             return redirect("/ingredients")
 

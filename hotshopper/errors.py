@@ -8,6 +8,11 @@ class DuplicateIndexError(Exception):
         pass
 
 
+class DuplicateIngredientError(Exception):
+    def __init__(self, *args, **kwargs):
+        pass
+
+
 class DuplicateRecipeError(Exception):
     def __init__(self, *args, **kwargs):
         pass
