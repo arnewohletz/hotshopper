@@ -120,7 +120,8 @@ def main(web=True):
                                    recipes=recipes)
 
         @app.route("/shopping_list")
-        def show_shopping_list_screen():
+        @app.route("/shopping_list/<int:scroll_height>")
+        def show_shopping_list_screen(scroll_height=None):
             ingredients = controller.get_ingredients()
             recipes = controller.get_recipes()
             locations = controller.get_locations()
@@ -128,7 +129,8 @@ def main(web=True):
             return render_template("shopping_list.html",
                                    locations=locations,
                                    ingredients=ingredients,
-                                   recipes=recipes)
+                                   recipes=recipes,
+                                   scroll_height=scroll_height)
 
         @app.route("/shopping_list/edit")
         def show_shopping_list_edit_screen():
@@ -359,9 +361,9 @@ def main(web=True):
             return redirect("/ingredients")
 
         @app.route(
-            "/update_ingredient_order/<int:location_id>/<int:section_id>/<string:new_ingr_id_order>")
+            "/update_ingredient_order/<int:location_id>/<int:section_id>/<string:new_ingr_id_order>/<int:scroll_height>")
         def set_new_ingredient_order(location_id, section_id,
-                                     new_ingr_id_order):
+                                     new_ingr_id_order, scroll_height):
             new_ingr_id_order = new_ingr_id_order.split("_")
             section = Section.query.filter_by(location_id=location_id,
                                               id=section_id).first()
@@ -375,7 +377,7 @@ def main(web=True):
                 else:
                     Ingredient.query.filter_by(
                         id=new_ingr_id_order[i]).first().update_order_id(i)
-            return redirect("/shopping_list")
+            return redirect(f"/shopping_list/{scroll_height}")
 
         @app.route("/update_location_order/<string:new_loc_id_order>")
         def set_new_location_order(new_loc_id_order):

@@ -127,13 +127,6 @@ th.shopping_list_header {
     width: 10px;
 }
 
-#shopping_list_screen {
-    color: #1e1e1e;
-}
-
-#shopping_list_screen table {
-    width: 100%;
-}
 
 td.spacer {
     min-width: 30px;
@@ -161,6 +154,18 @@ table#edit_locations {
     vertical-align: top;
 }
 
+/*#shopping_list_screen {*/
+/*    overflow-x: hidden;*/
+/*    overflow-y: auto;*/
+/*    white-space: nowrap;*/
+/*}*/
+
+#shopping_list_screen {
+    color: #1e1e1e;
+    overflow: hidden;
+    top: 10%;
+}
+
 #shopping_list_screen td.location_header {
     font-size: 14pt;
     text-transform: uppercase;
@@ -171,7 +176,6 @@ table#edit_locations {
 
 #shopping_list_screen td.section_header {
     font-size: 14pt;
-    /*text-align: center;*/
     font-weight: bold;
 }
 
@@ -182,15 +186,16 @@ table#edit_locations {
 
 #ingredients_screen {
     top: 10%;
-    max-height: 70%;
+    max-height: 80vh;
 }
 
 /*#ingredients_screen.scroll*/
-#ingredients_screen.ontop_screen div.scroll {
-    height: 50vh;
+.ontop_screen div.scroll {
+    max-height: 60vh;
     padding-bottom: 10px;
     overflow-x: hidden;
     overflow-y: auto;
+    width: 100%;
     white-space: nowrap;
 }
 

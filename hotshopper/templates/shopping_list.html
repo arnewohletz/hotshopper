@@ -25,37 +25,39 @@
             </tr>
         </table>
     </h2>
-    <table id="shopping_list_template" class="noselect">
-        {% for location in locations %}
-        <tr>
-            <td>
-                <table class="location" data-index-number="{{ location.id }}">
-                    <tr>
-                        <td class="location_header">{{ location.name }}</td>
-                    </tr>
-                    {% for section in location.sections %}
-                    <tr>
-                        <td>
-                            <table id="{{ section.name }}" class="rows_draggable" data-index-number="{{ location.id }}_{{ section.id }}">
-                                <tr>
-                                    <td class="section_header">{{ section.name }}</td>
-                                </tr>
-                                {% for ingredient in section.get_ingredients() %}
-                                <tr data-index-number="{{ location.id }}_{{ section.id }}_{{ ingredient.id }}">
-                                    <td class="ingredient">{{ ingredient.name }}</td>
-                                </tr>
-                                {% endfor %}
-                            </table>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </table>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
+    <div id="shopping_list_template_table" class="scroll">
+        <table class="noselect scroll">
+            {% for location in locations %}
+            <tr>
+                <td>
+                    <table class="location" data-index-number="{{ location.id }}">
+                        <tr>
+                            <td class="location_header">{{ location.name }}</td>
+                        </tr>
+                        {% for section in location.sections %}
+                        <tr>
+                            <td>
+                                <table id="{{ section.name }}" class="rows_draggable"
+                                       data-index-number="{{ location.id }}_{{ section.id }}">
+                                    <tr>
+                                        <td class="section_header">{{ section.name }}</td>
+                                    </tr>
+                                    {% for ingredient in section.get_ingredients() %}
+                                    <tr data-index-number="{{ location.id }}_{{ section.id }}_{{ ingredient.id }}">
+                                        <td class="ingredient">{{ ingredient.name }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </table>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
     <!--    </table>-->
-    </h2>
 </div>
 
 {% block edit_shopping_list %}

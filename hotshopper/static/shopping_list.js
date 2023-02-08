@@ -18,6 +18,7 @@
 // });
 // }
 
+
 function close_shopping_list_screen() {
     document.getElementById("shopping_list_screen").style.display = "none";
     document.getElementById("cover").style.display = "none";
@@ -44,11 +45,15 @@ function open_edit_shopping_list_screen() {
 function init() {
     document.getElementById("cover").style.display = "block";
     document.getElementById("shopping_list_screen").style.display = "block";
+    if (scroll_height !== null) {
+        document.getElementById("shopping_list_template_table").scroll(0, scroll_height);
+    }
+
 
     // table = document.getElementById("Kühlteigwaren");
     let tables = document.getElementsByClassName("rows_draggable")
     for (let i = 0; i < tables.length; i++) {
-        tables[i].querySelectorAll("#Kühlteigwaren tr").forEach(function (row, index) {
+        tables[i].querySelectorAll("tr").forEach(function (row, index) {
             if (index === 0) {
                 return;
             }
@@ -67,6 +72,7 @@ function post_drag_action(table) {
     const location_id = table.dataset.indexNumber.split("_")[0]
     const section_id = table.dataset.indexNumber.split("_")[1]
     let new_order = "";
+    const scroll_height = document.getElementById("shopping_list_template_table").scrollTop;
     table.querySelectorAll("tr").forEach(function (row, index) {
         if (index === 0) {
             return;
@@ -75,7 +81,7 @@ function post_drag_action(table) {
     });
     new_order = new_order.substring(0, new_order.length - 1)
 
-    window.location.href = `/update_ingredient_order/${location_id}/${section_id}/${new_order}`
+    window.location.href = `/update_ingredient_order/${location_id}/${section_id}/${new_order}/${scroll_height}`
 }
 
 // let draggingEle; // The dragging element
