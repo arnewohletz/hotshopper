@@ -33,7 +33,7 @@ h2 table {
     width: 100%;
 }
 
-td.food_plan_buttons {
+td.menu_buttons {
     padding-right: 10px;
     text-align: right;
 }
@@ -220,7 +220,7 @@ table.selection {
     min-width: 100%;
 }
 
-button.header_button, button.food_plan_buttons, #calc_button {
+button.header_button, button.menu_buttons, #calc_button {
     padding: 5px 10px;
     vertical-align: middle;
     /*text-align: right;*/

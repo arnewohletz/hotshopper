@@ -12,18 +12,22 @@ from hotshopper import db, create_app
 from hotshopper.constants import Unit
 from hotshopper.foodplan import FoodPlan
 from hotshopper.model import Recipe, Ingredient, RecipeIngredient, Location, \
-    Section
+    Section, ShoppingList
 from hotshopper.ui import View
 
 
 class Controller:
     def __init__(self, view=None):
-        self.foodplan = None
+        # self.foodplan = None
+        self.shopping_lists = db.session.query(ShoppingList).all()
+        self.foodplan = FoodPlan(self.shopping_lists)
+        # self.shopping_lists = None
         self.recipes = []  # make to set() ??
         self.ingredients = []
         if view:
             self.view = view
             self.view.initialize(self, self.get_recipes())
+
 
     def get_recipes(self):
         all_recipes = db.session.query(Recipe).all()
@@ -66,11 +70,24 @@ class Controller:
         loc = Location.query.filter_by(id=location_id).first()
         return loc
 
+    @staticmethod
+    def get_always_on_list_items(location_id):
+        items = Ingredient.query.filter_by(id=location_id, always_on_list=1).all()
+        return items
+
     def display_shopping_lists(self):
-        self.foodplan = FoodPlan()
+        # self.foodplan = FoodPlan()
         self.foodplan.set_shopping_lists(self.recipes)
-        shopping_lists = self.foodplan.get_shopping_lists()
-        self.view.display_shopping_lists(shopping_lists)
+        # self.shopping_lists = self.foodplan.get_shopping_lists()
+        self.view.display_shopping_lists(self.shopping_lists)
+
+    def print_shopping_list(self):
+        if not self.shopping_lists:
+            return RuntimeError("No shopping lists existing")
+        for location_list in self.shopping_lists:
+            # items = self.get_always_on_list_items(location_list)
+            location_list.add()
+        # TODO: Implement print_shopping_list() method
 
     @staticmethod
     def get_highest_order_id(model: db.Model, **filters):
@@ -175,7 +192,7 @@ def main(web=True):
         @app.route("/show_shopping_list", methods=["POST"])
         def show_shopping_list():
             recipes = controller.get_recipes()
-            food_plan = FoodPlan()
+            food_plan = FoodPlan(controller.shopping_lists)
             food_plan.set_shopping_lists(recipes)
             return render_template("main_screen.html",
                                    recipes=recipes,

@@ -1,7 +1,7 @@
-from sqlalchemy import update
 from typing import Union, NewType
 
 from hotshopper import db
+from hotshopper.constants import Unit
 from hotshopper.errors import (DuplicateIngredientError,
                                DuplicateRecipeError,
                                DuplicateRecipeIngredientError,
@@ -16,7 +16,7 @@ class Ingredient(db.Model):
     id = db.Column("id", db.Integer, primary_key=True)
     name = db.Column("name", db.String)
     order_id = db.Column("order_id", db.Integer)
-    where = db.Column("where", db.String)
+    location_id = db.Column("location_id", db.Integer)
     recipes = db.relationship("RecipeIngredient",
                               backref=db.backref("ingredient", lazy=False),
                               lazy="subquery")
@@ -59,17 +59,6 @@ class Ingredient(db.Model):
             result.append(r.name)
 
         return result
-
-
-# class NonFoodItem(db.Model):
-#     __tablename__ = "nonfood_item"
-#     id = db.Column("id", db.Integer, primary_key=True)
-#     name = db.Column("name", db.String)
-#     order_id = db.Column("order_id", db.Integer)
-#     where = db.Column("where", db.String)
-#     always_on_list = db.Column("always_on_list", db.Integer)
-#     section = db.Column(db.Integer, db.ForeignKey("section.id"))
-#     location = db.Column(db.Integer, db.ForeignKey("location.id"))
 
 
 class Recipe(db.Model):
@@ -205,7 +194,9 @@ class Location(db.Model):
     name = db.Column(db.String)
     order_id = db.Column(db.String)
     sections = db.relationship("Section", backref="location")
-
+    shopping_lists = db.relationship("ShoppingList",
+                                     secondary="shopping_list_location",
+                                     back_populates="locations")
     # ingredients = db.relationship("Ingredient", backref="locationIngredients")
     # non_food_items = db.relationship("NonFoodItem", backref="locationNonFood")
 
@@ -227,6 +218,90 @@ class Section(db.Model):
     def get_ingredients(self):
         return sorted(self.ingredients,
                       key=lambda ingredient: ingredient.order_id)
+
+
+class ShoppingListLocation(db.Model):
+    __tablename__ = "shopping_list_location"
+    shopping_list_id = db.Column(db.Integer, db.ForeignKey("shopping_list.id"), primary_key=True)
+    location_id = db.Column(db.Integer, db.ForeignKey("location.id"), primary_key=True)
+
+
+class ShoppingListWeek(db.Model):
+    __tablename__ = "shopping_list_week"
+    shopping_list_id = db.Column(db.Integer, db.ForeignKey("shopping_list.id"), primary_key=True)
+    week_id = db.Column(db.Integer, db.ForeignKey("week.id"), primary_key=True)
+
+
+class Week(db.Model):
+    __tablename__ = "week"
+    id = db.Column(db.Integer, primary_key=True)
+    shopping_lists = db.relationship("ShoppingList",
+                                     secondary="shopping_list_week",
+                                     back_populates="weeks")
+
+class ShoppingList(db.Model):
+    __tablename__ = "shopping_list"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
+    weeks = db.relationship("Week", secondary="shopping_list_week",
+                            back_populates="shopping_lists")
+                            # backref=db.backref("shopping_lists"))
+    # locations = db.relationship("Location", secondary="shopping_list_location",
+    #                             backref=db.backref("shopping_list_id", lazy=False),
+    #                             lazy="joined")
+    locations = db.relationship("Location", secondary="shopping_list_location",
+                            back_populates="shopping_lists")
+    ingredients = []
+    # ingredients = db.relationship("RecipeIngredient",
+    #                               backref=db.backref("recipe", lazy=False),
+    #                               lazy="joined")
+
+    # def __init__(self, name, locations, weeks):
+    #     super().__init__()
+    #     self.name = name
+    #     self.locations = locations
+    #     self.weeks = weeks
+
+    def __contains__(self, type):
+        for ingredient in self.ingredients:
+            if isinstance(ingredient, type):
+                return True
+            return False
+
+    def has_location(self, id):
+        for loc in self.locations:
+            if id == loc.id:
+                return True
+        return False
+
+    def get_name(self):
+        return self.name
+
+    def add(self, ingredient):
+        if ingredient.unit == Unit.PIECE:
+            ingredient.amount_piece = ingredient.quantity_per_person
+        else:
+            ingredient.amount = ingredient.quantity_per_person
+
+        for existing_ingredient in self.ingredients:
+            if ingredient.ingredient.name == existing_ingredient.name:
+                if ingredient.unit == Unit.PIECE:
+                    # TODO: Add multiplied by 'persons' once added to recipe
+                    existing_ingredient.amount_piece += ingredient.amount_piece
+                else:
+                    existing_ingredient.amount += ingredient.amount
+                return True
+        self.ingredients.append(ShoppingListIngredient(ingredient))
+        # Copy required since shopping list otherwise alters the ingredient
+        # amount in the recipe, when adding them (not nice, I know)
+        # self.append(copy.deepcopy(ingredient))
+    #
+    def sort_ingredients(self):
+        self.ingredients.sort(key=lambda ri: ri.order_id)
+    #
+    def append_always_on_list_items(self):
+        # TODO: Implement append_always_on_list_items() method
+        raise NotImplementedError
 
 
 class ShoppingListIngredient:

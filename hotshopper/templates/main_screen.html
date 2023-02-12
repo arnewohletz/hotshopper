@@ -29,8 +29,8 @@
             <tbody class="header">
             <tr>
                 <td colspan="3">Woche</td>
-                <td rowspan="2" class="food_plan_buttons">
-                    <button type="button" class="food_plan_buttons"
+                <td rowspan="2" class="menu_buttons">
+                    <button type="button" class="menu_buttons"
                             onclick="show_add_recipe_screen()"> Neues
                         Rezept ...
                     </button>
@@ -103,16 +103,24 @@
     {% if food_plan %}
     <table class="shopping_list">
         <tr>
-            <th class="list_header" colspan="2">Einkaufsliste</th>
+            <th class="list_header">Einkaufsliste</th>
+        </tr>
+        <tr>
+            <td class="menu_buttons" colspan="2">
+                <button type="button"
+                        id="print_shopping_list"
+                        class="menu_buttons"
+                        onclick="print_shopping_list()">Ausdrucken</button>
+            </td>
         </tr>
         {% for list in food_plan.get_shopping_lists() %}
         <th colspan="2" class="shopping_list_header">{{ list.name }}</th>
-        {% if list|length < 1 %}
+        {% if list.ingredients|length < 1 %}
         <tr>
             <td id="no_item" colspan="2">---</td>
         </tr>
         {% endif %}
-        {% for item in list %}
+        {% for item in list.ingredients %}
         <tr>
             <td>
                 {{ item.get_amount() }}
