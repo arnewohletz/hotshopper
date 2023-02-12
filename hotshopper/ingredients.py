@@ -334,6 +334,12 @@ class Cucumber(Ingredient):
     id = 14010
 
 
+class Cumin(Ingredient):
+    name = "Kreuzkümmel"
+    where = SUPERMARKET
+    id = 8013
+
+
 class DillFrozen(Ingredient):
     name = "TK-Dill"
     where = SUPERMARKET
@@ -434,6 +440,12 @@ class GroundMeat(Ingredient):
     name = "Hackfleisch (gem.)"
     where = MARKET
     id = 12010
+
+
+class GroundMeatBeef(Ingredient):
+    name = "Rinderhack"
+    where = MARKET
+    id = 12011
 
 
 class HamCooked(Ingredient):
@@ -574,6 +586,12 @@ class NoodlesTagliatelle(Ingredient):
     id = 4074
 
 
+class Oatflakes(Ingredient):
+    name = "Haferflocken"
+    where = SUPERMARKET
+    id = 4140
+
+
 class Onion(Ingredient):
     name = "Zwiebel(n)"
     where = SUPERMARKET
@@ -614,6 +632,12 @@ class ParsleyRoot(Ingredient):
     name = "Petersilienwurzel"
     where = MARKET
     id = 14110
+
+
+class Pear(Ingredient):
+    name = "Birne(n)"
+    where = MARKET
+    id = 14180
 
 
 class PeasAndCarrotsFrozen(Ingredient):
@@ -760,6 +784,12 @@ class Schupfnudeln(Ingredient):
     id = 1020
 
 
+class Sesame(Ingredient):
+    name = "Sesam"
+    where = SUPERMARKET
+    id = 4025
+
+
 class Smetana(Ingredient):
     name = "Schmand"
     where = SUPERMARKET
@@ -904,6 +934,12 @@ class Tzatziki(Ingredient):
     id = 5120
 
 
+class Walnuts(Ingredient):
+    name = "Walnüsse"
+    where = SUPERMARKET
+    id = 4026
+
+
 class WheatFlour(Ingredient):
     name = "Weizenmehl"
     where = SUPERMARKET
@@ -916,6 +952,12 @@ class Wiener(Ingredient):
     id = 6040
 
 
+class WhiteCabbage(Ingredient):
+    name = "Weißkohl"
+    where = MARKET
+    id = 14510
+
+
 class VanillaSugar(Ingredient):
     name = "Vanillezucker"
     where = SUPERMARKET
@@ -926,6 +968,12 @@ class VegetablesFrozen(Ingredient):
     name = "TK-Gemüse (Mix)"
     where = SUPERMARKET
     id = 11040
+
+
+class Yoghurt(Ingredient):
+    name = "Joghurt (Natur)"
+    where = SUPERMARKET
+    id = 5030
 
 
 class Zucchini(Ingredient):

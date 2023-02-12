@@ -15,13 +15,15 @@ from hotshopper.ingredients import (AgaveSyrup, Ajvar, ApplePuree, Asparagus,
                                     ChiliSausage, Coleslaw, CorianderBunch,
                                     CoconutMilk, Cream, CreamCheese,
                                     CremeFraiche, CroquettesFrozen, Cucumber,
+                                    Cumin,
                                     DillFrozen, Egg, EightHerbsFrozen,
                                     FetaCheese, Fishsticks, FlakyPastry,
                                     FriesFrozen,
                                     Garlic, Ginger, GlassNoodles, Gnocchi,
                                     Gorgonzola, GoudaSlices, GratinCheese,
                                     GreenBeansFrozen,
-                                    GreenCurryPaste, GroundMeat, HamCooked,
+                                    GreenCurryPaste, GroundMeat,
+                                    GroundMeatBeef, HamCooked,
                                     HamCubes, HamSlices, HazelnutFlakes,
                                     HazelnutMilled, HokkaidoPumpkin, Kohlrabi,
                                     Leek, Lemon, Lettuce, Lime,
@@ -30,9 +32,10 @@ from hotshopper.ingredients import (AgaveSyrup, Ajvar, ApplePuree, Asparagus,
                                     MaggiFixPepperCreamSchnitzel,
                                     Mascarpone, Maultaschen, Milk, MisoPaste,
                                     MungbeanSproute, NoodlesLinguine,
-                                    NoodlesTagliatelle, NoodlesSpiral, Onion,
+                                    NoodlesTagliatelle, NoodlesSpiral,
+                                    Oatflakes, Onion,
                                     OnionRed, Orange, ParmesanCheese, Parsley,
-                                    ParsleyFrozen, Parsley, ParsleyRoot,
+                                    ParsleyFrozen, ParsleyRoot, Pear,
                                     PeasAndCarrotsFrozen, PeasFrozen,
                                     PepperGreen, PepperRed, PepperRoasted,
                                     PepperYellow, PestoGenovese, Pickles,
@@ -43,7 +46,7 @@ from hotshopper.ingredients import (AgaveSyrup, Ajvar, ApplePuree, Asparagus,
                                     RiceBasmati,
                                     RicePudding, Rucola, SaladSauce, Salami,
                                     SandwichCheese, SausageStripes, Savoy,
-                                    ScallionBunch,
+                                    ScallionBunch, Sesame,
                                     Schupfnudeln, Smetana, SourCream,
                                     Sourcrout, SoySauce, SpaetzleCheese,
                                     SpaetzleNoodles, SpaghettiNoodles,
@@ -56,7 +59,9 @@ from hotshopper.ingredients import (AgaveSyrup, Ajvar, ApplePuree, Asparagus,
                                     TomatoPickled, TomatoSauce,
                                     TortelliniDried, Tortilla, TurkeySchnitzel,
                                     Tzatziki, VanillaSugar, VegetablesFrozen,
-                                    WheatFlour, Wiener, Zucchini)
+                                    Walnuts,
+                                    WheatFlour, WhiteCabbage, Wiener, Yoghurt,
+                                    Zucchini)
 from hotshopper.ingredients import piece, gram, Ingredients
 
 
@@ -939,4 +944,35 @@ class PotatoeSalad(Recipe):
         self.name = "Kartoffelsalat (2-3 Portionen)"
         self.ingredients = [
             LowStarchPotatoe(gram, 800)
+        ]
+
+
+class PowerBowl(Recipe):
+    def __init__(self):
+        super().__init__()
+        self.name = "Power-Bowl"
+        self.ingredients = [
+            RiceBasmati(gram, 100),
+            WhiteCabbage(gram, 400),
+            Onion(piece, 1),
+            Carrot(gram, 200),
+            Ginger(piece, 1),
+            SoySauce(gram, 20),
+            AgaveSyrup(gram, 20),
+            GroundMeatBeef(gram, 300),
+            Cumin(gram, 5),
+            Sesame(gram, 10),
+            ChiliPepper(piece, 1)
+        ]
+
+
+class PearWalnutMuesli(Recipe):
+    def __init__(self):
+        super().__init__()
+        self.name = "Birnen-Walnuss-Müsli"
+        self.ingredients = [
+            Pear(piece, 2),
+            Walnuts(gram, 50),
+            Oatflakes(gram, 30),
+            Yoghurt(gram, 500)
         ]
