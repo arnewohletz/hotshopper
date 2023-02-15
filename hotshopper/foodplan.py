@@ -80,13 +80,14 @@ class FoodPlan:
     def _add_recipe(self, recipe: Recipe):
         self.recipes.append(recipe)
 
-        for ri in recipe.ingredients:
-            for shopping_list in self.shopping_lists:
-                if shopping_list.has_location(ri.ingredient.location_id) and
-                    shopping_list.has_week(ri.ingredient):
-                    # TODO: Only add ingredient if shopping list has correct week
-                    shopping_list.add(ri)
-                    break
+        for week in recipe.weeks:
+            for ri in recipe.ingredients:
+                for shopping_list in self.shopping_lists:
+                    if shopping_list.has_location(ri.ingredient.location_id) \
+                        and shopping_list.has_week(week):
+                        # TODO: Only add ingredient if shopping list has correct week
+                        shopping_list.add(ri)
+                        break
             # if self.shopping_listsri.ingredient.location_id in self.shopping_lists.locations.idsupermarket.locations:
             #     for i in range(len(recipe.weeks)):
             #         self.shopping_list_supermarket.add(ri)

@@ -75,6 +75,10 @@ class Controller:
         items = Ingredient.query.filter_by(id=location_id, always_on_list=1).all()
         return items
 
+    def reset_shopping_lists(self):
+        self.shopping_lists = None
+        self.shopping_lists = db.session.query(ShoppingList).all()
+
     def display_shopping_lists(self):
         # self.foodplan = FoodPlan()
         self.foodplan.set_shopping_lists(self.recipes)
@@ -191,6 +195,7 @@ def main(web=True):
 
         @app.route("/show_shopping_list", methods=["POST"])
         def show_shopping_list():
+            controller.reset_shopping_lists()
             recipes = controller.get_recipes()
             food_plan = FoodPlan(controller.shopping_lists)
             food_plan.set_shopping_lists(recipes)

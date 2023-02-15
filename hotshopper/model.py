@@ -1,4 +1,6 @@
 from typing import Union, NewType
+from sqlalchemy import orm
+import copy
 
 from hotshopper import db
 from hotshopper.constants import Unit
@@ -251,7 +253,11 @@ class ShoppingList(db.Model):
     #                             lazy="joined")
     locations = db.relationship("Location", secondary="shopping_list_location",
                             back_populates="shopping_lists")
-    ingredients = []
+
+    ingredients = None
+    @orm.reconstructor  # called after object was loaded from database
+    def initialize(self):
+        self.ingredients = []
     # ingredients = db.relationship("RecipeIngredient",
     #                               backref=db.backref("recipe", lazy=False),
     #                               lazy="joined")
@@ -274,6 +280,14 @@ class ShoppingList(db.Model):
                 return True
         return False
 
+    def has_week(self, week):
+        return week in [week.id for week in self.weeks]
+        # matches = set(week.id for week in self.weeks).intersection(set(*weeks))
+        # if len(matches) > 0:
+        #     return True
+        # else:
+        #     return False
+
     def get_name(self):
         return self.name
 
@@ -291,10 +305,10 @@ class ShoppingList(db.Model):
                 else:
                     existing_ingredient.amount += ingredient.amount
                 return True
-        self.ingredients.append(ShoppingListIngredient(ingredient))
+        # self.ingredients.append(ShoppingListIngredient(ingredient))
         # Copy required since shopping list otherwise alters the ingredient
         # amount in the recipe, when adding them (not nice, I know)
-        # self.append(copy.deepcopy(ingredient))
+        self.ingredients.append(ShoppingListIngredient(copy.deepcopy(ingredient)))
     #
     def sort_ingredients(self):
         self.ingredients.sort(key=lambda ri: ri.order_id)
