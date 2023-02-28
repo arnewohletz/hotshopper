@@ -360,8 +360,8 @@ class Egg(Ingredient):
 
 class FetaCheese(Ingredient):
     name = "Fetakäse"
-    where = SUPERMARKET
-    id = 5500
+    where = MARKET
+    id = 13011
 
 
 class Fishsticks(Ingredient):
@@ -450,8 +450,8 @@ class GroundMeatBeef(Ingredient):
 
 class HamCooked(Ingredient):
     name = "Kochschinken"
-    where = SUPERMARKET
-    id = 6500
+    where = MARKET
+    id = 12063
 
 
 class HamCubes(Ingredient):
@@ -920,6 +920,12 @@ class Tortilla(Ingredient):
     name = "Tortillafladen"
     where = SUPERMARKET
     id = 8170
+
+
+class TurkeyCuts(Ingredient):
+    name = "Putengeschnetzeltes"
+    where =MARKET
+    id = 12031
 
 
 class TurkeySchnitzel(Ingredient):

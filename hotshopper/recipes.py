@@ -57,7 +57,8 @@ from hotshopper.ingredients import (AgaveSyrup, Ajvar, ApplePuree, Asparagus,
                                     ToastbreadWholemeal, Tofu, Tomato,
                                     TomatoPaste,
                                     TomatoPickled, TomatoSauce,
-                                    TortelliniDried, Tortilla, TurkeySchnitzel,
+                                    TortelliniDried, Tortilla, TurkeyCuts,
+                                    TurkeySchnitzel,
                                     Tzatziki, VanillaSugar, VegetablesFrozen,
                                     Walnuts,
                                     WheatFlour, WhiteCabbage, Wiener, Yoghurt,
@@ -446,8 +447,9 @@ class ChiliMascarponeNoodles(Recipe):
         self.ingredients = [
             NoodlesSpiral(gram, 400),
             Mascarpone(gram, 250),
-            HamCooked(piece, 1),
+            HamCooked(gram, 150),
             Cream(piece, 1),
+            ChiliPepper(piece, 1)
         ]
 
 
@@ -475,7 +477,7 @@ class GyrosPita(Recipe):
         super().__init__()
         self.name = "Gyros-Pita"
         self.ingredients = [
-            PorkCuts(gram, 250),
+            TurkeyCuts(gram, 250),
             Tomato(piece, 3),
             Onion(piece, 2),
             Tzatziki(piece, 1),
@@ -778,11 +780,11 @@ class PotatoeGrantinWithSpinach(Recipe):
         super().__init__()
         self.name = "Kartoffelgratin mit Blattspinat (nur WE, SBK S.98)"
         self.ingredients = [
-            SpinachLeafFrozen(gram, 300),
+            SpinachLeafFrozen(gram, 400),
             Onion(piece, 2),
             Garlic(piece, 4),
-            LowStarchPotatoe(gram, 600),
-            Milk(gram, 200),
+            LowStarchPotatoe(gram, 800),
+            Milk(gram, 300),
             Cream(piece, 1)
         ]
 
@@ -962,7 +964,8 @@ class PowerBowl(Recipe):
             GroundMeatBeef(gram, 300),
             Cumin(gram, 5),
             Sesame(gram, 10),
-            ChiliPepper(piece, 1)
+            ChiliPepper(piece, 1),
+            Lemon(piece, 2)
         ]
 
 
