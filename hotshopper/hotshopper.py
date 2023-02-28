@@ -146,7 +146,6 @@ def main(web=True):
             ingredients = controller.get_ingredients()
             recipes = controller.get_recipes()
             locations = controller.get_locations()
-            # TODO: Ingredients must be sorted via order_id (also sections and locations)
             return render_template("shopping_list.html",
                                    locations=locations,
                                    ingredients=ingredients,
@@ -199,6 +198,7 @@ def main(web=True):
             recipes = controller.get_recipes()
             food_plan = FoodPlan(controller.shopping_lists)
             food_plan.set_shopping_lists(recipes)
+            # TODO: Ingredients must be sorted via order_id (also sections and locations)
             return render_template("main_screen.html",
                                    recipes=recipes,
                                    food_plan=food_plan)
