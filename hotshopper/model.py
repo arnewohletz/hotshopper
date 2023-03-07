@@ -25,6 +25,7 @@ class Ingredient(db.Model):
     section_id = db.Column(db.Integer, db.ForeignKey("section.id"))
     always_on_list = db.Column("always_on_list", db.Integer)
     non_food = db.Column("non_food", db.Integer)
+    shopping_list_item = None
 
     def update_order_id(self, order_id):
         self.order_id = order_id
@@ -61,6 +62,9 @@ class Ingredient(db.Model):
             result.append(r.name)
 
         return result
+
+    def has_shopping_list_item(self):
+        return self.shopping_list_item is not None
 
 
 class Recipe(db.Model):
@@ -221,6 +225,26 @@ class Section(db.Model):
         return sorted(self.ingredients,
                       key=lambda ingredient: ingredient.order_id)
 
+    # def add(self, ingredient):
+    #     # TODO: ShoppingListIngredient must be put into shopping_list > location > section
+    #     if ingredient.unit == Unit.PIECE:
+    #         ingredient.amount_piece = ingredient.quantity_per_person
+    #     else:
+    #         ingredient.amount = ingredient.quantity_per_person
+    #
+    #     for existing_ingredient in self.ingredients:
+    #         if ingredient.ingredient.name == existing_ingredient.name:
+    #             if ingredient.unit == Unit.PIECE:
+    #                 # TODO: Add multiplied by 'persons' once added to recipe
+    #                 existing_ingredient.amount_piece += ingredient.amount_piece
+    #             else:
+    #                 existing_ingredient.amount += ingredient.amount
+    #             return True
+    #     # self.ingredients.append(ShoppingListIngredient(ingredient))
+    #     # Copy required since shopping list otherwise alters the ingredient
+    #     # amount in the recipe, when adding them (not nice, I know)
+    #     self.ingredients.append(ShoppingListItem(copy.deepcopy(ingredient)))
+
 
 class ShoppingListLocation(db.Model):
     __tablename__ = "shopping_list_location"
@@ -274,9 +298,9 @@ class ShoppingList(db.Model):
                 return True
             return False
 
-    def has_location(self, id):
+    def has_location(self, location_id):
         for loc in self.locations:
-            if id == loc.id:
+            if location_id == loc.id:
                 return True
         return False
 
@@ -291,24 +315,70 @@ class ShoppingList(db.Model):
     def get_name(self):
         return self.name
 
-    def add(self, ingredient):
-        if ingredient.unit == Unit.PIECE:
-            ingredient.amount_piece = ingredient.quantity_per_person
-        else:
-            ingredient.amount = ingredient.quantity_per_person
 
-        for existing_ingredient in self.ingredients:
-            if ingredient.ingredient.name == existing_ingredient.name:
-                if ingredient.unit == Unit.PIECE:
-                    # TODO: Add multiplied by 'persons' once added to recipe
-                    existing_ingredient.amount_piece += ingredient.amount_piece
-                else:
-                    existing_ingredient.amount += ingredient.amount
-                return True
-        # self.ingredients.append(ShoppingListIngredient(ingredient))
-        # Copy required since shopping list otherwise alters the ingredient
-        # amount in the recipe, when adding them (not nice, I know)
-        self.ingredients.append(ShoppingListIngredient(copy.deepcopy(ingredient)))
+
+    def add(self, recipe_ingredient: RecipeIngredient):
+        # TODO: ShoppingListIngredient must be put into shopping_list > location > section
+        matching_ingredient = None
+        list_item = ShoppingListItem(recipe_ingredient)
+
+        for location in self.locations:
+            for section in location.sections:
+                for ingredient in section.ingredients:
+                    if ingredient.id == recipe_ingredient.ingredient_id:
+                        matching_ingredient = ingredient
+
+        if matching_ingredient.has_shopping_list_item():
+            matching_ingredient.shopping_list_item += list_item
+        else:
+            matching_ingredient.shopping_list_item = list_item
+        return True
+        #
+        # ingredient = Ingredient.query.filter_by(id=recipe_ingredient.ingredient_id)
+        # ingredient = Ingredient.query.filter_by(id=recipe_ingredient.ingredient.location_id).first()
+        #
+        # if not self.list_item:
+        #     self.list_item = ShoppingListItem(recipe_ingredient)
+        #
+        # if self.list_item.unit == Unit.PIECE:
+        #     recipe_ingredient.amount_piece = recipe_ingredient.quantity_per_person
+        # else:
+        #     recipe_ingredient.amount = recipe_ingredient.quantity_per_person
+        #
+        #
+        # for location in self.locations:
+        #     if location.ingredients:
+        #         location.add_ingredient(recipe_ingredient)
+        #         for existing_ing in location.ingredients:
+        #             if existing_ing.id == recipe_ingredient.ingredient_id:
+        #                 existing_ing.amount_piece += recipe_ingredient.amount_piece
+        #                 existing_ing.amount += recipe_ingredient.amount
+        #                 return True
+        #     if location.sections:
+        #         for section in location.sections:
+        #             for existing_ing in section.ingredients:
+        #                 if existing_ing.id == recipe_ingredient.ingredient_id:
+        #                     existing_ing.amount_piece += recipe_ingredient.amount_piece
+        #                     existing_ing.amount += recipe_ingredient.amount
+        #                     return True
+        #             if section.id == recipe_ingredient.section_id:
+        #                 raise NotImplementedError
+        #
+        # for existing_ingredient in self.ingredients:
+        #     if recipe_ingredient.ingredient.name == existing_ingredient.name:
+        #         if recipe_ingredient.unit == Unit.PIECE:
+        #             # TODO: Add multiplied by 'persons' once added to recipe
+        #             # TODO: Add "ShoppingListItem" to Ingredient instance of ShoppingList
+        #             existing_ingredient.amount_piece += recipe_ingredient.amount_piece
+        #             recipe_ingredient.ingredient.shopping_list_item.amount_piece += recipe_ingredient.amount_piece
+        #         else:
+        #             existing_ingredient.amount += recipe_ingredient.amount
+        #             recipe_ingredient.ingredient.shopping_list_item.amount += existing_ingredient.amount
+        #         return True
+        # # self.ingredients.append(ShoppingListIngredient(ingredient))
+        # # Copy required since shopping list otherwise alters the ingredient
+        # # amount in the recipe, when adding them (not nice, I know)
+        # self.ingredients.append(ShoppingListItem(copy.deepcopy(recipe_ingredient)))
     #
     def sort_ingredients(self):
         self.ingredients.sort(key=lambda ri: ri.order_id)
@@ -318,29 +388,46 @@ class ShoppingList(db.Model):
         raise NotImplementedError
 
 
-class ShoppingListIngredient:
+class ShoppingListItem:
     """
     Stripped down, non-database model representation of
     :class:`RecipeIngredient` to be added to :class:`ShoppingList`.
     """
 
     def __init__(self, recipe_ingredient: RecipeIngredient):
+        self.amount_piece = self.amount = 0
+        if recipe_ingredient.unit == Unit.GRAM:
+            self.amount = recipe_ingredient.quantity_per_person
+        if recipe_ingredient.unit == Unit.PIECE:
+            self.amount_piece = recipe_ingredient.quantity_per_person
         self.name = recipe_ingredient.ingredient.name
         self.order_id = recipe_ingredient.ingredient.order_id
         self.unit = recipe_ingredient.unit
-        self.amount = recipe_ingredient.amount
-        self.amount_piece = recipe_ingredient.amount_piece
+        # self.amount = recipe_ingredient.amount
+        # self.amount_piece = recipe_ingredient.amount_piece
 
-    def get_amount(self):
+
+    def __add__(self, other):
+        if self.name is not other.name:
+            raise ValueError(f"Name mismatch: Can't add '{other.name}' to {self.name}")
+        if self.order_id is not other.order_id:
+            raise ValueError(f"Order ID mismatch: Existing item has order id "
+                             f"{self.order_id}, but addend uses {other.order_id}")
+        self.amount += other.amout
+        self.amount_piece += other.amount_piece
+        # TODO: I am caring about the unit here. Might be an issue...
+
+    def print_amounts(self):
+        # TODO: Should return both amount_piece and amount, if both > 0
+        result = ""
         if self.amount_piece > 0:
             if float(self.amount_piece).is_integer():
-                return int(self.amount_piece)
-            else:
-                return self.amount_piece
-        elif self.amount > 0:
+                self.amount_piece = int(self.amount_piece)
+            result = f"{self.amount_piece} St."
+            if self.amount > 0:
+                result += " + "
+        if self.amount > 0:
             if float(self.amount).is_integer():
-                return int(self.amount)
-            else:
-                return self.amount
-        else:
-            return 0
+                self.amount = int(self.amount)
+            result += f"{self.amount} g"
+        return result

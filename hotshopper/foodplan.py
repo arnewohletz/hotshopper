@@ -1,5 +1,5 @@
 from hotshopper.constants import Unit, Location
-from hotshopper.model import Recipe, ShoppingListIngredient, Location, ShoppingList
+from hotshopper.model import Recipe, ShoppingListItem, Location, ShoppingList
 
 
 # class ShoppingList(list):
@@ -87,6 +87,11 @@ class FoodPlan:
                         and shopping_list.has_week(week):
                         # TODO: Only add ingredient if shopping list has correct week
                         shopping_list.add(ri)
+                        # TODO: I have everything here:
+                        #   ri -> ingredient.location_id, ingredient.location.section.id
+                        #   self ->  [shopping_lists].id
+                        #  Must find a way to add ri to the correct shopping_list.location.section
+                        #  so it is already placed correctly for printing shopping list
                         break
             # if self.shopping_listsri.ingredient.location_id in self.shopping_lists.locations.idsupermarket.locations:
             #     for i in range(len(recipe.weeks)):

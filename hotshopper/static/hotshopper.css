@@ -106,6 +106,14 @@ th.shopping_list_header {
     padding: 10px;
 }
 
+.shopping_list_location {
+    font-weight: bold;
+}
+
+.shopping_list_section {
+    font-style: italic;
+}
+
 .noselect {
     -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
@@ -126,7 +134,6 @@ th.shopping_list_header {
 .column_spacer {
     width: 10px;
 }
-
 
 td.spacer {
     min-width: 30px;

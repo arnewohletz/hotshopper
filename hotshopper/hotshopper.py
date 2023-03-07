@@ -1,5 +1,5 @@
 """Main module."""
-from flask import render_template, redirect, session, request, make_response
+from flask import render_template, redirect, session, request, make_response, g
 import json
 from sqlalchemy import func
 from werkzeug.routing import IntegerConverter
@@ -70,6 +70,9 @@ class Controller:
         loc = Location.query.filter_by(id=location_id).first()
         return loc
 
+    def get_shopping_lists(self):
+        return self.foodplan.shopping_lists
+
     @staticmethod
     def get_always_on_list_items(location_id):
         items = Ingredient.query.filter_by(id=location_id, always_on_list=1).all()
@@ -85,13 +88,6 @@ class Controller:
         # self.shopping_lists = self.foodplan.get_shopping_lists()
         self.view.display_shopping_lists(self.shopping_lists)
 
-    def print_shopping_list(self):
-        if not self.shopping_lists:
-            return RuntimeError("No shopping lists existing")
-        for location_list in self.shopping_lists:
-            # items = self.get_always_on_list_items(location_list)
-            location_list.add()
-        # TODO: Implement print_shopping_list() method
 
     @staticmethod
     def get_highest_order_id(model: db.Model, **filters):
@@ -122,6 +118,8 @@ def main(web=True):
         app = create_app(test=False)
         app.url_map.converters['signed_int'] = SignedIntConverter
         controller = Controller()
+
+        # food_plan = None
 
         @app.route("/", methods=["GET", "POST"])
         def show_init_app():
@@ -196,6 +194,7 @@ def main(web=True):
         def show_shopping_list():
             controller.reset_shopping_lists()
             recipes = controller.get_recipes()
+            # nonlocal food_plan
             food_plan = FoodPlan(controller.shopping_lists)
             food_plan.set_shopping_lists(recipes)
             # TODO: Ingredients must be sorted via order_id (also sections and locations)
@@ -224,6 +223,48 @@ def main(web=True):
                                    ingredients=controller.get_ingredients(),
                                    unit=Unit
                                    )
+
+        @app.route("/print_shopping_list", methods=["POST"])
+        def print_shopping_list():
+            # TODO: Must get the food_plan from 'show_shopping_list' method
+            #  -> use some session object??
+            # for location_list in self.shopping_lists:
+            #     # items = self.get_always_on_list_items(location_list)
+            #     location_list.add()
+            # TODO: Implement print_shopping_list() method
+            from reportlab.lib.pagesizes import A4
+            from reportlab.pdfbase import pdfmetrics
+            from reportlab.pdfbase.ttfonts import TTFont
+            from reportlab.pdfgen.canvas import Canvas
+
+            pdfmetrics.registerFont(TTFont("Arial Narrow", "Arial Narrow.ttf"))
+            canvas = Canvas("shopping_list.pdf", pagesize=A4, bottomup=0)
+            canvas.setFont("Arial Narrow", 10)
+
+            current_height = 10
+            # nonlocal food_plan
+            controller.reset_shopping_lists()
+            recipes = controller.get_recipes()
+            food_plan = FoodPlan(controller.shopping_lists)
+            food_plan.set_shopping_lists(recipes)
+            for i, shopping_list in enumerate(food_plan.shopping_lists):
+                current_height += i * 10
+                canvas.drawString(x=10, y=i * 10, text=shopping_list.name)
+                for j, location in enumerate(shopping_list.locations):
+                    current_height += (j + 1) * 10
+                    canvas.drawString(x=10, y=current_height, text=location.name)
+                    for k, section in enumerate(location.sections):
+                        current_height += (k + 1) * 10
+                        canvas.drawString(x=10, y=current_height, text=section.name)
+                        for v, ingredient in enumerate(shopping_list.ingredients.model):
+                            current_height += (v + 1) * 10
+                            text = f"{ingredient.print_amounts()} {ingredient.item} {ingredient.name}"
+                            canvas.drawString(x=10, y=current_height, text=text)
+
+            canvas.save()
+            import subprocess
+            subprocess.Popen(['shopping_list.pdf'], shell=True)
+            return redirect("/show_shopping_list")
 
         @app.route(
             "/confirm_edit_recipe/<int:recipe_id>_<int:amount_ingredients>_<int:scroll_height>",

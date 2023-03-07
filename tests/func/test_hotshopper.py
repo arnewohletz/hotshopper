@@ -16,7 +16,7 @@ def test_add_single_recipe_to_shopping_list():
                    PotatoSoup().ingredients):
                 i = PotatoSoup().ingredients[type(ingredient)]
 
-                assert ingredient.get_amount() == i.get_amount()
+                assert ingredient.print_amounts() == i.print_amounts()
             else:
                 assert False
 
@@ -28,12 +28,12 @@ def test_two_combined_quantities_on_shopping_list():
     onions_amount_recipe = 0
     for recipe in recipes:
         recipe.select(week=1)
-        onions_amount_recipe += recipe.ingredients[Onion].get_amount()
+        onions_amount_recipe += recipe.ingredients[Onion].print_amounts()
 
     for shopping_list in food_plan.get_shopping_lists():
         for ingredient in shopping_list:
             if isinstance(ingredient, Onion):
-                food_plan_onions_amount = ingredient.get_amount()
+                food_plan_onions_amount = ingredient.print_amounts()
                 assert onions_amount_recipe == food_plan_onions_amount
 
 

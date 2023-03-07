@@ -110,9 +110,9 @@ class TestShoppingList:
         sli2 = foodplan.shopping_list_supermarket[0]
 
         assert sli1.name == "ABC"
-        assert sli1.get_amount() == 200
+        assert sli1.print_amounts() == 200
         assert sli2.name == "CBA"
-        assert sli2.get_amount() == 20
+        assert sli2.print_amounts() == 20
 
     def test_gram_piece_amount_are_summed_separately(self, app, setup_teardown,
                                                      td):

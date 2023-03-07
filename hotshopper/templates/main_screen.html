@@ -107,10 +107,10 @@
         </tr>
         <tr>
             <td class="menu_buttons" colspan="2">
-                <button type="button"
-                        id="print_shopping_list"
-                        class="menu_buttons"
-                        onclick="print_shopping_list()">Ausdrucken</button>
+                <form action="/print_shopping_list" method="post">
+                    <input type="submit" id="print_shopping_list"
+                           value="Ausdrucken" >
+                </form>
             </td>
         </tr>
         {% for list in food_plan.get_shopping_lists() %}
@@ -120,19 +120,30 @@
             <td id="no_item" colspan="2">---</td>
         </tr>
         {% endif %}
-        {% for item in list.ingredients %}
+        {% for location in list.locations %}
         <tr>
-            <td>
-                {{ item.get_amount() }}
-                {{ item.unit }}
-            </td>
-            <td class="shopping_list_item_name">
-                {{ item.name }}
-            </td>
+            <td class="shopping_list_location" colspan="2">{{ location.name }}</td>
         </tr>
+        {% for section in location.sections %}
+        {% if section.name == "NONE" %}
+        <div class="no_section"></div>
+        {% else %}
+        <tr>
+            <td class="shopping_list_section">{{ section.name }}</td>
+        </tr>
+        {% endif %}
+        {% for ingredient in section.ingredients %}
+        {% if ingredient.shopping_list_item %}
+        <tr>
+            <td>{{ ingredient.shopping_list_item.print_amounts() }}</td>
+            <td>{{ ingredient.name }}</td>
+        </tr>
+        {% endif %}
         {% endfor %}
         {% endfor %}
-        </td>
+        {% endfor %}
+        {% endfor %}
+
     </table>
     {% endif %}
 </div>
