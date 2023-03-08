@@ -93,25 +93,47 @@ th.shopping_list_header {
     z-index: 10;
 }
 
-.shopping_list table {
+.all_shopping_lists table {
     flex: 1;
+    width: 100%;
 }
 
-.shopping_list {
-    background-color: #ff8989;
+.all_shopping_lists {
+    background-color: lightgrey;
     border-radius: 15px;
     display: flex;
     margin: 0 10px 10px 0;
     max-width: max-content;
     padding: 10px;
 }
-
-.shopping_list_location {
-    font-weight: bold;
+.shopping_list_location th {
+    text-decoration: underline;
+    text-align: center;
+    display: block;
+    width: 100%;
+    padding-bottom: 5px;
 }
 
-.shopping_list_section {
+tr.shopping_list_item {
+    font-style: normal;
+    font-weight: normal;
+    padding-left: 15px;
+    display: block;
+    text-decoration: none;
+}
+
+table.shopping_list_section th {
+    text-align: left;
+    text-decoration: none;
+    font-weight: normal;
     font-style: italic;
+    padding-bottom: 5px;
+    color: dimgrey;
+}
+
+tr.shopping_list_section {
+    font-style: italic;
+    text-decoration: none;
 }
 
 .noselect {

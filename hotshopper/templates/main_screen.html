@@ -101,7 +101,7 @@
         </table>
     </form>
     {% if food_plan %}
-    <table class="shopping_list">
+    <table class="all_shopping_lists">
         <tr>
             <th class="list_header">Einkaufsliste</th>
         </tr>
@@ -114,36 +114,54 @@
             </td>
         </tr>
         {% for list in food_plan.get_shopping_lists() %}
-        <th colspan="2" class="shopping_list_header">{{ list.name }}</th>
-        {% if list.ingredients|length < 1 %}
         <tr>
-            <td id="no_item" colspan="2">---</td>
+            <td>
+            <table class="shopping_list">
+                <tr>
+                    <th colspan="2" class="shopping_list_header">{{ list.name }}</th>
+                </tr>
+                {% if list.ingredients|length < 1 %}
+                <tr>
+                    <td id="no_item" colspan="2">---</td>
+                </tr>
+                {% endif %}
+                {% for location in list.locations %}
+                <tr>
+                    <td colspan="2">
+                    <table class="shopping_list_location">
+                        <tr>
+                            <th colspan="2">{{ location.name }}</th>
+                        </tr>
+                        {% for section in location.sections %}
+                        <tr>
+                            <td>
+                            <table class="shopping_list_section">
+                                {% if section.name == "NONE" %}
+                                {% else %}
+                                <tr>
+                                    <th colspan="2">{{ section.name }}</th>
+                                </tr>
+                                {% endif %}
+                                {% for ingredient in section.ingredients %}
+                                {% if ingredient.shopping_list_item %}
+                                <tr class="shopping_list_item">
+                                    <td>{{ ingredient.shopping_list_item.print_amounts() }}</td>
+                                    <td>{{ ingredient.name }}</td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                            </table>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                    </td>
+                </tr>
+            {% endfor %}
+            </table>
+            </td>
         </tr>
-        {% endif %}
-        {% for location in list.locations %}
-        <tr>
-            <td class="shopping_list_location" colspan="2">{{ location.name }}</td>
-        </tr>
-        {% for section in location.sections %}
-        {% if section.name == "NONE" %}
-        <div class="no_section"></div>
-        {% else %}
-        <tr>
-            <td class="shopping_list_section">{{ section.name }}</td>
-        </tr>
-        {% endif %}
-        {% for ingredient in section.ingredients %}
-        {% if ingredient.shopping_list_item %}
-        <tr>
-            <td>{{ ingredient.shopping_list_item.print_amounts() }}</td>
-            <td>{{ ingredient.name }}</td>
-        </tr>
-        {% endif %}
         {% endfor %}
-        {% endfor %}
-        {% endfor %}
-        {% endfor %}
-
     </table>
     {% endif %}
 </div>
