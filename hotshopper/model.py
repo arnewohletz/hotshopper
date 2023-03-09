@@ -318,7 +318,6 @@ class ShoppingList(db.Model):
 
 
     def add(self, recipe_ingredient: RecipeIngredient):
-        # TODO: ShoppingListIngredient must be put into shopping_list > location > section
         matching_ingredient = None
         list_item = ShoppingListItem(recipe_ingredient)
 
@@ -413,7 +412,7 @@ class ShoppingListItem:
         if self.order_id is not other.order_id:
             raise ValueError(f"Order ID mismatch: Existing item has order id "
                              f"{self.order_id}, but addend uses {other.order_id}")
-        self.amount += other.amout
+        self.amount += other.amount
         self.amount_piece += other.amount_piece
         # TODO: I am caring about the unit here. Might be an issue...
 

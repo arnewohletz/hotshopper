@@ -120,11 +120,6 @@
                 <tr>
                     <th colspan="2" class="shopping_list_header">{{ list.name }}</th>
                 </tr>
-                {% if list.ingredients|length < 1 %}
-                <tr>
-                    <td id="no_item" colspan="2">---</td>
-                </tr>
-                {% endif %}
                 {% for location in list.locations %}
                 <tr>
                     <td colspan="2">
