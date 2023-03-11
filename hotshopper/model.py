@@ -324,12 +324,18 @@ class ShoppingList(db.Model):
                 for ingredient in section.ingredients:
                     if ingredient.id == recipe_ingredient.ingredient_id:
                         matching_ingredient = ingredient
+                        if ingredient.has_shopping_list_item():
+                            ingredient.shopping_list_item += list_item
+                        else:
+                            ingredient.shopping_list_item = list_item
+                        return True
 
-        if matching_ingredient.has_shopping_list_item():
-            matching_ingredient.shopping_list_item += list_item
-        else:
-            matching_ingredient.shopping_list_item = list_item
-        return True
+        raise KeyError(f"Cannot find ingredient entry for {recipe_ingredient.ingredient.name}")
+        # if matching_ingredient.has_shopping_list_item():
+        #     matching_ingredient.shopping_list_item += list_item
+        # else:
+        #     matching_ingredient.shopping_list_item = list_item
+        # return True
         #
         # ingredient = Ingredient.query.filter_by(id=recipe_ingredient.ingredient_id)
         # ingredient = Ingredient.query.filter_by(id=recipe_ingredient.ingredient.location_id).first()
@@ -411,6 +417,7 @@ class ShoppingListItem:
                              f"{self.order_id}, but addend uses {other.order_id}")
         self.amount += other.amount
         self.amount_piece += other.amount_piece
+        return self
         # TODO: I am caring about the unit here. Might be an issue...
 
     def print_amounts(self):
