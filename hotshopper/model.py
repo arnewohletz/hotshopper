@@ -74,7 +74,7 @@ class Recipe(db.Model):
     ingredients = db.relationship("RecipeIngredient",
                                   backref=db.backref("recipe", lazy=False),
                                   lazy="joined")
-    weeks = None
+    weeks: list = None
     selected = False
 
     def __eq__(self, other):
@@ -93,7 +93,7 @@ class Recipe(db.Model):
         self.weeks.remove(week)
         if len(self.weeks) == 0:
             self.selected = False
-            self.weeks = None
+            self.weeks = []
         print(self.name + " is deselected from week " + str(week))
 
     def add_ingredient(self, ingredient: RecipeIngredient):
@@ -315,8 +315,6 @@ class ShoppingList(db.Model):
     def get_name(self):
         return self.name
 
-
-
     def add(self, recipe_ingredient: RecipeIngredient):
         matching_ingredient = None
         list_item = ShoppingListItem(recipe_ingredient)
@@ -404,7 +402,6 @@ class ShoppingListItem:
         self.unit = recipe_ingredient.unit
         # self.amount = recipe_ingredient.amount
         # self.amount_piece = recipe_ingredient.amount_piece
-
 
     def __add__(self, other):
         if self.name is not other.name:

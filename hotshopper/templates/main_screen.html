@@ -118,7 +118,7 @@
             <td>
             <table class="shopping_list">
                 <tr>
-                    <th colspan="2" class="shopping_list_header">{{ list.name }}</th>
+                    <th colspan="2" class="shopping_list_header"> {{ "#"*((32 - list.name|length) / 2)|round|int }} {{ list.name }} {{ "#"*((32 - list.name|length) / 2)|round|int }}</th>
                 </tr>
                 {% for location in list.locations %}
                 <tr>
