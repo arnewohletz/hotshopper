@@ -211,7 +211,7 @@ def main(web=True):
                                    ingredients=ingredients,
                                    unit=Unit)
 
-        @app.route("/edit_recipe/<int:recipe_id>", methods=["POST", "GET"])
+        @app.route("/edit_recipe/<int:recipe_id>")
         def show_edit_recipe_screen(recipe_id):
             recipes = controller.get_recipes()
             recipe = controller.get_recipe(recipe_id)
@@ -224,7 +224,7 @@ def main(web=True):
                                    unit=Unit
                                    )
 
-        @app.route("/print_shopping_list", methods=["POST"])
+        @app.route("/print_shopping_list", methods=["POST", "GET"])
         def print_shopping_list():
             # TODO: Must get the food_plan from 'show_shopping_list' method
             #  -> use some session object??
@@ -236,30 +236,68 @@ def main(web=True):
             from reportlab.pdfbase import pdfmetrics
             from reportlab.pdfbase.ttfonts import TTFont
             from reportlab.pdfgen.canvas import Canvas
+            from reportlab.lib.styles import ParagraphStyle
+            from reportlab.platypus import Paragraph
 
-            pdfmetrics.registerFont(TTFont("Arial Narrow", "Arial Narrow.ttf"))
+            pdfmetrics.registerFont(TTFont("ArialNarrowNormal", "Arial Narrow.ttf"))
+            pdfmetrics.registerFont(TTFont("ArialNarrowBold", "Arial Narrow Bold.ttf"))
+            pdfmetrics.registerFont(TTFont("ArialNarrowItalic", "Arial Narrow Italic.ttf"))
+
+            pdfmetrics.registerFontFamily("ArialNarrow", normal="ArialNarrowNormal",
+                                          bold="ArialNarrowBold",
+                                          italic="ArialNarrowItalic")
             canvas = Canvas("shopping_list.pdf", pagesize=A4, bottomup=0)
-            canvas.setFont("Arial Narrow", 10)
+            canvas.setFont("ArialNarrowNormal", 10)
 
-            current_height = 10
-            # nonlocal food_plan
+            # heading = ParagraphStyle("shopping_list_header", default ={
+            #     'fontSize':12,
+            #     }
+            # )
+
+            # Steps
+            # Go through all shopping list
+            # Go through all location in shopping list
+            # Go through all sections of shopping list
+            # If no ingredient in section contains
+            #  - shopping_list_item
+            #  - or always_on_list
+            # Skip section
+            # If all sections of location are skipped, skip location
+            # If all locations of shopping list are skipped, skip shopping list
+
+            current_height = 20
             controller.reset_shopping_lists()
             recipes = controller.get_recipes()
             food_plan = FoodPlan(controller.shopping_lists)
             food_plan.set_shopping_lists(recipes)
             for i, shopping_list in enumerate(food_plan.shopping_lists):
-                current_height += i * 10
-                canvas.drawString(x=10, y=i * 10, text=shopping_list.name)
+                current_height += 20
+                canvas.setFont("ArialNarrowBold", 14)
+                canvas.drawString(x=10, y=current_height, text=shopping_list.name)
                 for j, location in enumerate(shopping_list.locations):
-                    current_height += (j + 1) * 10
-                    canvas.drawString(x=10, y=current_height, text=location.name)
+                    if location.has_shopping_list_items():
+                        current_height += 15
+                        canvas.setFont("ArialNarrowBold", 12)
+                        canvas.drawString(x=10, y=current_height, text=location.name)
                     for k, section in enumerate(location.sections):
-                        current_height += (k + 1) * 10
-                        canvas.drawString(x=10, y=current_height, text=section.name)
-                        for v, ingredient in enumerate(shopping_list.ingredients.model):
-                            current_height += (v + 1) * 10
-                            text = f"{ingredient.print_amounts()} {ingredient.item} {ingredient.name}"
-                            canvas.drawString(x=10, y=current_height, text=text)
+                        if section.has_shopping_list_items():
+                            if section.name != "NONE":
+                                current_height += 15
+                                canvas.setFont("ArialNarrowItalic", 10)
+                                canvas.drawString(x=10, y=current_height, text=section.name)
+                        for v, ingredient in enumerate(section.ingredients):
+                            canvas.setFont("ArialNarrowNormal", 10)
+                            if ingredient.has_shopping_list_item():
+                                current_height += 12
+                                text = f"{ingredient.shopping_list_item.print_amounts()} {ingredient.name}"
+                                canvas.drawString(x=20, y=current_height, text=text)
+                            elif ingredient.always_on_list:
+                                current_height += 12
+                                canvas.drawString(x=20, y=current_height, text=f"__ {ingredient.name}" )
+                            else:
+                                continue
+                            # if not v == len(section.ingredients) - 1:
+                            #     current_height += 10
 
             canvas.save()
             import subprocess

@@ -63,6 +63,9 @@ class Ingredient(db.Model):
 
         return result
 
+    def must_be_on_list(self):
+        return self.always_on_list or self.has_shopping_list_item()
+
     def has_shopping_list_item(self):
         return self.shopping_list_item is not None
 
@@ -210,6 +213,12 @@ class Location(db.Model):
         self.order_id = order_id
         db.session.commit()
 
+    def has_shopping_list_items(self):
+        for section in self.sections:
+            if section.has_shopping_list_items():
+                return True
+        return False
+
 
 class Section(db.Model):
     __tablename__ = "section"
@@ -224,6 +233,13 @@ class Section(db.Model):
     def get_ingredients(self):
         return sorted(self.ingredients,
                       key=lambda ingredient: ingredient.order_id)
+
+    def has_shopping_list_items(self):
+        for ingredient in self.ingredients:
+            if ingredient.must_be_on_list():
+                return True
+        return False
+
 
     # def add(self, ingredient):
     #     # TODO: ShoppingListIngredient must be put into shopping_list > location > section
@@ -323,8 +339,8 @@ class ShoppingList(db.Model):
             for section in location.sections:
                 for ingredient in section.ingredients:
                     if ingredient.id == recipe_ingredient.ingredient_id:
-                        matching_ingredient = ingredient
-                        if ingredient.has_shopping_list_item():
+                        # matching_ingredient = ingredient
+                        if ingredient.must_be_on_list():
                             ingredient.shopping_list_item += list_item
                         else:
                             ingredient.shopping_list_item = list_item
@@ -421,7 +437,6 @@ class ShoppingListItem:
         # TODO: I am caring about the unit here. Might be an issue...
 
     def print_amounts(self):
-        # TODO: Should return both amount_piece and amount, if both > 0
         result = ""
         if self.amount_piece > 0:
             if float(self.amount_piece).is_integer():
@@ -433,4 +448,7 @@ class ShoppingListItem:
             if float(self.amount).is_integer():
                 self.amount = int(self.amount)
             result += f"{self.amount} g"
-        return result
+        if result == "":
+            return "__"
+        else:
+            return result
