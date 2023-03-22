@@ -190,7 +190,7 @@ def main(web=True):
                     session["scroll_height"] = scroll_height
             return redirect("/")
 
-        @app.route("/show_shopping_list", methods=["POST"])
+        @app.route("/show_shopping_list", methods=["POST", "GET"])
         def show_shopping_list():
             controller.reset_shopping_lists()
             recipes = controller.get_recipes()
@@ -224,7 +224,7 @@ def main(web=True):
                                    unit=Unit
                                    )
 
-        @app.route("/print_shopping_list", methods=["POST", "GET"])
+        @app.route("/print_shopping_list", methods=["POST"])
         def print_shopping_list():
             # TODO: Must get the food_plan from 'show_shopping_list' method
             #  -> use some session object??
@@ -296,8 +296,6 @@ def main(web=True):
                                 canvas.drawString(x=20, y=current_height, text=f"__ {ingredient.name}" )
                             else:
                                 continue
-                            # if not v == len(section.ingredients) - 1:
-                            #     current_height += 10
 
             canvas.save()
             import subprocess
