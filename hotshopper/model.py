@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import Union, NewType
 from sqlalchemy import orm
 import copy
@@ -12,7 +13,7 @@ from hotshopper.errors import (DuplicateIngredientError,
 # used for type hints only
 RecipeIngredient = NewType("RecipeIngredient", None)
 
-
+@dataclass
 class Ingredient(db.Model):
     __tablename__ = "ingredient"
     id = db.Column("id", db.Integer, primary_key=True)
@@ -69,7 +70,7 @@ class Ingredient(db.Model):
     def has_shopping_list_item(self):
         return self.shopping_list_item is not None
 
-
+@dataclass
 class Recipe(db.Model):
     __tablename__ = "recipe"
     id = db.Column(db.Integer, primary_key=True)
@@ -134,7 +135,7 @@ class Recipe(db.Model):
     def save_recipe():
         db.session.commit()
 
-
+@dataclass
 class RecipeIngredient(db.Model):
     __tablename__ = "recipe_ingredient"
     recipe_id = db.Column(db.ForeignKey("recipe.id"),
@@ -196,7 +197,7 @@ class RecipeIngredient(db.Model):
             f"Can't delete ingredient, as it"
             f" is not found in recipe")
 
-
+@dataclass
 class Location(db.Model):
     __tablename__ = "location"
     id = db.Column(db.Integer, primary_key=True)
@@ -206,8 +207,6 @@ class Location(db.Model):
     shopping_lists = db.relationship("ShoppingList",
                                      secondary="shopping_list_location",
                                      back_populates="locations")
-    # ingredients = db.relationship("Ingredient", backref="locationIngredients")
-    # non_food_items = db.relationship("NonFoodItem", backref="locationNonFood")
 
     def update_order_id(self, order_id):
         self.order_id = order_id
@@ -219,7 +218,7 @@ class Location(db.Model):
                 return True
         return False
 
-
+@dataclass
 class Section(db.Model):
     __tablename__ = "section"
     id = db.Column(db.Integer, primary_key=True)
@@ -227,8 +226,6 @@ class Section(db.Model):
     order_id = db.Column(db.Integer)
     location_id = db.Column(db.Integer, db.ForeignKey("location.id"))
     ingredients = db.relationship("Ingredient", backref="section")
-
-    # non_food_items = db.relationship("NonFoodItem", backref="sectionNonFood")
 
     def get_ingredients(self):
         return sorted(self.ingredients,
@@ -261,26 +258,26 @@ class Section(db.Model):
     #     # amount in the recipe, when adding them (not nice, I know)
     #     self.ingredients.append(ShoppingListItem(copy.deepcopy(ingredient)))
 
-
+@dataclass
 class ShoppingListLocation(db.Model):
     __tablename__ = "shopping_list_location"
     shopping_list_id = db.Column(db.Integer, db.ForeignKey("shopping_list.id"), primary_key=True)
     location_id = db.Column(db.Integer, db.ForeignKey("location.id"), primary_key=True)
 
-
+@dataclass
 class ShoppingListWeek(db.Model):
     __tablename__ = "shopping_list_week"
     shopping_list_id = db.Column(db.Integer, db.ForeignKey("shopping_list.id"), primary_key=True)
     week_id = db.Column(db.Integer, db.ForeignKey("week.id"), primary_key=True)
 
-
+@dataclass
 class Week(db.Model):
     __tablename__ = "week"
     id = db.Column(db.Integer, primary_key=True)
     shopping_lists = db.relationship("ShoppingList",
                                      secondary="shopping_list_week",
                                      back_populates="weeks")
-
+@dataclass
 class ShoppingList(db.Model):
     __tablename__ = "shopping_list"
     id = db.Column(db.Integer, primary_key=True)
@@ -293,8 +290,17 @@ class ShoppingList(db.Model):
     #                             lazy="joined")
     locations = db.relationship("Location", secondary="shopping_list_location",
                             back_populates="shopping_lists")
-
     ingredients = None
+    print_columns = db.Column(db.Integer)
+    # print_columns_width = db.Column(db.Integer)
+
+    # TODO: Add print options:
+    #   - Columns total
+    #   - Columns width
+    #   Rule:
+    #   1/2 Columns total <= Columns width <= Columns total
+
+
     @orm.reconstructor  # called after object was loaded from database
     def initialize(self):
         self.ingredients = []
@@ -406,7 +412,7 @@ class ShoppingList(db.Model):
         # TODO: Implement append_always_on_list_items() method
         raise NotImplementedError
 
-
+@dataclass
 class ShoppingListItem:
     """
     Stripped down, non-database model representation of

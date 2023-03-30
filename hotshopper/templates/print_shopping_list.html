@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block shopping_list_print_preview %}
+<script type="text/javascript">
+    food_plan = "{{ food_plan }}"
+</script>
+{% for i, shopping_list in enumerate(food_plan.shopping_lists) %}
+{% if i < 3 %}
+<table id="{{ shopping_list.name }}"
+       style="outline: solid 1pt; width: 65mm; height: 145mm;
+       position: absolute; top: 0mm; left: {{ i * 68 }}mm">
+{% elif 3 <= i <= 5 %}
+<table id="{{ shopping_list.name }}"
+       style="outline: solid 1pt; width: 65mm; height: 145mm;
+       position: absolute; top: 148mm; left: {{ (i-3) * 68 }}mm">>
+{% else %}
+<table>
+    <tr>Liste ist voll!</tr>
+{% endif %}
+    <th colspan="2" style="vertical-align: top; text-align: center">{{
+        shopping_list.name }}
+    </th>
+    {% for j, location in enumerate(shopping_list.locations) %}
+    {% if location.has_shopping_list_items() %}
+    <tr style="font-size: 14pt; font-weight: bold">
+        <td colspan="2">{{ location.name }}</td>
+    </tr>
+    shopping_list.current_row = 0
+    current_height += 20
+    {% for k, section in enumerate(location.sections) %}
+    <tr style="font-style: italic">
+        <td colspan="2">{{ section.name }}</td>
+    </tr>
+    {% if section.has_shopping_list_items %}
+    {% if section.name != "NONE" %}
+    <tr>
+        <td>{{ section.name }}</td>
+    </tr>
+    {% endif %}
+    {% for v, ingredient in enumerate(section.ingredients) %}
+    {% if ingredient.has_shopping_list_item %}
+    <tr>
+        <td>{{ ingredient.shopping_list_item.print_amounts()}}</td>
+        <td>{{ ingredient.name }}</td>
+    </tr>
+    {% elif ingredient.always_on_list %}
+    <tr>
+        <td>___</td>
+        <td>{{ ingredient.name }}</td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+    {% endfor %}
+</table>
+
+{% endfor %}
+
+{% endblock %}

@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from hotshopper.constants import Unit, Location
 from hotshopper.model import Recipe, ShoppingListItem, Location, ShoppingList
 
@@ -45,7 +47,6 @@ from hotshopper.model import Recipe, ShoppingListItem, Location, ShoppingList
     #     # TODO: Implement append_always_on_list_items() method
     #     raise NotImplementedError
 
-
 class FoodPlan:
     def __init__(self, shopping_lists):
         self.recipes = []
@@ -76,6 +77,8 @@ class FoodPlan:
         #                                                              "Metzger",
         #                                                              "Bäcker"])],
         #                                                weeks=[3]),
+    def to_dict(self):
+        return dict(recipes=self.recipes, shopping_lists=self.shopping_lists)
 
     def _add_recipe(self, recipe: Recipe):
         self.recipes.append(recipe)
