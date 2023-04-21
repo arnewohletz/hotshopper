@@ -446,7 +446,7 @@ class ChiliMascarponeNoodles(Recipe):
         self.ingredients = [
             NoodlesSpiral(gram, 400),
             Mascarpone(gram, 250),
-            HamCooked(piece, 1),
+            HamSlices(gram, 200),
             Cream(piece, 1),
         ]
 
@@ -475,7 +475,7 @@ class GyrosPita(Recipe):
         super().__init__()
         self.name = "Gyros-Pita"
         self.ingredients = [
-            PorkCuts(gram, 250),
+            ChickenCuts(gram, 250),
             Tomato(piece, 3),
             Onion(piece, 2),
             Tzatziki(piece, 1),

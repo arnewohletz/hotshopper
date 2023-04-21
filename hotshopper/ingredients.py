@@ -450,7 +450,7 @@ class GroundMeatBeef(Ingredient):
 
 class HamCooked(Ingredient):
     name = "Kochschinken"
-    where = SUPERMARKET
+    where = MARKET
     id = 6500
 
 
@@ -930,8 +930,8 @@ class TurkeySchnitzel(Ingredient):
 
 class Tzatziki(Ingredient):
     name = "Tzatziki"
-    where = SUPERMARKET
-    id = 5120
+    where = MARKET
+    id = 13012
 
 
 class Walnuts(Ingredient):
