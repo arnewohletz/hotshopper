@@ -32,7 +32,6 @@ def create_app(test=False):
     app.app_context().push()
     return app
 
-
 # with Path("hotshopper/recipes.db").resolve() as path:
 #     app.config[
 #         "SQLALCHEMY_DATABASE_URI"] = \

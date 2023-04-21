@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block body %}
-
+<script src="{{ url_for('static', filename='hotshopper.js') }}"></script>
 <script type="text/javascript">
     recipes = "{{ recipes }}"
     scroll_height = "{{ scroll_height }}"

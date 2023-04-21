@@ -1,24 +1,26 @@
 {% extends 'base.html' %}
 
-{% block shopping_list_print_preview %}
+{% block body %}
 <script type="text/javascript">
     food_plan = "{{ food_plan }}"
 </script>
+<script src="{{ url_for('static', filename='print_shopping_list.js') }}"></script>
+<div id="shopping_lists">
 {% for i, shopping_list in enumerate(food_plan.shopping_lists) %}
 {% if i < 3 %}
 <table id="{{ shopping_list.name }}"
        style="outline: solid 1pt; width: 65mm; height: 145mm;
-       position: absolute; top: 0mm; left: {{ i * 68 }}mm">
+       position: relative; top: 0mm; left: 0mm; display: inline-block">
 {% elif 3 <= i <= 5 %}
 <table id="{{ shopping_list.name }}"
        style="outline: solid 1pt; width: 65mm; height: 145mm;
-       position: absolute; top: 148mm; left: {{ (i-3) * 68 }}mm">>
+       position: relative; top: 0mm; left: 0mm">
 {% else %}
 <table>
     <tr>Liste ist voll!</tr>
 {% endif %}
-    <th colspan="2" style="vertical-align: top; text-align: center">{{
-        shopping_list.name }}
+    <th colspan="2" style="vertical-align: top; text-align: center">
+    {{ shopping_list.name }}
     </th>
     {% for j, location in enumerate(shopping_list.locations) %}
     {% if location.has_shopping_list_items() %}
@@ -55,7 +57,9 @@
     {% endif %}
     {% endfor %}
 </table>
-
+</table>
+</table>
 {% endfor %}
+</div>
 
 {% endblock %}

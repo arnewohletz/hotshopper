@@ -5,7 +5,6 @@
     <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='hotshopper.css') }}"/>
     <link rel='stylesheet' href="{{ url_for('static', filename='fontawesome/css/all.css') }}">
     <script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI=" crossorigin="anonymous"></script>
-    <script src="{{ url_for('static', filename='hotshopper.js') }}"></script>
     <script src="{{ url_for('static', filename='sweetalert2.all.min.js') }}"></script>
     {% block scripts %}
     {% endblock %}
@@ -14,7 +13,7 @@
 {% block body %}
 
 {% endblock %}
-<hr>
-<p>Copyright 2021-2023. Arne Wohletz</p>
+<hr id="copyright_ruler">
+<p id="copyright">Copyright 2021-2023. Arne Wohletz</p>
 </body>
 </html>
