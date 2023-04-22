@@ -6,43 +6,40 @@
 </script>
 <script src="{{ url_for('static', filename='print_shopping_list.js') }}"></script>
 <div id="shopping_lists">
-{% for i, shopping_list in enumerate(food_plan.shopping_lists) %}
-{% if i < 3 %}
+{% for shopping_list in food_plan.shopping_lists %}
+{% if loop.index0 < 3 %}
 <table id="{{ shopping_list.name }}"
        style="outline: solid 1pt; width: 65mm; height: 145mm;
        position: relative; top: 0mm; left: 0mm; display: inline-block">
-{% elif 3 <= i <= 5 %}
+{% elif 3 <= loop.index0 <= 5 %}
 <table id="{{ shopping_list.name }}"
        style="outline: solid 1pt; width: 65mm; height: 145mm;
-       position: relative; top: 0mm; left: 0mm">
+       position: relative; top: 0mm; left: 0mm; display: inline-block"">
 {% else %}
 <table>
     <tr>Liste ist voll!</tr>
 {% endif %}
-    <th colspan="2" style="vertical-align: top; text-align: center">
+    <th colspan="2" style="vertical-align: top; text-align: center;
+    font-size: 12pt; text-decoration-line: underline; text-decoration-thickness: 3px">
     {{ shopping_list.name }}
     </th>
-    {% for j, location in enumerate(shopping_list.locations) %}
+    {% for location in shopping_list.locations %}
     {% if location.has_shopping_list_items() %}
-    <tr style="font-size: 14pt; font-weight: bold">
+    <tr style="font-size: 14pt; font-weight: bold; font-size: 12pt">
         <td colspan="2">{{ location.name }}</td>
     </tr>
-    shopping_list.current_row = 0
-    current_height += 20
-    {% for k, section in enumerate(location.sections) %}
-    <tr style="font-style: italic">
-        <td colspan="2">{{ section.name }}</td>
-    </tr>
+
+    {% for section in location.sections %}
     {% if section.has_shopping_list_items %}
     {% if section.name != "NONE" %}
-    <tr>
-        <td>{{ section.name }}</td>
+    <tr style="font-style: italic; font-variant-caps: small-caps;">
+        <td colspan="2">{{ section.name }}</td>
     </tr>
     {% endif %}
-    {% for v, ingredient in enumerate(section.ingredients) %}
-    {% if ingredient.has_shopping_list_item %}
-    <tr>
-        <td>{{ ingredient.shopping_list_item.print_amounts()}}</td>
+    {% for ingredient in section.ingredients %}
+    {% if ingredient.shopping_list_item %}
+    <tr style="font-size: 9pt">
+        <td>{{ ingredient.shopping_list_item.print_amounts() }}</td>
         <td>{{ ingredient.name }}</td>
     </tr>
     {% elif ingredient.always_on_list %}
