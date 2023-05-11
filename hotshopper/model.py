@@ -327,6 +327,7 @@ class ShoppingList(db.Model):
         return False
 
     def has_week(self, week):
+        has_weeks = [week.id for week in self.weeks]
         return week in [week.id for week in self.weeks]
         # matches = set(week.id for week in self.weeks).intersection(set(*weeks))
         # if len(matches) > 0:
