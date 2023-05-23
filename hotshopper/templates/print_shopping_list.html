@@ -23,23 +23,24 @@
     font-size: 12pt; text-decoration-line: underline; text-decoration-thickness: 3px">
     {{ shopping_list.name }}
     </th>
+    {% for week_index in shopping_list.weeks %}
     {% for location in shopping_list.locations %}
-    {% if location.has_shopping_list_items() %}
+    {% if location.has_shopping_list_items(week_index - 1) %}
     <tr style="font-size: 14pt; font-weight: bold; font-size: 12pt">
         <td colspan="2">{{ location.name }}</td>
     </tr>
 
     {% for section in location.sections %}
-    {% if section.has_shopping_list_items %}
+    {% if section.has_shopping_list_items(week_index - 1) %}
     {% if section.name != "NONE" %}
     <tr style="font-style: italic; font-variant-caps: small-caps;">
         <td colspan="2">{{ section.name }}</td>
     </tr>
     {% endif %}
     {% for ingredient in section.ingredients %}
-    {% if ingredient.shopping_list_item %}
+    {% if ingredient.shopping_list_item[week_index - 1] %}
     <tr style="font-size: 9pt">
-        <td>{{ ingredient.shopping_list_item.print_amounts() }}</td>
+        <td>{{ ingredient.shopping_list_item[week_index - 1].print_amounts() }}</td>
         <td>{{ ingredient.name }}</td>
     </tr>
     {% elif ingredient.always_on_list %}
@@ -52,6 +53,7 @@
     {% endif %}
     {% endfor %}
     {% endif %}
+    {% endfor %}
     {% endfor %}
 </table>
 </table>

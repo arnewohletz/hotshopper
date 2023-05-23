@@ -75,10 +75,15 @@ class Ingredient(db.Model):
         return result
 
     def must_be_on_list(self):
-        return self.always_on_list
+        if self.always_on_list:
+            return True
+        # if has_shopping_list_item()
         # return self.always_on_list or self.has_shopping_list_item(week_index)
 
-    def already_has_shopping_list_item(self, week_index):
+    # def has_shopping_list_item(self, week_index):
+    #     return self.has_shopping_list_item(week_index)
+
+    def has_shopping_list_item(self, week_index):
         return self.shopping_list_item[week_index] is not None
 
 @dataclass
@@ -227,14 +232,13 @@ class Location(db.Model):
         for section in self.existing_sections:
             self.sections.append(Section(section.name, section.order_id))
 
-
     def update_order_id(self, order_id):
         self.order_id = order_id
         db.session.commit()
 
-    def has_shopping_list_items(self):
+    def has_shopping_list_items(self, week_index):
         for section in self.sections:
-            if section.has_shopping_list_items():
+            if section.has_shopping_list_items(week_index):
                 return True
         return False
 
@@ -255,9 +259,11 @@ class Section(db.Model):
         return sorted(self.ingredients,
                       key=lambda ingredient: ingredient.order_id)
 
-    def has_shopping_list_items(self):
+    def has_shopping_list_items(self, week_index):
         for ingredient in self.ingredients:
             if ingredient.must_be_on_list():
+                return True
+            if ingredient.has_shopping_list_item(week_index):
                 return True
         return False
 
@@ -398,15 +404,16 @@ class ShoppingList:
                 for ingredient in section.ingredients:
                     if ingredient.id == recipe_ingredient.ingredient_id:
                         # matching_ingredient = ingredient
+                        week_index = self.weeks[0] - 1
                         if ingredient.must_be_on_list():
-                            ingredient.shopping_list_item[self.weeks[0] - 1] = list_item
+                            ingredient.shopping_list_item[week_index] = list_item
                             # TODO: Add a week_x attribute to ingredient, one for each entry in self.weeks
-                        if ingredient.already_has_shopping_list_item(week_index=self.weeks[0] - 1):
+                        if ingredient.has_shopping_list_item(week_index=week_index):
                             #
                             # if ingredient.shopping_list_item[self.weeks[0]-1]:
-                            ingredient.shopping_list_item[self.weeks[0]-1] += list_item
+                            ingredient.shopping_list_item[week_index] += list_item
                         else:
-                            ingredient.shopping_list_item[self.weeks[0] - 1] = list_item
+                            ingredient.shopping_list_item[week_index] = list_item
                         # else:
                         #     ingredient.shopping_list_item[self.weeks[0]-1] = list_item
                             self.a = ShoppingListItem(recipe_ingredient)
