@@ -1,3 +1,4 @@
+import copy
 from dataclasses import dataclass
 
 from hotshopper.constants import Unit, Location
@@ -115,8 +116,8 @@ class FoodPlan:
 
     def get_shopping_lists(self):
         # Currently, sorting the ingredients is done here - not nice
-        for shopping_list in self.shopping_lists:
-            shopping_list.sort_ingredients()
+        # for shopping_list in self.shopping_lists:
+        #     shopping_list.sort_ingredients()
         return self.shopping_lists
         # self.shopping_list_supermarket.sort_ingredients()
         # self.shopping_list_market_week1.sort_ingredients()
