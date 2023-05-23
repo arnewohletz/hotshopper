@@ -40,11 +40,16 @@
     {% for ingredient in section.ingredients %}
     {% if ingredient.shopping_list_item[week_index - 1] %}
     <tr style="font-size: 9pt">
-        <td>{{ ingredient.shopping_list_item[week_index - 1].print_amounts() }}</td>
+        <td>{{ ingredient.shopping_list_item[week_index - 1].print_amounts() }}
+        {% if ingredient.always_on_list %}
+            + ___
+        {% else %}
+        </td>
+        {% endif %}
         <td>{{ ingredient.name }}</td>
     </tr>
     {% elif ingredient.always_on_list %}
-    <tr>
+    <tr style="font-size: 9pt">
         <td>___</td>
         <td>{{ ingredient.name }}</td>
     </tr>
