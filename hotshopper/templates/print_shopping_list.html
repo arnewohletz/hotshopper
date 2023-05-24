@@ -8,13 +8,15 @@
 <div id="shopping_lists">
 {% for shopping_list in food_plan.shopping_lists %}
 {% if loop.index0 < 3 %}
-<table id="{{ shopping_list.name }}"
+<table class="shopping_list_table" id="{{ shopping_list.name }}"
        style="outline: solid 1pt; width: 65mm; height: 145mm;
-       position: relative; top: 0mm; left: 0mm; display: inline-block">
+       position: relative; top: 0mm; left: 0mm; display: inline-block;
+       overflow: auto">
 {% elif 3 <= loop.index0 <= 5 %}
-<table id="{{ shopping_list.name }}"
+<table class="shopping_list_table" id="{{ shopping_list.name }}"
        style="outline: solid 1pt; width: 65mm; height: 145mm;
-       position: relative; top: 0mm; left: 0mm; display: inline-block">
+       position: relative; top: 0mm; left: 0mm; display: inline-block;
+       overflow: auto">
 {% else %}
 <table>
     <tr>Liste ist voll!</tr>
@@ -24,6 +26,7 @@
     {{ shopping_list.name }}
     </th>
     {% for week_index in shopping_list.weeks %}
+    {% if loop.index0 < 1 %}
     {% for location in shopping_list.locations %}
     {% if location.has_shopping_list_items(week_index - 1) %}
     <tr style="font-size: 14pt; font-weight: bold; font-size: 12pt">
@@ -40,9 +43,9 @@
     {% for ingredient in section.ingredients %}
     {% if ingredient.shopping_list_item[week_index - 1] %}
     <tr style="font-size: 9pt">
-        <td>{{ ingredient.shopping_list_item[week_index - 1].print_amounts() }}
+        <td style="width: 14mm">{{ ingredient.shopping_list_item[week_index - 1].print_amounts() }}
         {% if ingredient.always_on_list %}
-            + ___
+            + ____
         {% else %}
         </td>
         {% endif %}
@@ -50,7 +53,7 @@
     </tr>
     {% elif ingredient.always_on_list %}
     <tr style="font-size: 9pt">
-        <td>___</td>
+        <td>____</td>
         <td>{{ ingredient.name }}</td>
     </tr>
     {% endif %}
@@ -59,6 +62,7 @@
     {% endfor %}
     {% endif %}
     {% endfor %}
+    {% endif %}
     {% endfor %}
 </table>
 </table>
