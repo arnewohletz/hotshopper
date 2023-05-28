@@ -262,3 +262,8 @@ tbody.header, td#no_item {
 td.show_sections {
     float: right;
 }
+
+
+div.shopping_list_content p {
+    margin: 0;
+}

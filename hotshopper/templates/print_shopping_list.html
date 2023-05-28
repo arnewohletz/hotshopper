@@ -4,70 +4,65 @@
 <script type="text/javascript">
     food_plan = "{{ food_plan }}"
 </script>
-<script src="{{ url_for('static', filename='print_shopping_list.js') }}"></script>
-<div id="shopping_lists">
-{% for shopping_list in food_plan.shopping_lists %}
-{% if loop.index0 < 3 %}
-<table class="shopping_list_table" id="{{ shopping_list.name }}"
-       style="outline: solid 1pt; width: 65mm; height: 145mm;
-       position: relative; top: 0mm; left: 0mm; display: inline-block;
-       overflow: auto">
-{% elif 3 <= loop.index0 <= 5 %}
-<table class="shopping_list_table" id="{{ shopping_list.name }}"
-       style="outline: solid 1pt; width: 65mm; height: 145mm;
-       position: relative; top: 0mm; left: 0mm; display: inline-block;
-       overflow: auto">
-{% else %}
-<table>
-    <tr>Liste ist voll!</tr>
-{% endif %}
-    <th colspan="2" style="vertical-align: top; text-align: center;
-    font-size: 12pt; text-decoration-line: underline; text-decoration-thickness: 3px">
-    {{ shopping_list.name }}
-    </th>
-    {% for week_index in shopping_list.weeks %}
-    {% if loop.index0 < 1 %}
-    {% for location in shopping_list.locations %}
-    {% if location.has_shopping_list_items(week_index - 1) %}
-    <tr style="font-size: 14pt; font-weight: bold; font-size: 12pt">
-        <td colspan="2">{{ location.name }}</td>
-    </tr>
-
-    {% for section in location.sections %}
-    {% if section.has_shopping_list_items(week_index - 1) %}
-    {% if section.name != "NONE" %}
-    <tr style="font-style: italic; font-variant-caps: small-caps;">
-        <td colspan="2">{{ section.name }}</td>
-    </tr>
-    {% endif %}
-    {% for ingredient in section.ingredients %}
-    {% if ingredient.shopping_list_item[week_index - 1] %}
-    <tr style="font-size: 9pt">
-        <td style="width: 14mm">{{ ingredient.shopping_list_item[week_index - 1].print_amounts() }}
-        {% if ingredient.always_on_list %}
-            + ____
-        {% else %}
-        </td>
-        {% endif %}
-        <td>{{ ingredient.name }}</td>
-    </tr>
-    {% elif ingredient.always_on_list %}
-    <tr style="font-size: 9pt">
-        <td>____</td>
-        <td>{{ ingredient.name }}</td>
-    </tr>
-    {% endif %}
+<script
+    src="{{ url_for('static', filename='print_shopping_list.js') }}"></script>
+<div id="shopping_lists" style="display: inline-block;">
+    {% for shopping_list in food_plan.shopping_lists %}
+    <div class="shopping_list_table" id="{{ shopping_list.name }}"
+         style="width: fit-content; display: inline-block; margin-top: 3mm">
+        <div class="shopping_list_name" style="vertical-align: top; text-align: center;
+        font-size: 12pt; text-decoration-line: underline; text-decoration-thickness: 3px;
+        position: relative; top: 0; left: 0; margin-bottom: 10px">
+        {{ shopping_list.name }}
+        </div>
+        <div class="shopping_list_content" style=" height: 135mm;
+            position: relative; top: 0; left: 0; display: inline-block;
+            overflow: auto; columns: 1">
+            {% for week_index in shopping_list.weeks %}
+            {% if loop.index0 < 1 %}
+            {% for location in shopping_list.locations %}
+            {% if location.has_shopping_list_items(week_index - 1) %}
+            <p style="font-size: 12pt; font-weight: bold">- {{
+                location.name }} -</p>
+            {% for section in location.sections %}
+            {% if section.has_shopping_list_items(week_index - 1) %}
+            {% if section.name != "NONE" %}
+            <p>
+            <p style="font-size: 11pt; font-weight: bold; font-variant-caps: small-caps;">
+                {{ section.name }}</p>
+            </p>
+            {% endif %}
+            {% for ingredient in section.ingredients %}
+            {% if ingredient.shopping_list_item[week_index - 1] %}
+            <p style="font-size: 9pt; width: 60mm">
+                <a style="width: 12mm; display: inline-block; vertical-align: middle">
+                    {{ ingredient.shopping_list_item[week_index -
+                    1].print_amounts() }}
+                    {% if ingredient.always_on_list %}
+                    + ____
+                    {% else %}
+                    {% endif %}
+                </a>
+                <a>
+                    {{ ingredient.name }}
+                </a>
+                {% elif ingredient.always_on_list %}
+            <p style="font-size: 9pt; width: 60mm">
+                <a class="amount"
+                   style="width: 12mm; display: inline-block; vertical-align: middle">____</a>
+                <a>{{ ingredient.name }}</a>
+            </p>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
     {% endfor %}
-    {% endif %}
-    {% endfor %}
-    {% endif %}
-    {% endfor %}
-    {% endif %}
-    {% endfor %}
-</table>
-</table>
-</table>
-{% endfor %}
 </div>
 
 {% endblock %}
