@@ -33,10 +33,17 @@ class Ingredient(db.Model):
     def _initialize(self):
         self.shopping_list_item = [None, None, None]
 
-    def __init__(self, name, order_id):
-        self.name = name
-        self.order_id = order_id
-        self.shopping_list_item = [None, None, None]
+    # DON'T NEED THE __INIT__() METHOD ON MODEL CLASSES -> DELETE LATER
+    #
+    # def __init__(self, name, order_id, always_on_list, location_id,
+    #              section_id = None, non_food=False):
+    #     self.name = name
+    #     self.always_on_list = always_on_list,
+    #     self.location_id = location_id,
+    #     self.section_id = section_id,
+    #     self.non_food = non_food,
+    #     self.order_id = order_id
+    #     self.shopping_list_item = [None, None, None]
 
     def update_order_id(self, order_id):
         self.order_id = order_id
@@ -47,13 +54,14 @@ class Ingredient(db.Model):
     def add(self):
         exists = Ingredient.query.filter_by(
             name=self.name).first()
-        if exists:
+        if exists is not None:
             raise DuplicateIngredientError("Ingredient with the same "
                                            "name already exists. Choose "
                                            "different name!")
         else:
             db.session.add(self)
             db.session.commit()
+            db.session.flush()    # probably not needed
 
     def delete(self):
         ingredient = Ingredient.query.filter_by(id=self.id).first()
@@ -64,6 +72,8 @@ class Ingredient(db.Model):
             db.session.delete(ri)
         db.session.commit()
 
+    def update(self):
+        raise NotImplementedError
 
     def used_by(self) -> list:
         result = []

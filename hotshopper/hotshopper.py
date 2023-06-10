@@ -100,6 +100,11 @@ class Controller:
                 self.recipes.remove(recipe)
         return sorted(self.recipes, key=lambda recipe: recipe.name.lower())
 
+    @staticmethod
+    def get_ingredient(name):
+        ingredient = db.session.query(Ingredient).filter_by(name=name).first()
+        return ingredient
+
     def get_ingredients(self):
         self.ingredients = db.session.query(Ingredient).all()
         return sorted(self.ingredients,
@@ -331,7 +336,7 @@ def main(web=True):
             "/confirm_edit_recipe/<int:recipe_id>_<int:amount_ingredients>_"
             "<int:scroll_height>",
             methods=["POST"])
-        def edit_recipe(recipe_id, amount_ingredients, scroll_height):
+        def confirm_edit_recipe(recipe_id, amount_ingredients, scroll_height):
 
             r_name = request.form[f"recipe_name"]
             recipe = Recipe.query.filter_by(id=recipe_id).first()
@@ -471,7 +476,7 @@ def main(web=True):
                                                                    section_id=section_id)
 
             i = Ingredient(name=name, always_on_list=always_on_list,
-                           where="",
+                           location_id=location_id,
                            section_id=section_id,
                            non_food=bool_to_int(non_food),
                            order_id=current_max_order_id + 1)
@@ -485,6 +490,59 @@ def main(web=True):
                 return response
 
             return redirect("/ingredients")
+
+        @app.route("/confirm_edit_ingredient/"
+                   "<int:ingredient_id>_"
+                   "<int:location_id>_"
+                   "<signed_int:section_order_id>_"
+                   "<string:non_food>", methods=["POST", "GET"])
+        def confirm_edit_ingredient(ingredient_id, location_id, section_order_id, non_food):
+
+            def bool_to_int(s: str) -> int:
+                if s.lower() == "true":
+                    return 1
+                elif s.lower() == "false":
+                    return 0
+                else:
+                    var_name = f'{s=}'.split('=')[0]
+                    raise ValueError(f"'{var_name}' has illegal value: ${s}")
+
+            form = json.loads(str(request.data, "utf-8"))
+            name = form["ingredient_name"]
+
+            always_on_list = bool_to_int(form["always_on_list"])
+            section_id = controller.get_section_id(location_id,
+                                                   section_order_id)
+
+            existing_ingredient = Ingredient.query.filter_by(id=ingredient_id).first()
+
+            # if location_id != existing_ingredient.location_id \
+            #     or section_id is not existing_ingredient.section_id:
+            #
+            #     section_order_id = controller.get_highest_order_id(Ingredient,
+            #                                                section_id=section_id)
+
+            try:
+                # TODO: add update method to Ingredient model class
+                existing_ingredient.name = name
+                existing_ingredient.location_id = location_id
+                existing_ingredient.order_id = section_order_id
+                existing_ingredient.section_id = section_id
+                existing_ingredient.always_on_list = always_on_list
+                existing_ingredient.non_food = bool_to_int(non_food)
+
+                db.session.commit()
+                # TODO: UPDATE DOES NOT WORK! NOT WRITTEN TO DATABASE
+
+            except DuplicateIngredientError:
+                response = make_response()
+                response.status = 409
+                response.header = "Duplicate Ingredient Error"
+                return response
+
+            return redirect("/ingredients")
+
+
 
         @app.route(
             "/update_ingredient_order/<int:location_id>/<int:section_id"

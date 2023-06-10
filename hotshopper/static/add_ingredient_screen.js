@@ -10,11 +10,13 @@ function init() {
 
     decide_display_section(0);
 
-    if (edit) {
-        document.getElementById("edit_add_ingredient_headline").innerText="Zutat bearbeiten";
-    } else {
-        document.getElementById("edit_add_ingredient_headline").innerText="Neue Zutat";
-    }
+    // TODO: Add edit mode + uncomment
+    // if (edit) {
+    //     document.getElementById("edit_add_ingredient_headline").innerText="Zutat bearbeiten";
+    // } else {
+    //     document.getElementById("edit_add_ingredient_headline").innerText="Neue Zutat";
+    // }
+    document.getElementById("ingredient_headline").innerText="Neue Zutat";
 
     if (SELECTED_LOCATION_ID >= 0) {
         decide_display_section(SELECTED_LOCATION_ID)

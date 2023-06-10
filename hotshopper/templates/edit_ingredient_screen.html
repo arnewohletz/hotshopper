@@ -1,17 +1,19 @@
 {% extends 'ingredients.html' %}
 
-{% block add_ingredient_screen %}
+{% block edit_ingredient_screen %}
 <script type="text/javascript">
+    ingredient = "{{ ingredient }}"
     ingredients = "{{ ingredients }}"
     locations = "{{ locations }}"
+    section = "{{ section }}"
     selected_location_id = "{{ location.id }}"
 </script>
-<script src="{{ url_for('static', filename='add_ingredient_screen.js') }}"></script>
+<script src="{{ url_for('static', filename='edit_ingredient_screen.js') }}"></script>
 
 <div id="ingredient_screen" class="ontop_screen">
     <form method="POST" id="ingredient_form" action="placeholder">
-        <h2 id="ingredient_headline">
-            <td>Neue Zutat</td>
+        <h2 id="edit_ingredient_headline">
+            <td>Zutat bearbeiten</td>
         </h2>
         <div>
             <table>
@@ -20,41 +22,33 @@
                         Name:
                     </td>
                     <td colspan="5">
-                        <input style="width: 100%" type="text" id="ingredient_name" name="ingredient_name" required>
+                        <input style="width: 100%" type="text" id="ingredient_name" name="ingredient_name" value="{{ ingredient.name }}" required>
                     </td>
                 </tr>
                 <tr>
                     <td>Einkaufsort:</td>
                     <td>
                         <select id="location" name="location" onchange="set_location()" required>
-                            {% if location %}
-                            <option id="location_placeholder">-- Bitte Ort auswählen --</option>
+                            <option id="location_placeholder">&#45;&#45; Bitte Ort auswählen &#45;&#45;</option>-->
                             {% for l in locations %}
-                            {% if location.id == l.id %}
-                            <option value="{{ l.name }}" location_id="{{ l.id }}"
-                                    id="location_{{ l.id }}">{{ l.name }}
-                            </option>
-                            {% else %}
+                            {% if l.id == location.id %}
                             <option value="{{ l.name }}" location_id="{{ l.id }}"
                                     id="location_{{ l.id }}" selected>{{ l.name }}
                             </option>
-                            {% endif %}
-                            {% endfor %}
                             {% else %}
-                            <option id="location_placeholder" selected>-- Bitte Ort auswählen --</option>
-                            {% for l in locations %}
                             <option value="{{ l.name }}" location_id="{{ l.id }}"
                                     id="location_{{ l.id }}">{{ l.name }}
                             </option>
-                            {% endfor %}
                             {% endif %}
+                            {% endfor %}
+
                         </select>
                     </td>
                 </tr>
                 {% if locations|length == 0 or location == None %}
                 <div id="selected_location_id" style="display: none;">-1</div>
                 {% else %}
-                <div id="selected_location_id" style="display: none;">{{ selected_location_id }}</div>
+                <div id="selected_location_id" style="display: none;">{{ location.id }}</div>
                 {% endif %}
                 <tr id="section_placeholder" class="section">
                     <td>Sektion:</td>
@@ -68,11 +62,15 @@
                 <tr id="section_{{ location.id }}" class="section">
                     <td>Sektion:</td>
                     <td>
-                        <select id="location_{{ location.id }}_sections" class="section_list" disabled>
+                        <select id="location_{{ location.id }}_sections" class="section_list">
                             <option>-- Bitte Sektion auswählen --</option>
-                            {% for section in location.sections %}
-                            {% if section.id > 0 %}
-                            <option id="section_{{ section.id }}">{{ section.name }}</option>
+                            {% for s in location.sections %}
+                            {% if s.id > 0 %}
+                            {% if s.id == section.id %}
+                            <option id="section_{{ s.id }}" selected>{{ s.name }}</option>
+                            {% else %}
+                            <option id="section_{{ s.id }}">{{ s.name }}</option>
+                            {% endif %}
                             {% endif %}
                             {% endfor %}
                         </select>
@@ -80,16 +78,25 @@
                 </tr>
                 {% endfor %}
                 <tr>
-                    <td>Immer auf Einkaufsliste</td>
+                    <td>Immer auf Einkaufsliste:</td>
                     <td id="always_on_shopping_list">
+                        {% if ingredient.always_on_list == 1 %}
+                        <input type="radio" name="always_on_list" checked value="true">Ja</input>
+                        <input type="radio" name="always_on_list" value="false">Nein</input>
+                        {% else %}
                         <input type="radio" name="always_on_list" value="true">Ja</input>
                         <input type="radio" name="always_on_list" checked value="false">Nein</input>
+                        {% endif %}
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <label for="non_food">Non-Food</label>
-                        <input type="checkbox" id="non_food" name="non_food"></input>
+                        <label for="non_food">Non-Food:</label>
+                        {% if ingredient.non_food == 1 %}
+                        <input type="checkbox" id="non_food" name="non_food" checked>
+                        {% else %}
+                        <input type="checkbox" id="non_food" name="non_food">
+                        {% endif %}
                     </td>
                 </tr>
                 <tr>
@@ -97,7 +104,7 @@
                         <button type="button" id="cancel_ingredient" onclick="cancel_close_add_ingredient()">X</button>
                     </td>
                     <td>
-                        <input type="submit" id="confirm_ingredient" onclick="confirm_add_ingredient()" value="OK">
+                        <input type="submit" id="confirm_ingredient" onclick="confirm_edit_ingredient()" value="OK">
                     </td>
                 </tr>
             </table>

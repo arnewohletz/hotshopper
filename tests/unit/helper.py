@@ -29,7 +29,7 @@ class TestDataGenerator:
         if not name:
             name = get_random_string(10)
         i = Ingredient(id=self.next_ingredient_id, name=name,
-                       order_id=random.randint(1,10000), where=where)
+                       order_id=random.randint(1,10000), location_id=where)
         self.db.session.add(i)
         self.next_ingredient_id += 1
 
