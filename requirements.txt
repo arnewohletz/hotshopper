@@ -1,5 +1,6 @@
-units==0.07
 flask>=2.0.2
-sqlalchemy>=1.4.26
 Flask-SQLAlchemy>=2.5.1
+fontawesomefree==6.4.0
 reportlab>=3.6.12
+sqlalchemy>=1.4.26
+units==0.07
