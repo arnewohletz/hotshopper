@@ -213,7 +213,7 @@ class SignedIntConverter(IntegerConverter):
 
 def main(web=True):
     if web:
-        port = 5001
+        port = 5002
         app = create_app(test=False)
         app.url_map.converters['signed_int'] = SignedIntConverter
         controller = Controller()
