@@ -5,6 +5,9 @@ include LICENSE
 include README.rst
 include requirements.txt
 
+graft hotshopper/templates
+graft hotshopper/static
+
 recursive-include tests *
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
