@@ -5,7 +5,7 @@ from flask import (Flask, render_template, redirect, session)
 
 from hotshopper.foodplan import FoodPlan
 from hotshopper.recipes import Recipe
-from hotshopper.ui import View
+# from hotshopper.ui import View
 
 
 class Controller:
@@ -71,7 +71,7 @@ def main(web=True):
 
         app.run(port=port, debug=True)
 
-    else:
-        view = View()
-        Controller(view)
-        view.mainloop()
+    # else:
+    #     view = View()
+    #     Controller(view)
+    #     view.mainloop()
