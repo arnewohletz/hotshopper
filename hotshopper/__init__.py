@@ -2,7 +2,7 @@
 
 __author__ = "Arne Wohletz"
 __email__ = "arnewohletz@gmx.de"
-__version__ = "0.2.0"
+__version__ = "1.0.0-rc"
 
 import secrets
 from pathlib import Path
