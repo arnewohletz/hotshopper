@@ -37,7 +37,7 @@ setup(
     description="Hotshopper creates a shopping list out of recipes",
     entry_points={
         'console_scripts': [
-            'hotshopper=hotshopper.hotshopper:main',
+            'hotshopper-legacy=hotshopper.hotshopper:main',
         ],
     },
     install_requires=requirements,
@@ -45,7 +45,7 @@ setup(
     long_description=readme + '\n\n' + history,
     include_package_data=True,
     keywords='hotshopper',
-    name='hotshopper',
+    name='hotshopper-legacy',
     packages=find_packages(include=['hotshopper', 'hotshopper.*']),
     setup_requires=setup_requirements,
     test_suite='tests',
