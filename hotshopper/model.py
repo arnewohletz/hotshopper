@@ -99,6 +99,7 @@ class Ingredient(db.Model):
 @dataclass
 class Recipe(db.Model):
     __tablename__ = "recipe"
+    __allow_unmapped__ = True
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     ingredients = db.relationship("RecipeIngredient",

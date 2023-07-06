@@ -4,7 +4,11 @@ include HISTORY.rst
 include LICENSE
 include README.rst
 include requirements.txt
+include hotshopper/constants.json
+include hotshopper/recipes.db
 
+graft hotshopper/templates
+graft hotshopper/static *.js
 recursive-include tests *
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
