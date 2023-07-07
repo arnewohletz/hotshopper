@@ -182,7 +182,10 @@ table#shopping_list_parameters {
 table#edit_locations {
     vertical-align: top;
 }
-
+input.quantity {
+    min-width: 70px;
+    width: fit-content;
+}
 /*#shopping_list_screen {*/
 /*    overflow-x: hidden;*/
 /*    overflow-y: auto;*/
