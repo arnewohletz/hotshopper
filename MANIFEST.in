@@ -7,8 +7,9 @@ include requirements.txt
 include hotshopper/constants.json
 include hotshopper/recipes.db
 
+include hotshopper/static *.js
+
 graft hotshopper/templates
-graft hotshopper/static *.js
 recursive-include tests *
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
