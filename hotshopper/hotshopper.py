@@ -129,7 +129,7 @@ class Controller:
     @staticmethod
     def get_locations():
         ls = Location.query.all()
-        return sorted(ls, key=lambda location: location.order_id)
+        return sorted(ls, key=lambda location: location.id)
 
     @staticmethod
     def get_location(location_id):
