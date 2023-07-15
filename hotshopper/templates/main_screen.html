@@ -140,8 +140,8 @@
                                 {% for ingredient in section.ingredients %}
                                 {% if ingredient.shopping_list_item[list.weeks[0] - 1] %}
                                 <tr class="shopping_list_item">
-                                    <td>{{ ingredient.shopping_list_item[list.weeks[0] - 1].print_amounts() }}</td>
-                                    <td>{{ ingredient.name }}</td>
+                                    <td class="fld_amount">{{ ingredient.shopping_list_item[list.weeks[0] - 1].print_amounts() }}</td>
+                                    <td class="fld_ingredient_name">{{ ingredient.name }}</td>
                                 </tr>
                                 {% endif %}
                                 {% endfor %}
