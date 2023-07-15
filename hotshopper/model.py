@@ -525,18 +525,28 @@ class ShoppingListItem:
         # TODO: I am caring about the unit here. Might be an issue...
 
     def print_amounts(self):
+        """Prints the amount per gram or/and per piece"""
         result = ""
+        if self._is_whole_amount(self.amount_piece):
+            self.amount_piece = int(self.amount_piece)
+        if self._is_whole_amount(self.amount):
+            self.amount = int(self.amount)
+
         if self.amount_piece > 0:
-            if float(self.amount_piece).is_integer():
-                self.amount_piece = int(self.amount_piece)
             result = f"{self.amount_piece} St."
             if self.amount > 0:
-                result += " + "
+                result += f" + {self.amount} g"
+
         if self.amount > 0:
-            if float(self.amount).is_integer():
-                self.amount = int(self.amount)
-            result += f"{self.amount} g"
+            result = f"{self.amount} g"
+            if self.amount_piece > 0:
+                result += f" + {self.amount_piece} St."
+
         if result == "":
             return "__"
         else:
             return result
+
+    @staticmethod
+    def _is_whole_amount(amount):
+        return int(amount % 1) == 0
