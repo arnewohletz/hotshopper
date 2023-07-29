@@ -516,6 +516,8 @@ def main(web=True):
 
             existing_ingredient = Ingredient.query.filter_by(id=ingredient_id).first()
 
+            order_id = controller.get_highest_order_id(Ingredient, section_id=section_id)
+
             # if location_id != existing_ingredient.location_id \
             #     or section_id is not existing_ingredient.section_id:
             #
@@ -526,7 +528,7 @@ def main(web=True):
                 # TODO: add update method to Ingredient model class
                 existing_ingredient.name = name
                 existing_ingredient.location_id = location_id
-                existing_ingredient.order_id = section_order_id
+                existing_ingredient.order_id = order_id + 1
                 existing_ingredient.section_id = section_id
                 existing_ingredient.always_on_list = always_on_list
                 existing_ingredient.non_food = bool_to_int(non_food)
