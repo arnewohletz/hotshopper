@@ -3,6 +3,7 @@
 {% block add_recipe_screen %}
 <script type="text/javascript">
     ingredients = "{{ ingredients }}"
+    unit = "{{ unit }}"
 </script>
 <script src="{{ url_for('static', filename='add_recipe_screen.js') }}"></script>
 
@@ -28,8 +29,8 @@
                                 </td>
                                 <td>
                                     <select id="unit_0" name="unit_0" required>
-                                        <option value="g">g</option>
-                                        <option value="st.">St.</option>
+                                        <option value="g">{{ unit.GRAM }}</option>
+                                        <option value="st.">{{ unit.PIECE }}</option>
                                     </select>
                                 </td>
                                 <td>

@@ -9,6 +9,7 @@
     recipe_ingredients = "{{ recipe_ingredients }}"
     recipe = "{{ recipe }}"
     ingredients = "{{ ingredients }}"
+    unit = "{{ unit }}"
 </script>
 <script src="{{ url_for('static', filename='edit_recipe_screen.js') }}"></script>
 
@@ -35,12 +36,12 @@
                                 </td>
                                 <td>
                                     <select id="unit_{{ loop.index0 }}" name="unit_{{ loop.index0 }}" required>
-                                        {% if ri.unit == "g" %}
-                                            <option value="g" selected>g</option>
-                                            <option value="st.">St.</option>
-                                        {% elif ri.unit == "St." %}
-                                            <option value="g">g</option>
-                                            <option value="st." selected>St.</option>
+                                        {% if ri.unit == unit.GRAM %}
+                                            <option value="g" selected>{{ unit.GRAM }}</option>
+                                            <option value="st.">{{ unit.PIECE }}</option>
+                                        {% elif ri.unit == unit.PIECE %}
+                                            <option value="g">{{ unit.GRAM }}</option>
+                                            <option value="st." selected>{{ unit.PIECE }}</option>
                                         {% endif %}
                                     </select>
                                 </td>
