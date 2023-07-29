@@ -545,7 +545,7 @@ def main(web=True):
 
 
         @app.route(
-            "/update_ingredient_order/<int:location_id>/<int:section_id"
+            "/update_ingredient_order/<int:location_id>/<signed_int:section_id"
             ">/<string:new_ingr_id_order>/<int:scroll_height>")
         def set_new_ingredient_order(location_id, section_id,
                                      new_ingr_id_order, scroll_height):
