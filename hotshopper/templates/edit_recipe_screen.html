@@ -37,11 +37,11 @@
                                 <td>
                                     <select id="unit_{{ loop.index0 }}" name="unit_{{ loop.index0 }}" required>
                                         {% if ri.unit == unit.GRAM %}
-                                            <option value="g" selected>{{ unit.GRAM }}</option>
-                                            <option value="st.">{{ unit.PIECE }}</option>
+                                            <option name="{{ unit.GRAM }}" selected>{{ unit.GRAM }}</option>
+                                            <option name="{{ unit.PIECE }}">{{ unit.PIECE }}</option>
                                         {% elif ri.unit == unit.PIECE %}
-                                            <option value="g">{{ unit.GRAM }}</option>
-                                            <option value="st." selected>{{ unit.PIECE }}</option>
+                                            <option name="{{ unit.GRAM }}">{{ unit.GRAM }}</option>
+                                            <option name="{{ unit.PIECE }}" selected>{{ unit.PIECE }}</option>
                                         {% endif %}
                                     </select>
                                 </td>
