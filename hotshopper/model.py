@@ -416,8 +416,8 @@ class ShoppingList:
                     if ingredient.id == recipe_ingredient.ingredient_id:
                         # matching_ingredient = ingredient
                         week_index = self.weeks[0] - 1
-                        if ingredient.must_be_on_list():
-                            ingredient.shopping_list_item[week_index] = list_item
+                        # if ingredient.must_be_on_list():
+                        #     ingredient.shopping_list_item[week_index] = list_item
                             # TODO: Add a week_x attribute to ingredient, one for each entry in self.weeks
                         if ingredient.has_shopping_list_item(week_index=week_index):
                             #
