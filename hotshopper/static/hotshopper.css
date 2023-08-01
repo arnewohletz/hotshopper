@@ -110,6 +110,7 @@ th.shopping_list_header {
     max-width: max-content;
     padding: 10px;
 }
+
 .shopping_list_location th {
     text-decoration: underline;
     text-align: center;
@@ -124,6 +125,11 @@ tr.shopping_list_item {
     padding-left: 15px;
     display: block;
     text-decoration: none;
+}
+
+table.recipe_screen_table {
+    margin-left: 18px;
+
 }
 
 table.shopping_list_section th {
@@ -190,11 +196,28 @@ input.quantity {
     min-width: 70px;
     width: fit-content;
 }
+
+input#recipe_name {
+    width: 100%;
+    box-sizing: border-box;
+}
+
 /*#shopping_list_screen {*/
 /*    overflow-x: hidden;*/
 /*    overflow-y: auto;*/
 /*    white-space: nowrap;*/
 /*}*/
+
+#add_ingredient_button {
+    float: right;
+    margin-top: 5px;
+    margin-right: 3px;
+}
+
+#recipe_ingredients table {
+    border-collapse: collapse;
+    display: inline-table;
+}
 
 #shopping_list_screen {
     color: #1e1e1e;
@@ -223,6 +246,10 @@ input.quantity {
 #ingredients_screen {
     top: 10%;
     max-height: 80vh;
+}
+
+#recipe_screen_close_buttons {
+    margin-top: 40px;
 }
 
 /*#ingredients_screen.scroll*/

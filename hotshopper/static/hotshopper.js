@@ -128,14 +128,15 @@ function delete_recipe_ingredient(ingredient) {
 
 function add_recipe_ingredient() {
     // get new ingredient index
-    amount_ingredients = document.getElementById("recipe_ingredients").getElementsByClassName("recipe_ingredient").length;
+    amount_ingredients = document.getElementById("recipe_table").getElementsByClassName("recipe_ingredient").length;
 
 
     // add new recipe ingredients nodes
-    let NewRecipeIngredients = document.getElementById("recipe_ingredients");
-    let NewRecipeIngredient = document.createElement("tr");
-    NewRecipeIngredient.setAttribute("class", "recipe_ingredient");
-    NewRecipeIngredient.setAttribute("id", `recipe_ingredient_${amount_ingredients}`);
+    let NewRecipeTable = document.getElementById("recipe_table");
+    let NewRecipeIngredientTable = document.createElement("table");
+    let NewRecipeIngredientRow = document.createElement("tr");
+    NewRecipeIngredientRow.setAttribute("class", "recipe_ingredient");
+    NewRecipeIngredientRow.setAttribute("id", `recipe_ingredient_${amount_ingredients}`);
     let InputQuantityCell = document.createElement("td");
     let UnitCell = document.createElement("td");
     let IngredientCell = document.createElement("td");
@@ -152,7 +153,14 @@ function add_recipe_ingredient() {
     InputQuantity.setAttribute('max', '10000.0');
     InputQuantity.setAttribute('required', "");
 
+    // get empty cell ("Zutaten:") real width
+    let IngredientLabelElement = document.getElementById("label_ingredients");
+    let style = window.getComputedStyle(IngredientLabelElement);
+    let EmptyCellWidth = document.getElementById("label_ingredients").clientWidth - parseFloat(style.paddingLeft) -parseFloat(style.paddingRight);
+
     // create unit node
+    let EmptyCell = document.createElement("td");
+    EmptyCell.setAttribute("style", `width: ${EmptyCellWidth}px`);
     let SelectUnit = document.createElement("select");
     SelectUnit.setAttribute("id", `unit_${amount_ingredients}`);
     SelectUnit.setAttribute("name", `unit_${amount_ingredients}`);
@@ -181,13 +189,15 @@ function add_recipe_ingredient() {
     DeleteIcon.setAttribute("class", "fa-solid fa-trash-can");
 
     // add row node
-    NewRecipeIngredients.appendChild(NewRecipeIngredient);
+    NewRecipeTable.appendChild(NewRecipeIngredientTable);
+    NewRecipeIngredientTable.appendChild(NewRecipeIngredientRow);
 
     // add cell nodes
-    NewRecipeIngredient.appendChild(InputQuantityCell);
-    NewRecipeIngredient.appendChild(UnitCell);
-    NewRecipeIngredient.appendChild(IngredientCell);
-    NewRecipeIngredient.appendChild(DeleteButtonCell);
+    NewRecipeIngredientRow.appendChild(EmptyCell);
+    NewRecipeIngredientRow.appendChild(InputQuantityCell);
+    NewRecipeIngredientRow.appendChild(UnitCell);
+    NewRecipeIngredientRow.appendChild(IngredientCell);
+    NewRecipeIngredientRow.appendChild(DeleteButtonCell);
 
     // fill InputQuantityCell
     InputQuantityCell.appendChild(InputQuantity);
