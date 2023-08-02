@@ -11,18 +11,22 @@
         <table>
             <tr>
                 <td>Zutaten</td>
-                <td id="header_buttons">
-                    <button type="button" id="show_ingredients_screen"
+                <td class="header_buttons">
+                    <button type="button"
+                            id="show_ingredients_screen"
+                            class="header_button"
                             onclick="show_add_ingredient_screen()">Neue Zutat ...
                     </button>
-                    <button type="button" id="close_ingredients_screen"
-                            onclick="close_ingredients_screen()">X
+                    <button type="button"
+                            id="close_ingredients_screen"
+                            class="header_button"
+                            onclick="close_ingredients_screen()">
+                        <i class="fa-solid fa-xmark"></i>
                     </button>
                 </td>
             </tr>
         </table>
     </h2>
-
     <div class="scroll" id="ingredients_table">
         <table>
             {% for i in ingredients %}
@@ -48,9 +52,6 @@
         </table>
     </div>
 </div>
-
-<!--{% block add_edit_ingredient_screen %}-->
-<!--{% endblock %}-->
 
 {% block add_ingredient_screen %}
 {% endblock %}

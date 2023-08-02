@@ -8,18 +8,18 @@
     ingredients = "{{ ingredients }}"
 </script>
 <script src="{{ url_for('static', filename='edit_shopping_list.js') }}"></script>
-<!--<script src="{{ url_for('static', filename='drag_table_elements.js') }}"></script>-->
 <div id="edit_shopping_list_screen" class="ontop_screen">
     <h2>
         <table>
             <tr>
-                <td>
-                    Einkaufsliste bearbeiten
-                </td>
+                <td>Einkaufsliste bearbeiten</td>
                 <td class="spacer"></td>
                 <td class="header_buttons">
-                    <button type="button" id="close_ingredients_screen" class="header_button"
-                            onclick="close_edit_shopping_list_screen()">X
+                    <button type="button"
+                            id="close_ingredients_screen"
+                            class="header_button"
+                            onclick="close_edit_shopping_list_screen()">
+                        <i class="fa-solid fa-xmark"></i>
                     </button>
                 </td>
             </tr>
@@ -47,22 +47,9 @@
                     </table>
                 </div>
             </td>
-<!--            <td>-->
-<!--                <table style="float: right">-->
-<!--                    <tr></tr>-->
-<!--                    {% for location in locations %}-->
-<!--                    <tr>-->
-<!--                        <td>-->
-<!--                            <button>>></button>-->
-<!--                        </td>-->
-<!--                    </tr>-->
-<!--                    {% endfor %}-->
-<!--                </table>-->
-<!--            </td>-->
             <td class="column_spacer"></td>
             <td>
                 <div id="edit_sections">
-<!--                <div id="edit_sections_{{ selected_location.id }}">-->
                     <table id="sections" class="selection" data-index-number="{{ selected_location.id }}">
                         {% if selected_location is not none %}
                         <tr></tr>
@@ -83,25 +70,25 @@
         <tr>
             <td>
                 <button type="button">
-                    +
+                    <i class="fa-solid fa-plus"></i>
                 </button>
                 <button type="button">
-                    Bearb
+                    <i class=" fa-solid fa-pen-to-square"></i>
                 </button>
                 <button type="button">
-                    Lösch
+                    <i class=" fa-solid fa-trash-can"></i>
                 </button>
             </td>
             <td class="column_spacer"></td>
             <td>
                 <button type="button">
-                    +
+                    <i class="fa-solid fa-plus"></i>
                 </button>
                 <button type="button">
-                    Bearb
+                    <i class=" fa-solid fa-pen-to-square"></i>
                 </button>
                 <button type="button">
-                    Lösch
+                    <i class=" fa-solid fa-trash-can"></i>
                 </button>
             </td>
         </tr>

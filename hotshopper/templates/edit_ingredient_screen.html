@@ -12,16 +12,12 @@
 
 <div id="ingredient_screen" class="ontop_screen">
     <form method="POST" id="ingredient_form" action="placeholder">
-        <h2 id="edit_ingredient_headline">
-            <td>Zutat bearbeiten</td>
-        </h2>
-        <div>
+        <h2 id="edit_ingredient_headline">Zutat bearbeiten</h2>
+        <div id="recipe_table">
             <table>
                 <tr>
-                    <td>
-                        Name:
-                    </td>
-                    <td colspan="5">
+                    <td>Name:</td>
+                    <td colspan="3">
                         <input style="width: 100%" type="text" id="ingredient_name" name="ingredient_name" value="{{ ingredient.name }}" required>
                     </td>
                 </tr>
@@ -41,7 +37,6 @@
                             </option>
                             {% endif %}
                             {% endfor %}
-
                         </select>
                     </td>
                 </tr>
@@ -99,15 +94,11 @@
                         {% endif %}
                     </td>
                 </tr>
-                <tr>
-                    <td>
-                        <button type="button" id="cancel_ingredient" onclick="cancel_close_add_ingredient()">X</button>
-                    </td>
-                    <td>
-                        <input type="submit" id="confirm_ingredient" onclick="confirm_edit_ingredient()" value="OK">
-                    </td>
-                </tr>
             </table>
+        </div>
+        <div id="recipe_screen_close_buttons">
+            <button type="button" id="cancel_ingredient" onclick="cancel_close_add_ingredient()">X</button>
+            <input type="submit" id="confirm_ingredient" onclick="confirm_edit_ingredient()" value="OK">
         </div>
     </form>
 </div>
