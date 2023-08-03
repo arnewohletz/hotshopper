@@ -80,7 +80,7 @@
                            onchange="set_selected(this)">
                     {% endif %}
                 </td>
-                <td>
+                <td style="padding-left: 8px">
                     {{recipe.name}}
                     <button type="button" id="edit_recipe/{{recipe.id}}"
                             onclick="edit_recipe(this)">
@@ -122,7 +122,7 @@
                     <td colspan="2">
                     <table class="shopping_list_location">
                         <tr>
-                            <th colspan="2">{{ location.name }}</th>
+                            <th class="shopping_list_location_name" colspan="2">{{ location.name }}</th>
                         </tr>
                         {% for section in location.sections %}
                         <tr>
@@ -131,7 +131,7 @@
                                 {% if section.name == "NONE" %}
                                 {% else %}
                                 <tr>
-                                    <th colspan="2">{{ section.name }}</th>
+                                    <th class="shopping_list_section_name" colspan="2">{{ section.name }}</th>
                                 </tr>
                                 {% endif %}
                                 {% for ingredient in section.ingredients %}

@@ -10,10 +10,17 @@ function init() {
         //     move_overflowing_content_to_new_table(this);
         // });
     }
+
+    let empty_amount_fields = document.getElementsByClassName("print_shopping_list_amount");
+    for (let i= 0; i < empty_amount_fields.length; i++) {
+        let ctx = empty_amount_fields[i].getContext('2d');
+        console.log(`Got'cha, bitch! ${i}`);
+        ctx.fillStyle = "#c6c6c6ff";
+        ctx.fillRect(0, 0, empty_amount_fields[i].width, empty_amount_fields[i].height);
+    }
 }
 
 function move_overflowing_content_to_new_table(list_element) {
-    console.log("Got'cha, bitch!");
     // console.log(list_element.style["columns"]++);
     // console.log(list_element.style["columns"] + 1);
     list_element.style["columns"]++;
