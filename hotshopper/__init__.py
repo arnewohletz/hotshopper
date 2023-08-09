@@ -11,7 +11,6 @@ from pathlib import Path
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-import fontawesomefree
 
 app = Flask(__name__)
 # db = None

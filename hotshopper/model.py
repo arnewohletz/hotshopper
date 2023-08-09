@@ -33,23 +33,9 @@ class Ingredient(db.Model):
     def _initialize(self):
         self.shopping_list_item = [None, None, None]
 
-    # DON'T NEED THE __INIT__() METHOD ON MODEL CLASSES -> DELETE LATER
-    #
-    # def __init__(self, name, order_id, always_on_list, location_id,
-    #              section_id = None, non_food=False):
-    #     self.name = name
-    #     self.always_on_list = always_on_list,
-    #     self.location_id = location_id,
-    #     self.section_id = section_id,
-    #     self.non_food = non_food,
-    #     self.order_id = order_id
-    #     self.shopping_list_item = [None, None, None]
-
     def update_order_id(self, order_id):
         self.order_id = order_id
         db.session.commit()
-        # db.session.add(self)
-        # db.session.flush()
 
     def add(self):
         exists = Ingredient.query.filter_by(
@@ -87,11 +73,6 @@ class Ingredient(db.Model):
     def must_be_on_list(self):
         if self.always_on_list:
             return True
-        # if has_shopping_list_item()
-        # return self.always_on_list or self.has_shopping_list_item(week_index)
-
-    # def has_shopping_list_item(self, week_index):
-    #     return self.has_shopping_list_item(week_index)
 
     def has_shopping_list_item(self, week_index):
         return self.shopping_list_item[week_index] is not None
@@ -343,9 +324,6 @@ class ShoppingList:
 
     def __init__(self, name: str, locations: list, weeks: list,
                  print_columns: int):
-    #     self.name = name
-        # self.locations = locations  # Initialize locations attribute with the provided location
-        # self.print_columns = print_columns
         self.ingredients = None
         self.name = name
         self.locations = locations
@@ -395,13 +373,7 @@ class ShoppingList:
         return False
 
     def has_week(self, week):
-        has_weeks = [week for week in self.weeks]
         return week in [week for week in self.weeks]
-        # matches = set(week.id for week in self.weeks).intersection(set(*weeks))
-        # if len(matches) > 0:
-        #     return True
-        # else:
-        #     return False
 
     def get_name(self):
         return self.name
@@ -414,7 +386,6 @@ class ShoppingList:
             for section in location.sections:
                 for ingredient in section.ingredients:
                     if ingredient.id == recipe_ingredient.ingredient_id:
-                        # matching_ingredient = ingredient
                         week_index = self.weeks[0] - 1
                         # if ingredient.must_be_on_list():
                         #     ingredient.shopping_list_item[week_index] = list_item

@@ -1,11 +1,7 @@
 """Main module."""
-import copy
-from dataclasses import dataclass
-from flask import render_template, redirect, session, request, make_response, \
-    g, jsonify
+from flask import render_template, redirect, session, request, make_response
 import json
 from sqlalchemy import func
-from typing import List
 from werkzeug.routing import IntegerConverter
 
 from hotshopper.errors import (
@@ -17,78 +13,15 @@ from hotshopper.constants import Unit
 from hotshopper.foodplan import FoodPlan
 from hotshopper.model import Recipe, Ingredient, RecipeIngredient, Location, \
     Section, ShoppingList
-# from hotshopper.ui import View
 
 
 class Controller:
-    def __init__(self, view=None):
-        # self.foodplan = None
-
-        # location_supermarket = db.session.query(Location,
-        #                                         name="Supermarkt").first()
-        # location_market = db.session.query(Location, name="Markt").first()
-        # location_bakery = db.session.query(Location, name="Bäckerei").first()
-        # location_butcher = db.session.query(Location, name="Metzger").first()
-
-        # self.existing_shopping_lists = db.session.query(ShoppingList).all()
+    def __init__(self):
         self.reset_shopping_lists()
-        # supermarket_123 = ShoppingList(name="Supermarkt (Woche 1-3)",
-        #                                locations=[Location.query.filter_by(name="Supermarkt").first()],
-        #                                weeks=[1,2,3], print_columns=4)
-        # market_1 = ShoppingList(name="Markt - Woche 1",
-        #                         locations=[Location.query.filter_by(name="Markt").first(),
-        #                                    Location.query.filter_by(name="Metzger").first(),
-        #                                    Location.query.filter_by(name="Bäckerei").first()],
-        #                         weeks=[1], print_columns=1)
-        # market_2 = ShoppingList(name="Markt - Woche 2",
-        #                         locations=[Location.query.filter_by(name="Markt").first(),
-        #                                    Location.query.filter_by(name="Metzger").first(),
-        #                                    Location.query.filter_by(name="Bäckerei").first()],
-        #                         weeks=[2], print_columns=1)
-        # market_3 = ShoppingList(name="Markt - Woche 3",
-        #                         locations=[Location.query.filter_by(name="Markt").first(),
-        #                                    Location.query.filter_by(name="Metzger").first(),
-        #                                    Location.query.filter_by(name="Bäckerei").first()],
-        #                         weeks=[3], print_columns=1)
-        #
-        # self.shopping_lists = [supermarket_123, market_1, market_2, market_3]
-        # for shopping_list in self.existing_shopping_lists:
-        #     self.shopping_lists.append(shopping_list.__class__(shopping_list.locations))
-            # self.shopping_lists.append(ShoppingList(shopping_list.name,
-            #     db.relationship("Location", secondary="shopping_list_location",
-            #                 back_populates="shopping_lists")))
-            # for location in shopping_list.locations_association:
-            #     shopping_list.locations_association.append(location)
-            # shopping_list.locations_association.append(
-            #     ShoppingList(name=shopping_list.name,
-            #                  # locations=shopping_list.locations,
-            #                  print_columns=shopping_list.print_columns))
-
-        # self.shopping_lists = [ShoppingList(locations=location_supermarket,
-        #                                     name="Supermarkt Woche 1-3",
-        #                                     weeks=1),
-        #                        ShoppingList(locations=[location_butcher,
-        #                                                location_bakery,
-        #                                                location_market],
-        #                                     name="Markt - Woche 1"),
-        #                        ShoppingList(locations=[location_butcher,
-        #                                                location_bakery,
-        #                                                location_market],
-        #                                     name="Markt - Woche 2"),
-        #                        ShoppingList(locations=[location_butcher,
-        #                                                location_bakery,
-        #                                                location_market],
-        #                                     name="Markt - Woche 3"),
-        #                        ]
-
-        # self.shopping_lists = db.session.query(ShoppingList).all()
         self.foodplan = FoodPlan(self.shopping_lists)
-        # self.shopping_lists = None
         self.recipes = []  # make to set() ??
         self.ingredients = []
-        if view:
-            self.view = view
-            self.view.initialize(self, self.get_recipes())
+        self.shopping_lists = []
 
     def get_recipes(self):
         all_recipes = db.session.query(Recipe).all()
@@ -179,13 +112,6 @@ class Controller:
                                 weeks=[3], print_columns=1)
 
         self.shopping_lists = [supermarket_123, market_1, market_2, market_3]
-        # self.shopping_lists = db.session.query(ShoppingList).all()
-
-    def display_shopping_lists(self):
-        # self.foodplan = FoodPlan()
-        self.foodplan.set_shopping_lists(self.recipes)
-        # self.shopping_lists = self.foodplan.get_shopping_lists()
-        self.view.display_shopping_lists(self.shopping_lists)
 
     @staticmethod
     def get_highest_order_id(model: db.Model, **filters):
@@ -217,8 +143,6 @@ def main(web=True):
         app = create_app(test=False)
         app.url_map.converters['signed_int'] = SignedIntConverter
         controller = Controller()
-
-        # food_plan = None
 
         @app.route("/", methods=["GET", "POST"])
         def show_init_app():
@@ -293,13 +217,9 @@ def main(web=True):
         def show_shopping_list():
             controller.reset_shopping_lists()
             recipes = controller.get_recipes()
-            # nonlocal food_plan
             food_plan = FoodPlan(controller.shopping_lists)
             food_plan.set_shopping_lists(recipes)
-            # g.food_plan = food_plan
             controller.foodplan = food_plan
-            # TODO: Ingredients must be sorted via order_id (also sections
-            #  and locations)
             return render_template("main_screen.html",
                                    recipes=recipes,
                                    food_plan=food_plan)
@@ -394,15 +314,6 @@ def main(web=True):
             session["scroll_height"] = scroll_height
             return redirect("/")
 
-        # @app.route("/add_ingredient/<int:location_id>")
-        # def add_ingredient_old(location_id):
-        #     return render_template("add_ingredient_screen.html",
-        #                            ingredients=controller.get_ingredients(),
-        #                            locations=controller.get_locations(),
-        #                            sections=controller.get_sections(
-        #                                location_id)
-        #                            )
-
         @app.route("/ingredients/new")
         def show_add_ingredient_screen():
             # edit = bool(request.args.get("edit"))
@@ -466,7 +377,6 @@ def main(web=True):
                     var_name = f'{s=}'.split('=')[0]
                     raise ValueError(f"'{var_name}' has illegal value: ${s}")
 
-            # data = request
             form = json.loads(str(request.data, "utf-8"))
             name = form["ingredient_name"]
             always_on_list = bool_to_int(form["always_on_list"])
@@ -556,8 +466,7 @@ def main(web=True):
                                               id=section_id).first()
             ingredients = section.get_ingredients()
             current_ingr_id_order = [i.id for i in ingredients]
-            # ingredients = Ingredient.query.filter_by(
-            #     section_id=section_id).all()
+
             for i in range(len(new_ingr_id_order)):
                 if new_ingr_id_order[i] == current_ingr_id_order[i]:
                     continue
@@ -610,15 +519,10 @@ def main(web=True):
             #     {"order_id": new_order_id}, synchronize_session=False)
             # ingredients = Ingredient.query.filter_by(
             #     section_id=section_id).all()
-            db.session.commit()
+            # db.session.commit()
 
             # TODO: Find another way to end function -> refresh
             #  /shopping_list sucks
-            return redirect("/shopping_list")
+            # return redirect("/shopping_list")
 
         app.run(port=port, debug=True)
-
-    # else:
-    #     view = View()
-    #     Controller(view)
-    #     view.mainloop()
