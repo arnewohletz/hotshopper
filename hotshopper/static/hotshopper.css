@@ -14,6 +14,22 @@ h2 {
     padding: 5px 5px 5px 10px;
 }
 
+/* Print special rules */
+
+@media print {
+    h2, h3#print_instruction {
+        display: none;
+    }
+    div.shopping_list_table {
+        break-inside: avoid;
+        page-break-after: auto;
+        border: none !important;
+        padding-left: 3mm !important;
+        margin-bottom: 5mm !important;
+        float: left;
+  }
+}
+
 /* Div */
 
 div.content {
@@ -22,6 +38,26 @@ div.content {
 
 div.invisible {
     color: transparent;
+}
+
+div#shopping_lists {
+    display: inline-block;
+    width: 210mm;
+}
+
+div.shopping_list_content {
+    position: relative;
+    top: 0;
+    left: 0;
+    display: inline-block;
+    column-gap: 2mm;
+}
+
+div.shopping_list_table {
+    border: #1e1e1e solid 1px;
+    margin-bottom: 10px;
+    padding: 5mm;
+    width: fit-content;
 }
 
 div#edit_locations, div#edit_sections {
@@ -275,4 +311,5 @@ input#recipe_name {
 
 div.shopping_list_content p {
     margin: 0;
+    overflow: clip;
 }

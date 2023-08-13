@@ -93,7 +93,7 @@ class Controller:
                                                name="Metzger").first(),
                                            Location.query.filter_by(
                                                name="Bäckerei").first()],
-                                weeks=[1], print_columns=1)
+                                weeks=[1], print_columns=2)
         market_2 = ShoppingList(name="Markt - Woche 2",
                                 locations=[Location.query.filter_by(
                                     name="Markt").first(),
@@ -101,7 +101,7 @@ class Controller:
                                                name="Metzger").first(),
                                            Location.query.filter_by(
                                                name="Bäckerei").first()],
-                                weeks=[2], print_columns=1)
+                                weeks=[2], print_columns=2)
         market_3 = ShoppingList(name="Markt - Woche 3",
                                 locations=[Location.query.filter_by(
                                     name="Markt").first(),
@@ -109,7 +109,7 @@ class Controller:
                                                name="Metzger").first(),
                                            Location.query.filter_by(
                                                name="Bäckerei").first()],
-                                weeks=[3], print_columns=1)
+                                weeks=[3], print_columns=2)
 
         self.shopping_lists = [supermarket_123, market_1, market_2, market_3]
 
