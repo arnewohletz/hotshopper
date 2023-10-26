@@ -43,6 +43,11 @@ class Controller:
         return sorted(self.ingredients,
                       key=lambda ingredient: ingredient.name.lower())
 
+    def get_food_only_ingredients(self):
+        self.ingredients = Ingredient.query.filter(Ingredient.non_food == 0).all()
+        return sorted(self.ingredients,
+                      key=lambda ingredient: ingredient.name.lower())
+
     @staticmethod
     def get_sections(location_id):
         sections = db.session.query(Section).filter_by(
@@ -242,7 +247,8 @@ def main(web=True):
                                    recipes=recipes,
                                    recipe=recipe,
                                    recipe_ingredients=recipe_ingredients,
-                                   ingredients=controller.get_ingredients(),
+                                   # ingredients=controller.get_ingredients(),
+                                   ingredients=controller.get_food_only_ingredients(),
                                    unit=Unit
                                    )
 
@@ -349,7 +355,8 @@ def main(web=True):
             location = Location.query.filter_by(id=section.location_id).first()
             return render_template("edit_ingredient_screen.html",
                                    recipes=controller.get_recipes(),
-                                   ingredients=controller.get_ingredients(),
+                                   # ingredients=controller.get_ingredients(),
+                                   ingredients=controller.get_food_only_ingredients(),
                                    locations=controller.get_locations(),
                                    ingredient=ingredient,
                                    location=location,
