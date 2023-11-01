@@ -8,6 +8,7 @@ include hotshopper/constants.json
 include hotshopper/recipes.db
 
 include hotshopper/static *.js
+recursive-include hotshopper/static/fontawesome-free-* *
 
 graft hotshopper/templates
 recursive-include tests *
