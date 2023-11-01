@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools >= 63.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hotshopper"
+version = "1.0.0rc0"
+description = "Hotshopper creates a shopping list out of recipes"
+requires-python = ">=3.8"
+authors = [
+    { name="Arne Wohletz", email="arnwohletz@gmx.de" },
+]
+readme = "README.rst"
+classifiers = [
+        'Development Status :: 3 - Alpha',
+        'Environment :: Web Environment',
+        'Framework :: Flask',
+        'Intended Audience :: End Users/Desktop',
+        'License :: OSI Approved :: MIT License',
+        'Operating System :: OS Independent',
+        'Natural Language :: German',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
+        'Topic :: Utilities'
+]
+keywords = ['hotshopper', 'shopping', 'recipes']
+license = {file = "LICENSE"}
+urls.homepage = "https://github.com/horsewithnoname1985/hotshopper"
+
+dependencies = [
+    "flask<3",
+    "Flask-SQLAlchemy",
+    "sqlalchemy",
+    "units"
+]
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "build",
+    "flake8",
+    "mypy",
+    "pytest",
+    "wheel"
+]
+
+[project.scripts]
+hotshopper = "hotshopper.hotshopper:main"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ['hotshopper', 'hotshopper.*']

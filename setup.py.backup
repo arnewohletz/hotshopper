@@ -22,17 +22,22 @@ test_requirements = ['pytest>=3', ]
 setup(
     author="Arne Wohletz",
     author_email='arnewohletz@gmx.de',
-    python_requires='>=3.6',
+    python_requires='>=3.8',
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
-        'Intended Audience :: Developers',
+        'Development Status :: 3 - Alpha',
+        'Environment :: Web Environment',
+        'Framework :: Flask',
+        'Intended Audience :: End Users/Desktop',
         'License :: OSI Approved :: MIT License',
-        'Natural Language :: English',
+        'Operating System :: OS Independent',
+        'Natural Language :: German',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
+        'Topic :: Utilities'
     ],
     description="Hotshopper creates a shopping list out of recipes",
     entry_points={
@@ -40,7 +45,7 @@ setup(
             'hotshopper=hotshopper.hotshopper:main',
         ],
     },
-    install_requires=requirements,
+    # install_requires=requirements,
     license="MIT license",
     long_description=readme + '\n\n' + history,
     include_package_data=True,
@@ -51,6 +56,5 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/horsewithnoname1985/hotshopper',
-    version='1.0.0-rc',
-    zip_safe=False,
+    version='1.0.0rc0'
 )
