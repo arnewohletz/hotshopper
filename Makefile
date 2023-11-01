@@ -88,7 +88,7 @@ servedocs: docs ## compile the docs watching for changes
 release: dist ## package and upload a release
 	twine upload dist/*
 
-dist: clean ## builds source and wheel package
+dist: clean ## builds wheel package
 	python -m build --wheel --outdir dist .
 	ls -l dist
 
@@ -106,11 +106,11 @@ install-e: clean ## install the package as editable to the active Python environ
 verify-pip-tools:
 	sh makefile_helper.sh verify-pip-tools
 
-deps-pin-versions: verify-pip-tools
+deps-pin-versions: verify-pip-tools ## Pin version for all dependencies
 	pip-compile --strip-extras -o requirements.txt pyproject.toml
 	pip-compile --strip-extras --extra=dev -o requirements_dev.txt pyproject.toml
 
-deps-upgrade-all: verify-pip-tools
+deps-upgrade-all: verify-pip-tools ## Upgrade and pin version for all dependencies
 	pip-compile \
 		--upgrade \
 		--strip-extras \
@@ -123,8 +123,8 @@ deps-upgrade-all: verify-pip-tools
 		-o requirements_dev.txt \
 		pyproject.toml
 
-deps-install: verify-pip-tools
+deps-install: verify-pip-tools ## Install user dependencies
 	pip-sync requirements.txt
 
-deps-install-dev: verify-pip-tools deps-install
+deps-install-all: verify-pip-tools deps-install ## Install dev & user dependencies
 	pip-sync requirements_dev.txt
