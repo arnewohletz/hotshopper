@@ -1,7 +1,0 @@
-black==21.5b2
-flake8==3.9.2
-mypy==0.812
-pytest==7.1.2
-wheel==0.36.2
-
--r requirements.txt
