@@ -2,7 +2,7 @@ import pytest
 import random
 import string
 
-from hotshopper import db, create_app
+from hotshopper import get_db, get_app
 from hotshopper.constants import Location, Unit
 from hotshopper.foodplan import FoodPlan
 from tests.unit import helper
@@ -22,11 +22,15 @@ def get_random_string(length: int):
 
 @pytest.fixture
 def app():
-    return create_app(test=True)
+    return get_app(test=True)
+
+@pytest.fixture
+def db():
+    return get_db()
 
 
 @pytest.fixture(scope="function")
-def setup_teardown():
+def setup_teardown(db):
     db.create_all()
     yield
     db.session.remove()

@@ -19,7 +19,7 @@ class TestDataGenerator:
         self.next_ingredient_id = 0
 
     def create_recipe(self):
-        r = Recipe(id=self.next_recipe_id,  name=get_random_string(10))
+        r = Recipe(name=get_random_string(10), ingredients=[])
         self.next_recipe_id += 1
         self.db.session.add(r)
 

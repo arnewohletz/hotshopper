@@ -1,7 +1,7 @@
 import pytest
 
 from hotshopper import hotshopper
-from hotshopper import model, db, create_app
+from hotshopper import model, _db, get_app
 from hotshopper.constants import Unit
 from hotshopper.errors import (
     DuplicateRecipeIngredientError,
@@ -11,15 +11,15 @@ from hotshopper.model import Recipe, RecipeIngredient
 
 @pytest.fixture
 def app():
-    return create_app(test=True)
+    return get_app(test=True)
 
 
 @pytest.fixture(scope="function")
 def setup_teardown():
-    db.create_all()
+    _db.create_all()
     yield
-    db.session.remove()
-    db.drop_all()
+    _db.session.remove()
+    _db.drop_all()
 
 
 class TestController:
@@ -33,7 +33,7 @@ class TestController:
         r2.add()
         r3.add()
         r1.delete()
-        db.session.commit()
+        _db.session.commit()
         recipes = controller.get_recipes()
         assert len(recipes) == 2
         assert recipes[0].name in ["TestRecipe2", "TestRecipe3"]
@@ -73,14 +73,14 @@ class TestRecipe:
 
     def test_add_ingredient_to_recipe(self, app, setup_teardown):
         r = model.Recipe(id=1, name="TestRecipe", ingredients=[])
-        db.session.add(r)
+        _db.session.add(r)
         result = RecipeIngredient.query.all()
         assert len(result) == 0
         i = model.Ingredient(id=1, name="TestIngredient")
         ri = model.RecipeIngredient(ingredient_id=r.id, recipe_id=i.id,
                                     quantity_per_person=100, unit=Unit.GRAM)
         r.add_ingredient(ri)
-        db.session.commit()
+        _db.session.commit()
         result = RecipeIngredient.query.filter_by(ingredient_id=1).all()
         assert len(result) == 1
 
@@ -104,9 +104,9 @@ class TestRecipe:
                                     amount=100, unit=Unit.GRAM)
         ri_2 = model.RecipeIngredient(recipe_id=1000, ingredient_id=1,
                                       amount=100, unit=Unit.GRAM)
-        db.session.add(r)
-        db.session.add(ri)
-        db.session.add(ri_2)
+        _db.session.add(r)
+        _db.session.add(ri)
+        _db.session.add(ri_2)
 
         assert len(Recipe.query.all()) == 1
         assert len(RecipeIngredient.query.all()) == 2
@@ -124,7 +124,7 @@ class TestRecipeIngredient:
 
     def test_change_ingredient_quantity_per_person(self, app, setup_teardown):
         r = model.Recipe(id=1, name="TestRecipe", ingredients=[])
-        db.session.add(r)
+        _db.session.add(r)
         i = model.Ingredient(id=1, name="TestIngredient")
         ri = model.RecipeIngredient(ingredient_id=r.id, recipe_id=i.id,
                                     quantity_per_person=100, unit=Unit.GRAM)

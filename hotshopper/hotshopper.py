@@ -1,6 +1,7 @@
 """Main module."""
 from flask import render_template, redirect, session, request, make_response
 import json
+from flask_sqlalchemy.model import Model
 from sqlalchemy import func
 from werkzeug.routing import IntegerConverter
 
@@ -8,7 +9,7 @@ from hotshopper.errors import (
     DuplicateIndexError,
     DuplicateIngredientError
 )
-from hotshopper import db, create_app
+from hotshopper import get_app, get_db
 from hotshopper.constants import Unit
 from hotshopper.foodplan import FoodPlan
 from hotshopper.model import Recipe, Ingredient, RecipeIngredient, Location, \
@@ -17,6 +18,7 @@ from hotshopper.model import Recipe, Ingredient, RecipeIngredient, Location, \
 
 class Controller:
     def __init__(self):
+        self.db = get_db()
         self.reset_shopping_lists()
         self.foodplan = FoodPlan(self.shopping_lists)
         self.recipes = []  # make to set() ??
@@ -24,7 +26,7 @@ class Controller:
         self.shopping_lists = []
 
     def get_recipes(self):
-        all_recipes = db.session.query(Recipe).all()
+        all_recipes = self.db.session.query(Recipe).all()
         for recipe in all_recipes:
             if recipe not in self.recipes:
                 self.recipes.append(recipe)
@@ -33,13 +35,9 @@ class Controller:
                 self.recipes.remove(recipe)
         return sorted(self.recipes, key=lambda recipe: recipe.name.lower())
 
-    @staticmethod
-    def get_ingredient(name):
-        ingredient = db.session.query(Ingredient).filter_by(name=name).first()
-        return ingredient
 
     def get_ingredients(self):
-        self.ingredients = db.session.query(Ingredient).all()
+        self.ingredients = self.db.session.query(Ingredient).all()
         return sorted(self.ingredients,
                       key=lambda ingredient: ingredient.name.lower())
 
@@ -48,11 +46,6 @@ class Controller:
         return sorted(self.ingredients,
                       key=lambda ingredient: ingredient.name.lower())
 
-    @staticmethod
-    def get_sections(location_id):
-        sections = db.session.query(Section).filter_by(
-            location_id=location_id).all()
-        return sorted(sections, key=lambda section: section.order_id)
 
     @staticmethod
     def get_recipe(recipe_id: int):
@@ -87,41 +80,43 @@ class Controller:
         return self.foodplan
 
     def reset_shopping_lists(self):
-        supermarket_123 = ShoppingList(name="Supermarkt (Woche 1-3)",
-                                       locations=[Location.query.filter_by(
-                                           name="Supermarkt").first()],
-                                       weeks=[1, 2, 3], print_columns=4)
-        market_1 = ShoppingList(name="Markt - Woche 1",
-                                locations=[Location.query.filter_by(
-                                    name="Markt").first(),
-                                           Location.query.filter_by(
-                                               name="Metzger").first(),
-                                           Location.query.filter_by(
-                                               name="Bäckerei").first()],
-                                weeks=[1], print_columns=2)
-        market_2 = ShoppingList(name="Markt - Woche 2",
-                                locations=[Location.query.filter_by(
-                                    name="Markt").first(),
-                                           Location.query.filter_by(
-                                               name="Metzger").first(),
-                                           Location.query.filter_by(
-                                               name="Bäckerei").first()],
-                                weeks=[2], print_columns=2)
-        market_3 = ShoppingList(name="Markt - Woche 3",
-                                locations=[Location.query.filter_by(
-                                    name="Markt").first(),
-                                           Location.query.filter_by(
-                                               name="Metzger").first(),
-                                           Location.query.filter_by(
-                                               name="Bäckerei").first()],
-                                weeks=[3], print_columns=2)
+        # supermarket_123 = ShoppingList(name="Supermarkt (Woche 1-3)",
+        #                                locations=[Location.query.filter_by(
+        #                                    name="Supermarkt").first()],
+        #                                weeks=[1, 2, 3], print_columns=4)
+        # market_1 = ShoppingList(name="Markt - Woche 1",
+        #                         locations=[Location.query.filter_by(
+        #                             name="Markt").first(),
+        #                                    Location.query.filter_by(
+        #                                        name="Metzger").first(),
+        #                                    Location.query.filter_by(
+        #                                        name="Bäckerei").first()],
+        #                         weeks=[1], print_columns=2)
+        # market_2 = ShoppingList(name="Markt - Woche 2",
+        #                         locations=[Location.query.filter_by(
+        #                             name="Markt").first(),
+        #                                    Location.query.filter_by(
+        #                                        name="Metzger").first(),
+        #                                    Location.query.filter_by(
+        #                                        name="Bäckerei").first()],
+        #                         weeks=[2], print_columns=2)
+        # market_3 = ShoppingList(name="Markt - Woche 3",
+        #                         locations=[Location.query.filter_by(
+        #                             name="Markt").first(),
+        #                                    Location.query.filter_by(
+        #                                        name="Metzger").first(),
+        #                                    Location.query.filter_by(
+        #                                        name="Bäckerei").first()],
+        #                         weeks=[3], print_columns=2)
+        #
+        # self.shopping_lists = [supermarket_123, market_1, market_2, market_3]
 
-        self.shopping_lists = [supermarket_123, market_1, market_2, market_3]
+        self.shopping_lists = ShoppingList.query.all()
 
-    @staticmethod
-    def get_highest_order_id(model: db.Model, **filters):
+    # @staticmethod
+    def get_highest_order_id(self, model: Model, **filters):
         result = \
-            db.session.query(model, func.max(model.order_id)).filter_by(
+            self.db.session.query(model, func.max(model.order_id)).filter_by(
                 **filters)[
                 0][1]
         if result:
@@ -145,7 +140,7 @@ class SignedIntConverter(IntegerConverter):
 def main(web=True):
     if web:
         port = 5002
-        app = create_app(test=False)
+        app = get_app()
         app.url_map.converters['signed_int'] = SignedIntConverter
         controller = Controller()
 
@@ -264,7 +259,7 @@ def main(web=True):
             methods=["POST"])
         def confirm_edit_recipe(recipe_id, amount_ingredients, scroll_height):
 
-            r_name = request.form[f"recipe_name"]
+            r_name = request.form["recipe_name"]
             recipe = Recipe.query.filter_by(id=recipe_id).first()
             recipe.update(r_name)
 
@@ -285,8 +280,8 @@ def main(web=True):
                                       unit=ri_unit)
                 ri.add()
 
-            db.session.expire_on_commit = False
-            db.session.commit()
+            controller.db.session.expire_on_commit = False
+            controller.db.session.commit()
             session["scroll_height"] = scroll_height
             return redirect("/")
 
@@ -315,27 +310,13 @@ def main(web=True):
                                       unit=ri_unit)
                 ri.add()
 
-            db.session.expire_on_commit = False
-            db.session.commit()
+            controller.db.session.expire_on_commit = False
+            controller.db.session.commit()
             session["scroll_height"] = scroll_height
             return redirect("/")
 
         @app.route("/ingredients/new")
         def show_add_ingredient_screen():
-            # edit = bool(request.args.get("edit"))
-            # if edit:
-            #     ingredients = Ingredient.query.filter_by(
-            #         id=ingredient_id).all()
-            #     if len(ingredients) > 1:
-            #         raise DuplicateIndexError(
-            #             f"Index '{id}' is used more than once."
-            #             f"Also used by {[i.name for i in ingredients]}")
-            #     result = ingredients[0]
-            #     return render_template("add_ingredient_screen.html",
-            #                            recipes=controller.get_recipes(),
-            #                            ingredients=controller.get_ingredients(),
-            #                            locations=controller.get_locations(),
-            #                            ingredient=result)
             return render_template("add_ingredient_screen.html",
                                    recipes=controller.get_recipes(),
                                    ingredients=controller.get_ingredients(),
@@ -355,7 +336,6 @@ def main(web=True):
             location = Location.query.filter_by(id=section.location_id).first()
             return render_template("edit_ingredient_screen.html",
                                    recipes=controller.get_recipes(),
-                                   # ingredients=controller.get_ingredients(),
                                    ingredients=controller.get_food_only_ingredients(),
                                    locations=controller.get_locations(),
                                    ingredient=ingredient,
@@ -450,8 +430,7 @@ def main(web=True):
                 existing_ingredient.always_on_list = always_on_list
                 existing_ingredient.non_food = bool_to_int(non_food)
 
-                db.session.commit()
-                # TODO: UPDATE DOES NOT WORK! NOT WRITTEN TO DATABASE
+                controller.db.session.commit()
 
             except DuplicateIngredientError:
                 response = make_response()

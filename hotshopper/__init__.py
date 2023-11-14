@@ -12,21 +12,19 @@ from pathlib import Path
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
-app = Flask(__name__)
-# db = None
-# db = SQLAlchemy(app, session_options={"autoflush": False})
+_app = Flask(__name__)
 
 if os.environ.get('TEST_MODE', False) is True:
-    app.testing = True
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
+    _app.testing = True
+    _app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
+    _app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
 else:
     with Path(__file__).parent.resolve() / "recipes.db" as path:
-        app.config[
+        _app.config[
             "SQLALCHEMY_DATABASE_URI"] = \
             f"sqlite:///{path}?check_same_thread=False"
-        app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
-    app.secret_key = secrets.token_hex()
+        _app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
+    _app.secret_key = secrets.token_hex()
 
 # with Path(__file__).parent.resolve() / "recipes.db" as path:
 #     print(f"Database path: {path}")
@@ -36,12 +34,12 @@ else:
 #     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
 # app.secret_key = secrets.token_hex()
 
-db = SQLAlchemy(app, session_options={"autoflush": False})
-with app.app_context():
-    db.create_all()
-app.app_context().push()
+_db = SQLAlchemy(_app, session_options={"autoflush": False})
+with _app.app_context():
+    _db.create_all()
+_app.app_context().push()
 
-def create_app(test=False):
+def get_app(test=False):
     # # app = Flask(__name__)
     # if test:
     #     app.testing = True
@@ -59,12 +57,7 @@ def create_app(test=False):
     # db = SQLAlchemy(app, session_options={"autoflush": False})
     # db.create_all()
     # app.app_context().push()
-    return app
+    return _app
 
-# with Path("hotshopper/recipes.db").resolve() as path:
-#     app.config[
-#         "SQLALCHEMY_DATABASE_URI"] = \
-#         f"sqlite:///{path}?check_same_thread=False"
-#     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
-# app.secret_key = secrets.token_hex()
-# db = SQLAlchemy(app)
+def get_db():
+    return _db
