@@ -45,6 +45,7 @@ dev = [
     "flake8",
     "mypy",
     "pytest",
+    "pytest-env",
     "wheel"
 ]
 
@@ -56,3 +57,9 @@ include-package-data = true
 
 [tool.setuptools.packages.find]
 include = ['hotshopper', 'hotshopper.*']
+
+[tool.pytest_env]
+TEST_MODE = "True"
+
+[tool.pytest.ini_options]
+addopts = "--cov=hotshopper.foodplan"
