@@ -1,7 +1,14 @@
 import random
 import string
 
-from hotshopper.model import Recipe, Ingredient, RecipeIngredient
+from hotshopper.model import (
+    Ingredient,
+    Location,
+    Recipe,
+    RecipeIngredient,
+    ShoppingList,
+    Week
+)
 
 
 def get_random_string(length: int):
@@ -23,7 +30,15 @@ class TestDataGenerator:
         self.next_recipe_id += 1
         self.db.session.add(r)
 
-        return r.id
+        return r
+
+    @staticmethod
+    def create_shopping_list():
+        s = ShoppingList(name="some_name",
+            locations=[Location(name="some_location", order_id=1)],
+            weeks = [Week(number=1)],
+            print_columns = 1)
+        return s
 
     def create_ingredient(self, where, name=None):
         if not name:

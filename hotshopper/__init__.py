@@ -14,7 +14,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 _app = Flask(__name__)
 
-if os.environ.get('TEST_MODE', False) is True:
+if os.environ.get("TEST_MODE") == "True":
     _app.testing = True
     _app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
     _app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
@@ -39,7 +39,7 @@ with _app.app_context():
     _db.create_all()
 _app.app_context().push()
 
-def get_app(test=False):
+def get_app():
     # # app = Flask(__name__)
     # if test:
     #     app.testing = True

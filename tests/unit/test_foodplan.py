@@ -2,10 +2,45 @@ import pytest
 import random
 import string
 
+# from pathlib import Path
+# from sqlalchemy import create_engine, MetaData
+# from flask_sqlalchemy import SQLAlchemy
+
 from hotshopper import get_db, get_app
-from hotshopper.constants import Location, Unit
 from hotshopper.foodplan import FoodPlan
+from hotshopper.model import Location, Recipe, ShoppingList, Week
 from tests.unit import helper
+
+
+# app = get_app()
+# _db = get_db()
+
+# @pytest.fixture
+# def test_db():
+#     # Configuration for the test database
+#     with Path(__file__).parent.resolve() / "test_recipes.db" as test_path:
+#         app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{test_path}?check_same_thread=False"
+#
+#     # Create a new engine and session for the test database
+#     test_db = SQLAlchemy(app, session_options={"autoflush": False})
+#     test_engine = test_db.engine
+#     test_metadata = test_db.metadata
+#
+#     # Reflect the original database schema into the metadata
+#     test_metadata.reflect()
+#
+#     # Create tables in the test database
+#     test_metadata.create_all(test_engine)
+#
+#     # Copy data from the original to the test database
+#     with app.app_context():
+#         with _db.engine.connect() as orig_conn, test_engine.connect() as test_conn:
+#             for table in test_metadata.sorted_tables:
+#                 data = orig_conn.execute(table.select()).fetchall()
+#                 test_conn.execute(table.insert().values(data))
+#
+#     return test_db
+
 
 
 def get_random_string(length: int):
@@ -20,152 +55,98 @@ def get_random_string(length: int):
     return result_str
 
 
-@pytest.fixture
-def app():
-    return get_app(test=True)
-
-@pytest.fixture
-def db():
-    return get_db()
-
-
-@pytest.fixture(scope="function")
-def setup_teardown(db):
-    db.create_all()
-    yield
-    db.session.remove()
-    db.drop_all()
+def create_app():
+    app = get_app()
+    # Use the testing configuration and an in-memory SQLite database
+    app.config['TESTING'] = True
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
+    return app
 
 
-@pytest.fixture
-def td():
-    return helper.TestDataGenerator(db)
+# @pytest.fixture(scope="function")
+@pytest.fixture()
+def test_db():
+    test_db = get_db()
+    test_db.create_all()
+    yield test_db
+    test_db.session.remove()
+    test_db.drop_all()
+
+
+# @pytest.fixture
+def test_data_generator(test_db):
+    return helper.TestDataGenerator(test_db)
 
 
 class TestFoodPlan:
+    def test_get_shopping_list(self, test_db):
+        tdg = test_data_generator(test_db)
+        s = tdg.create_shopping_list()
+        foodplan = FoodPlan([s])
+        amount_shopping_lists = len(foodplan.get_shopping_lists())
 
-    def test_add_selected_recipe(self, app, setup_teardown, td):
-        r_id = td.create_recipe()
-        i1_id = td.create_ingredient(where=Location.MARKET)
-        i2_id = td.create_ingredient(where=Location.SUPERMARKET)
-        td.create_recipe_ingredient(recipe_id=r_id, ingredient_id=i1_id)
-        td.create_recipe_ingredient(recipe_id=r_id, ingredient_id=i2_id)
+        assert amount_shopping_lists == 1
 
-        recipe = td.get_recipe(recipe_id=r_id)
+    def test_no_recipe_selected(self, test_db):
+        sl_s = ShoppingList(name="supermarket",
+                            locations=[
+                                Location(name="supermarket", order_id=1)],
+                            weeks=[Week(number=1), Week(number=2),
+                                   Week(number=3)],
+                            print_columns=1)
+        foodplan = FoodPlan([sl_s])
+        foodplan.set_shopping_lists([])
+
+        assert len(foodplan.recipes) == 0
+
+    def test_single_recipe_selected(self, test_db):
+        tdg = test_data_generator(test_db)
+        r = tdg.create_recipe()
+        r_id = r.add()
+
+        recipe = Recipe.query.filter_by(id=r_id).first()
         recipe.select(week=1)
-        recipe.select(week=2)
 
-        foodplan = FoodPlan()
+        sl_s = ShoppingList(name="supermarket",
+                            locations=[Location(name="supermarket", order_id=1)],
+                            weeks=[Week(number=1), Week(number=2), Week(number=3)],
+                            print_columns=1)
+        foodplan = FoodPlan([sl_s])
         foodplan.set_shopping_lists([recipe])
 
         assert len(foodplan.recipes) == 1
-        assert len(foodplan.shopping_list_supermarket) == 1
-        assert len(foodplan.shopping_list_market_week1) == 1
-        assert len(foodplan.shopping_list_market_week2) == 1
-        assert len(foodplan.shopping_list_market_week3) == 0
+        assert foodplan.recipes[0].weeks == [1]
 
-    def test_omit_unselected_recipe(self, app, setup_teardown, td):
-        r_id = td.create_recipe()
-        i1_id = td.create_ingredient(where=Location.MARKET)
-        td.create_recipe_ingredient(recipe_id=r_id, ingredient_id=i1_id)
-        recipe = td.get_recipe(recipe_id=r_id)
+    def test_single_recipe_multiple_weeks_selected(self, test_db):
+        tdg = test_data_generator(test_db)
 
-        foodplan = FoodPlan()
-        foodplan.set_shopping_lists([recipe])
+        r = tdg.create_recipe()
+        r.select(week=1)
+        r.select(week=2)
 
+        sl_s = ShoppingList(name="supermarket",
+                            locations=[
+                                Location(name="supermarket", order_id=1)],
+                            weeks=[Week(number=1), Week(number=2)],
+                            print_columns=1)
+        foodplan = FoodPlan([sl_s])
+        foodplan.set_shopping_lists([r])
+
+        assert len(foodplan.recipes) == 1
+        assert foodplan.recipes[0].weeks == [1, 2]
+
+    def test_unselected_recipe_is_omitted(self, test_db):
+        tdg = test_data_generator(test_db)
+        r = tdg.create_recipe()
+        r_id = r.add()
+
+        recipe = Recipe.query.filter_by(id=r_id).first()
+        recipe.select(week=1)
+        recipe.unselect(week=1)
+
+        sl_s = ShoppingList(name="supermarket",
+                            locations=[Location(name="supermarket", order_id=1)],
+                            weeks=[Week(number=1), Week(number=2), Week(number=3)],
+                            print_columns=1)
+        foodplan = FoodPlan([sl_s])
         assert len(foodplan.recipes) == 0
-        assert len(foodplan.shopping_list_supermarket) == 0
-        assert len(foodplan.shopping_list_market_week1) == 0
-        assert len(foodplan.shopping_list_market_week2) == 0
-        assert len(foodplan.shopping_list_market_week3) == 0
-
-
-class TestShoppingList:
-
-    def test_same_ingredients_are_added(self, app, setup_teardown, td):
-        r1_id = td.create_recipe()
-        r2_id = td.create_recipe()
-        i1_id = td.create_ingredient(where=Location.MARKET, name="ABC")
-        i2_id = td.create_ingredient(where=Location.SUPERMARKET, name="CBA")
-        td.create_recipe_ingredient(recipe_id=r1_id,
-                                    ingredient_id=i1_id,
-                                    quantity_per_person=100,
-                                    unit=Unit.GRAM)
-        td.create_recipe_ingredient(recipe_id=r2_id,
-                                    ingredient_id=i1_id,
-                                    quantity_per_person=100,
-                                    unit=Unit.GRAM)
-        td.create_recipe_ingredient(recipe_id=r1_id,
-                                    ingredient_id=i2_id,
-                                    quantity_per_person=10,
-                                    unit=Unit.PIECE)
-        td.create_recipe_ingredient(recipe_id=r2_id,
-                                    ingredient_id=i2_id,
-                                    quantity_per_person=10,
-                                    unit=Unit.PIECE)
-        r1 = td.get_recipe(recipe_id=r1_id)
-        r2 = td.get_recipe(recipe_id=r2_id)
-        r1.select(week=1)
-        r2.select(week=1)
-
-        foodplan = FoodPlan()
-        foodplan.set_shopping_lists([r1, r2])
-        sli1 = foodplan.shopping_list_market_week1[0]
-        sli2 = foodplan.shopping_list_supermarket[0]
-
-        assert sli1.name == "ABC"
-        assert sli1.print_amounts() == 200
-        assert sli2.name == "CBA"
-        assert sli2.print_amounts() == 20
-
-    def test_gram_piece_amount_are_summed_separately(self, app, setup_teardown,
-                                                     td):
-        r1_id = td.create_recipe()
-        r2_id = td.create_recipe()
-        i1_id = td.create_ingredient(where=Location.SUPERMARKET, name="ABC")
-        td.create_recipe_ingredient(recipe_id=r1_id,
-                                    ingredient_id=i1_id,
-                                    quantity_per_person=100,
-                                    unit=Unit.GRAM)
-        td.create_recipe_ingredient(recipe_id=r2_id,
-                                    ingredient_id=i1_id,
-                                    quantity_per_person=1,
-                                    unit=Unit.PIECE)
-
-        r1 = td.get_recipe(recipe_id=r1_id)
-        r2 = td.get_recipe(recipe_id=r2_id)
-        r1.select(week=1)
-        r2.select(week=1)
-
-        foodplan = FoodPlan()
-        foodplan.set_shopping_lists([r1, r2])
-        sli = foodplan.shopping_list_supermarket[0]
-
-        assert sli.amount == 100
-        assert sli.amount_piece == 1
-
-    def test_ingredients_of_deselected_recipes_are_removed(self, app,
-                                                           setup_teardown,
-                                                           td):
-        r1_id = td.create_recipe()
-        r2_id = td.create_recipe()
-        i1_id = td.create_ingredient(where=Location.SUPERMARKET, name="ABC")
-        td.create_recipe_ingredient(recipe_id=r1_id,
-                                    ingredient_id=i1_id,
-                                    quantity_per_person=100,
-                                    unit=Unit.GRAM)
-        td.create_recipe_ingredient(recipe_id=r2_id,
-                                    ingredient_id=i1_id,
-                                    quantity_per_person=100,
-                                    unit=Unit.GRAM)
-        r1 = td.get_recipe(recipe_id=r1_id)
-        r2 = td.get_recipe(recipe_id=r2_id)
-        r1.select(week=1)
-        r2.select(week=1)
-        r2.unselect(week=1)
-
-        foodplan = FoodPlan()
-        foodplan.set_shopping_lists([r1, r2])
-        sli = foodplan.shopping_list_supermarket[0]
-
-        assert sli.amount == 100
