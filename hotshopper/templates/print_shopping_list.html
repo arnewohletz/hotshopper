@@ -9,7 +9,7 @@
 <!--<div id="shopping_lists">-->
 <h2>Hotshopper</h2>
 <h3 id="print_instruction">DRUCKVORSCHAU: Diese Seite drucken im A4 Hochformat, 100 % Größe, ohne Hintergrund</h3>
-    k{% for shopping_list in food_plan.shopping_lists %}
+    {% for shopping_list in food_plan.shopping_lists %}
     <div class="shopping_list_table" id="{{ shopping_list.name }}">
         <div class="shopping_list_name" style="vertical-align: top; text-align: center;
         font-size: 12pt; text-decoration-line: underline; text-decoration-thickness: 3px;

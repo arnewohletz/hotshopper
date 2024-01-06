@@ -6,8 +6,8 @@ class FoodPlan:
         self.recipes = []
         self.shopping_lists = shopping_lists
 
-    def to_dict(self):
-        return dict(recipes=self.recipes, shopping_lists=self.shopping_lists)
+    # def to_dict(self):
+    #     return dict(recipes=self.recipes, shopping_lists=self.shopping_lists)
 
     def _add_recipe(self, recipe: Recipe):
         self.recipes.append(recipe)

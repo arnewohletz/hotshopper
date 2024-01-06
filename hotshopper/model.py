@@ -320,13 +320,13 @@ class ShoppingList(_db.Model):
     print_columns = _db.Column(_db.Integer)
     # locations = association_proxy('locations_association', 'name')
 
-    def __init__(self, name: str, locations: list, weeks: list,
-                 print_columns: int):
-        self.ingredients = None
-        self.name = name
-        self.locations = locations
-        self.weeks = weeks
-        self.print_columns = print_columns
+    # def __init__(self, name: str, locations: list, weeks: list,
+    #              print_columns: int):
+    #     self.ingredients = None
+    #     self.name = name
+    #     self.locations = locations
+    #     self.weeks = weeks
+    #     self.print_columns = print_columns
         # self.existing_locations = db.session.query(Location).all()
         # self.locations = db.relationship("Location", secondary="shopping_list_location",
         #                     back_populates="shopping_lists")
