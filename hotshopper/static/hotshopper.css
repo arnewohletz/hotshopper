@@ -239,16 +239,30 @@ tr.shopping_list_section {
     z-index: 1;
 }
 
-button.header_button, button.menu_buttons, #calc_button {
+button.header_button,
+button.menu_buttons,
+input.menu_buttons,
+#calc_button,
+#print_shopping_list_button {
     padding: 5px 10px;
     vertical-align: middle;
+    border: 1pt solid black;
+    border-radius: 5px;
+}
+
+input[type="submit"] {
+    background-color: #aae0ff;
+}
+
+input[type="submit"]:hover {
+    background-color: #76cdff;
 }
 
 input.quantity {
     min-width: 70px;
     width: fit-content;
 }
-
+html.ss.idc0_343 body div#add_recipe_screen.ontop_screen form#add_recipe_form div#recipe_screen_close_buttons input#confirm_recipe.menu_buttons
 input#recipe_name {
     box-sizing: border-box;
     width: 100%;
@@ -262,6 +276,7 @@ input#recipe_name {
 
 #recipe_screen_close_buttons {
     margin-top: 40px;
+    text-align: center;
 }
 
 /* Special: Shopping list table parts */
