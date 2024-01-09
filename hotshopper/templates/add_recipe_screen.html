@@ -18,7 +18,7 @@
                     <input style="width: 100%" type="text" id="recipe_name" name="recipe_name" required>
                 </td>
             </tr>
-            <tr class="recipe_ingredient">
+            <tr class="recipe_ingredient" id="recipe_ingredient_0">
                 <td id="label_ingredients" style="vertical-align: top">Zutaten:</td>
                 <td>
                     <input type="number" step="1.0" size=3 id="quantity_0" name="quantity_0" class="quantity" min="0.0" max="10000" required>
@@ -54,8 +54,9 @@
         </button>
         </div>
         <div id="recipe_screen_close_buttons">
-            <button type="button" id="cancel_recipe" onclick="cancel_close_recipe_screen()">Abbrechen</button>
-            <input type="submit" id="confirm_recipe"
+            <button type="button" id="cancel_recipe" class="menu_buttons"
+                    onclick="cancel_close_recipe_screen()">Abbrechen</button>
+            <input type="submit" id="confirm_recipe" class="menu_buttons"
                    name="confirm_new_recipe" onclick="confirm_close_recipe_screen(edit=false)" value="OK">
         </div>
     </form>

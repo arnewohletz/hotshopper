@@ -18,9 +18,6 @@ function set_selected(checkboxElem) {
 let amount_ingredients = 0;
 
 function show_add_recipe_screen() {
-    // new_ingredient_index = 1;
-    // document.getElementById("cover").style.display = "block";
-    // document.getElementById("add_recipe_screen").style.display = "block";
     window.location.href = "/add_recipe"
 }
 
@@ -35,12 +32,6 @@ function show_ingredients_screen() {
 function show_shopping_list_screen() {
     window.location.href = "/shopping_list"
 }
-
-// function cancel_close_recipe_screen() {
-//     document.getElementById("add_recipe_screen").style.display = "none";
-//     document.getElementById("cover").style.display = "none";
-//     document.getElementById('add_recipe_form').reset();
-// }
 
 function formcheck() {
     let fields = document.querySelectorAll("select, textarea, input, [required]")
@@ -90,10 +81,6 @@ function confirm_close_recipe_screen(edit = false) {
     }
 }
 
-function add_ingredient() {
-
-}
-
 function delete_recipe(recipe) {
     let scroll_height = document.documentElement.scrollTop || document.body.scrollTop;
     Swal.fire({
@@ -113,21 +100,48 @@ function edit_recipe(recipe) {
     window.location.href = recipe.id;
 }
 
-function delete_recipe_ingredient(ingredient) {
-    document.getElementById(`recipe_ingredient_${ingredient}`).remove();
+function delete_recipe_ingredient(index) {
+    let recipe_ingredients = document.getElementById("recipe_table").getElementsByClassName("recipe_ingredient")
+    amount_ingredients = recipe_ingredients.length;
+    document.getElementById(`recipe_ingredient_${index}`).remove();
+
+    // loop through all recipe_ingredient elements from deleted ingredient_id until end
+    // and decrease index by 1
+    for (var i = index; i < amount_ingredients - 1; i++) {
+        // update recipe_ingredient element id
+        let ri = recipe_ingredients[i];
+        ri.id = `recipe_ingredient_${i}`;
+        // update all other ids
+        let quantity_element = document.querySelector(`#recipe_ingredient_${i} #quantity_${i + 1}`);
+        quantity_element.id = `quantity_${i}`;
+        quantity_element.name = `quantity_${i}`;
+        let unit_element = document.querySelector(`#recipe_ingredient_${i} #unit_${i + 1}`);
+        unit_element.id = `unit_${i}`;
+        unit_element.name = `unit_${i}`;
+        let ingredient_elem = document.querySelector(`#recipe_ingredient_${i} #ingredient_${i + 1}`);
+        ingredient_elem.id = `ingredient_${i}`;
+        ingredient_elem.name = `ingredient_${i}`;
+        let delete_button = document.querySelector(`#recipe_ingredient_${i} #delete_${i + 1}`);
+        delete_button.id = `delete_${i}`;
+        delete_button.onclick = function() {
+            delete_recipe_ingredient(i);
+        };
+    }
 }
 
 function add_recipe_ingredient() {
     // get new ingredient index
-    amount_ingredients = document.getElementById("recipe_table").getElementsByClassName("recipe_ingredient").length;
-
+    let recipe_ingredients = document.getElementById("recipe_table").getElementsByClassName("recipe_ingredient")
+    let last_recipe_ingredient = recipe_ingredients[recipe_ingredients.length - 1]
+    let parts = last_recipe_ingredient.id.slice('_')
+    let new_recipe_ingredient_index = (parseInt(parts[parts.length -1], 10) + 1).toString();
 
     // add new recipe ingredients nodes
     let NewRecipeTable = document.getElementById("recipe_table");
     let NewRecipeIngredientTable = document.createElement("table");
     let NewRecipeIngredientRow = document.createElement("tr");
     NewRecipeIngredientRow.setAttribute("class", "recipe_ingredient");
-    NewRecipeIngredientRow.setAttribute("id", `recipe_ingredient_${amount_ingredients}`);
+    NewRecipeIngredientRow.setAttribute("id", `recipe_ingredient_${new_recipe_ingredient_index}`);
     let InputQuantityCell = document.createElement("td");
     let UnitCell = document.createElement("td");
     let IngredientCell = document.createElement("td");
@@ -137,8 +151,8 @@ function add_recipe_ingredient() {
     let InputQuantity = document.createElement("input");
     InputQuantity.setAttribute('type', "number");
     InputQuantity.setAttribute('size', "3");
-    InputQuantity.setAttribute('id', `quantity_${amount_ingredients}`);
-    InputQuantity.setAttribute('name', `quantity_${amount_ingredients}`);
+    InputQuantity.setAttribute('id', `quantity_${new_recipe_ingredient_index}`);
+    InputQuantity.setAttribute('name', `quantity_${new_recipe_ingredient_index}`);
     InputQuantity.setAttribute('class', 'quantity');
     InputQuantity.setAttribute('min', '0.0');
     InputQuantity.setAttribute('max', '10000.0');
@@ -153,8 +167,8 @@ function add_recipe_ingredient() {
     let EmptyCell = document.createElement("td");
     EmptyCell.setAttribute("style", `width: ${EmptyCellWidth}px`);
     let SelectUnit = document.createElement("select");
-    SelectUnit.setAttribute("id", `unit_${amount_ingredients}`);
-    SelectUnit.setAttribute("name", `unit_${amount_ingredients}`);
+    SelectUnit.setAttribute("id", `unit_${new_recipe_ingredient_index}`);
+    SelectUnit.setAttribute("name", `unit_${new_recipe_ingredient_index}`);
     let SelectGram = document.createElement("option");
     SelectGram.setAttribute("value", "g");
     SelectGram.textContent = "g";
@@ -167,15 +181,15 @@ function add_recipe_ingredient() {
     const $default_select = SelectIngredient.querySelector("#no_ingredient");
     SelectIngredient.value = $default_select.value;
     SelectIngredient.firstElementChild.setAttribute("selected", "")
-    SelectIngredient.setAttribute("id", `ingredient_${amount_ingredients}`);
-    SelectIngredient.setAttribute("name", `ingredient_${amount_ingredients}`);
+    SelectIngredient.setAttribute("id", `ingredient_${new_recipe_ingredient_index}`);
+    SelectIngredient.setAttribute("name", `ingredient_${new_recipe_ingredient_index}`);
 
     // create delete button node
     let DeleteButton = document.createElement("button");
-    DeleteButton.setAttribute("id", `delete_${amount_ingredients}`);
+    DeleteButton.setAttribute("id", `delete_${new_recipe_ingredient_index}`);
     DeleteButton.setAttribute("type", "button");
     DeleteButton.setAttribute("class", "delete_ingredient");
-    DeleteButton.setAttribute("onclick", `delete_recipe_ingredient(${amount_ingredients})`);
+    DeleteButton.setAttribute("onclick", `delete_recipe_ingredient(${new_recipe_ingredient_index})`);
     let DeleteIcon = document.createElement("i");
     DeleteIcon.setAttribute("class", "fa-solid fa-trash-can");
 
