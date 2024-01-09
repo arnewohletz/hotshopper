@@ -6,7 +6,6 @@
 </script>
 <script
     src="{{ url_for('static', filename='print_shopping_list.js') }}"></script>
-<!--<div id="shopping_lists">-->
 <h2>Hotshopper</h2>
 <h3 id="print_instruction">DRUCKVORSCHAU: Diese Seite drucken im A4 Hochformat, 100 % Größe, ohne Hintergrund</h3>
     {% for shopping_list in food_plan.shopping_lists %}
@@ -66,6 +65,5 @@
         </div>
     </div>
     {% endfor %}
-<!--</div>-->
 
 {% endblock %}
