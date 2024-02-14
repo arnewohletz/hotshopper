@@ -133,12 +133,11 @@ function add_recipe_ingredient() {
     // get new ingredient index
     let recipe_ingredients = document.getElementById("recipe_table").getElementsByClassName("recipe_ingredient")
     let last_recipe_ingredient = recipe_ingredients[recipe_ingredients.length - 1]
-    let parts = last_recipe_ingredient.id.slice('_')
-    let new_recipe_ingredient_index = (parseInt(parts[parts.length -1], 10) + 1).toString();
+    let parts = last_recipe_ingredient.id.split('_')
+    let new_recipe_ingredient_index = (parseInt(parts[parts.length - 1]) + 1).toString();
 
     // add new recipe ingredients nodes
     let NewRecipeTable = document.getElementById("recipe_table");
-    let NewRecipeIngredientTable = document.createElement("table");
     let NewRecipeIngredientRow = document.createElement("tr");
     NewRecipeIngredientRow.setAttribute("class", "recipe_ingredient");
     NewRecipeIngredientRow.setAttribute("id", `recipe_ingredient_${new_recipe_ingredient_index}`);
@@ -194,8 +193,7 @@ function add_recipe_ingredient() {
     DeleteIcon.setAttribute("class", "fa-solid fa-trash-can");
 
     // add row node
-    NewRecipeTable.appendChild(NewRecipeIngredientTable);
-    NewRecipeIngredientTable.appendChild(NewRecipeIngredientRow);
+    NewRecipeTable.appendChild(NewRecipeIngredientRow)
 
     // add cell nodes
     NewRecipeIngredientRow.appendChild(EmptyCell);
