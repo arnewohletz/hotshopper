@@ -1,13 +1,19 @@
+# Standard Library imports
 from dataclasses import dataclass
 from typing import Union, NewType
+
+# Third-Party library imports
 from sqlalchemy import orm
 
-from hotshopper import _db
+# Intra-package imports
+from hotshopper import get_db
 from hotshopper.constants import Unit
 from hotshopper.errors import (DuplicateIngredientError,
                                DuplicateRecipeError,
                                DuplicateRecipeIngredientError,
                                RecipeIngredientNotFoundError)
+
+_db = get_db()
 
 # used as type hint only
 RecipeIngredient = NewType("RecipeIngredient", None)
