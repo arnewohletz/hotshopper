@@ -7,7 +7,7 @@ include requirements.txt
 include hotshopper/constants.json
 include hotshopper/recipes.db
 
-include hotshopper/static *.js
+include hotshopper/static/*.js
 recursive-include hotshopper/static/fontawesome-free-* *
 
 graft hotshopper/templates
