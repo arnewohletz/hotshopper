@@ -1,19 +1,31 @@
+
 """Main module."""
-from flask import render_template, redirect, session, request, make_response
+
+# Standard library imports
 import json
+
+# Third-party imports
+from flask import render_template, redirect, session, request, make_response
 from flask_sqlalchemy.model import Model
 from sqlalchemy import func
 from werkzeug.routing import IntegerConverter
 
+# Intra-package imports
+from hotshopper import get_app, get_db
 from hotshopper.errors import (
     DuplicateIndexError,
     DuplicateIngredientError
 )
-from hotshopper import get_app, get_db
-from hotshopper.constants import Unit
 from hotshopper.foodplan import FoodPlan
-from hotshopper.model import Recipe, Ingredient, RecipeIngredient, Location, \
-    Section, ShoppingList
+from hotshopper.model import (
+    Ingredient,
+    Location,
+    Recipe,
+    RecipeIngredient,
+    Section,
+    ShoppingList,
+    Unit
+)
 
 
 class Controller:

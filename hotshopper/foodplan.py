@@ -1,3 +1,5 @@
+
+# Intra-package imports
 from hotshopper.model import Recipe
 
 

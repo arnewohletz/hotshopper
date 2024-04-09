@@ -1,4 +1,4 @@
-# Standard Library imports
+# Standard library imports
 from dataclasses import dataclass
 from typing import Union, NewType
 
@@ -7,7 +7,6 @@ from sqlalchemy import orm
 
 # Intra-package imports
 from hotshopper import get_db
-from hotshopper.constants import Unit
 from hotshopper.errors import (DuplicateIngredientError,
                                DuplicateRecipeError,
                                DuplicateRecipeIngredientError,
@@ -81,6 +80,37 @@ class Ingredient(_db.Model):
     def has_shopping_list_item(self, week_index):
         return self.shopping_list_item[week_index] is not None
 
+
+@dataclass
+class Location(_db.Model):
+    __tablename__ = "location"
+    id = _db.Column(_db.Integer, primary_key=True)
+    name = _db.Column(_db.String)
+    order_id = _db.Column(_db.String)
+    sections = _db.relationship("Section", backref="location")
+    shopping_lists = _db.relationship("ShoppingList",
+                                     secondary="shopping_list_location",
+                                     back_populates="locations")
+
+    def __init__(self, name, order_id):
+        self.name = name
+        self.order_id = order_id
+        self.existing_sections = Section.query.filter_by(location_id=self.id).all()
+        self.sections = []
+        for section in self.existing_sections:
+            self.sections.append(Section(section.name, section.order_id))
+
+    def update_order_id(self, order_id):
+        self.order_id = order_id
+        _db.session.commit()
+
+    def has_shopping_list_items(self, week_index):
+        for section in self.sections:
+            if section.has_shopping_list_items(week_index):
+                return True
+        return False
+
+
 @dataclass
 class Recipe(_db.Model):
     __tablename__ = "recipe"
@@ -147,6 +177,7 @@ class Recipe(_db.Model):
     def save_recipe():
         _db.session.commit()
 
+
 @dataclass
 class RecipeIngredient(_db.Model):
     __tablename__ = "recipe_ingredient"
@@ -209,34 +240,6 @@ class RecipeIngredient(_db.Model):
             f"Can't delete ingredient, as it"
             f" is not found in recipe")
 
-@dataclass
-class Location(_db.Model):
-    __tablename__ = "location"
-    id = _db.Column(_db.Integer, primary_key=True)
-    name = _db.Column(_db.String)
-    order_id = _db.Column(_db.String)
-    sections = _db.relationship("Section", backref="location")
-    shopping_lists = _db.relationship("ShoppingList",
-                                     secondary="shopping_list_location",
-                                     back_populates="locations")
-
-    def __init__(self, name, order_id):
-        self.name = name
-        self.order_id = order_id
-        self.existing_sections = Section.query.filter_by(location_id=self.id).all()
-        self.sections = []
-        for section in self.existing_sections:
-            self.sections.append(Section(section.name, section.order_id))
-
-    def update_order_id(self, order_id):
-        self.order_id = order_id
-        _db.session.commit()
-
-    def has_shopping_list_items(self, week_index):
-        for section in self.sections:
-            if section.has_shopping_list_items(week_index):
-                return True
-        return False
 
 @dataclass
 class Section(_db.Model):
@@ -284,33 +287,14 @@ class Section(_db.Model):
     #     # amount in the recipe, when adding them (not nice, I know)
     #     self.ingredients.append(ShoppingListItem(copy.deepcopy(ingredient)))
 
-@dataclass
-class ShoppingListLocation(_db.Model):
-    __tablename__ = "shopping_list_location"
-    shopping_list_id = _db.Column(_db.Integer, _db.ForeignKey("shopping_list.id"), primary_key=True)
-    location_id = _db.Column(_db.Integer, _db.ForeignKey("location.id"), primary_key=True)
-
-@dataclass
-class ShoppingListWeek(_db.Model):
-    __tablename__ = "shopping_list_week"
-    shopping_list_id = _db.Column(_db.Integer, _db.ForeignKey("shopping_list.id"), primary_key=True)
-    week_id = _db.Column(_db.Integer, _db.ForeignKey("week.id"), primary_key=True)
-
-@dataclass
-class Week(_db.Model):
-    __tablename__ = "week"
-    id = _db.Column(_db.Integer, primary_key=True)
-    number = _db.Column(_db.Integer)
-    shopping_lists = _db.relationship("ShoppingList",
-                                     secondary="shopping_list_week",
-                                     back_populates="weeks")
 
 class ShoppingList(_db.Model):
     __tablename__ = "shopping_list"
     id = _db.Column(_db.Integer, primary_key=True)
     name = _db.Column(_db.String)
-    weeks = _db.relationship("Week", secondary="shopping_list_week",
-                            back_populates="shopping_lists")
+    weeks = _db.relationship("Week",
+                             secondary="shopping_list_week",
+                             back_populates="shopping_lists")
     # locations = None
                             # backref=db.backref("shopping_lists"))
     # locations = db.relationship("Location", secondary="shopping_list_location",
@@ -318,8 +302,9 @@ class ShoppingList(_db.Model):
     #                             lazy="joined")
     # locations_association = db.relationship("Location", secondary="shopping_list_location",
     #                         back_populates="shopping_lists")
-    locations = _db.relationship("Location", secondary="shopping_list_location",
-                            back_populates="shopping_lists")
+    locations = _db.relationship("Location",
+                                 secondary="shopping_list_location",
+                                 back_populates="shopping_lists")
     # locations = db.relationship("Location", secondary="shopping_list_location")
     ingredients = None
     # locations = []
@@ -466,6 +451,7 @@ class ShoppingList(_db.Model):
         # TODO: Implement append_always_on_list_items() method
         raise NotImplementedError
 
+
 @dataclass
 class ShoppingListItem:
     """
@@ -525,3 +511,41 @@ class ShoppingListItem:
     @staticmethod
     def _is_whole_amount(amount):
         return int(amount % 1) == 0
+
+
+@dataclass
+class ShoppingListLocation(_db.Model):
+    __tablename__ = "shopping_list_location"
+    shopping_list_id = _db.Column(_db.Integer,
+                                  _db.ForeignKey("shopping_list.id"),
+                                  primary_key=True)
+    location_id = _db.Column(_db.Integer,
+                             _db.ForeignKey("location.id"),
+                             primary_key=True)
+
+
+@dataclass
+class ShoppingListWeek(_db.Model):
+    __tablename__ = "shopping_list_week"
+    shopping_list_id = _db.Column(_db.Integer,
+                                  _db.ForeignKey("shopping_list.id"),
+                                  primary_key=True)
+    week_id = _db.Column(_db.Integer,
+                         _db.ForeignKey("week.id"),
+                         primary_key=True)
+
+
+@dataclass
+class Unit:
+    GRAM: str = "g"
+    PIECE: str = "St."
+
+
+@dataclass
+class Week(_db.Model):
+    __tablename__ = "week"
+    id = _db.Column(_db.Integer, primary_key=True)
+    number = _db.Column(_db.Integer)
+    shopping_lists = _db.relationship("ShoppingList",
+                                     secondary="shopping_list_week",
+                                     back_populates="weeks")

@@ -1,12 +1,12 @@
-import json
-import pathlib
+# import json
+# import pathlib
+#
+# from dataclasses import dataclass
 
-from dataclasses import dataclass
 
-
-json_file = pathlib.Path(__file__).resolve().parent / "constants.json"
-location = json.load(open(json_file))['Location']
-unit = json.load(open(json_file))['Unit']
+# json_file = pathlib.Path(__file__).resolve().parent / "constants.json"
+# location = json.load(open(json_file))['Location']
+# unit = json.load(open(json_file))['Unit']
 
 
 # @dataclass
@@ -17,9 +17,9 @@ unit = json.load(open(json_file))['Unit']
 #     MARKET = "market"
 
 
-@dataclass
-class Unit:
-    # GRAM = unit['GRAM']
-    # PIECE = unit['PIECE']
-    GRAM = "g"
-    PIECE = "St."
+# @dataclass
+# class Unit:
+#     # GRAM = unit['GRAM']
+#     # PIECE = unit['PIECE']
+#     GRAM = "g"
+#     PIECE = "St."

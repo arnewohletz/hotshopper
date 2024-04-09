@@ -1,7 +1,3 @@
-class UnsupportedUnitError(Exception):
-    def __init__(self, *args, **kwargs):
-        pass
-
 
 class DuplicateIndexError(Exception):
     def __init__(self, *args, **kwargs):
@@ -24,5 +20,10 @@ class DuplicateRecipeIngredientError(Exception):
 
 
 class RecipeIngredientNotFoundError(Exception):
+    def __init__(self, *args, **kwargs):
+        pass
+
+
+class UnsupportedUnitError(Exception):
     def __init__(self, *args, **kwargs):
         pass

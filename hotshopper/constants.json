@@ -1,10 +1,10 @@
-{
-    "Unit": {
-        "GRAM": "g",
-        "PIECE": "St."
-    },
-    "Location": {
-        "SUPERMARKET": "supermarket",
-        "MARKET": "market"
-    }
-}
+//{
+//    "Unit": {
+//        "GRAM": "g",
+//        "PIECE": "St."
+//    },
+//    "Location": {
+//        "SUPERMARKET": "supermarket",
+//        "MARKET": "market"
+//    }
+//}
