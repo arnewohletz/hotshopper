@@ -103,14 +103,14 @@ class Recipe(_db.Model):
             self.weeks = []
         self.selected = True
         self.weeks.append(week)
-        print(self.name + " is selected for week " + str(week))
+        print(f"{self.name} is selected for week {str(week)}")
 
     def unselect(self, week: int):
         self.weeks.remove(week)
         if len(self.weeks) == 0:
             self.selected = False
             self.weeks = []
-        print(self.name + " is deselected from week " + str(week))
+        print(f"{self.name} is deselected from week {str(week)}")
 
     def add_ingredient(self, ingredient: RecipeIngredient):
         existing = RecipeIngredient.query.filter_by(recipe_id=self.id,
