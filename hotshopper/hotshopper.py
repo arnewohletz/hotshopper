@@ -31,11 +31,10 @@ from hotshopper.model import (
 class Controller:
     def __init__(self):
         self.db = get_db()
-        self.reset_shopping_lists()
-        self.foodplan = FoodPlan(self.shopping_lists)
+        self.shopping_lists = ShoppingList.query.all()
+        self.food_plan = FoodPlan(self.shopping_lists)
         self.recipes = []  # make to set() ??
         self.ingredients = []
-        self.shopping_lists = []
 
     def get_recipes(self):
         all_recipes = self.db.session.query(Recipe).all()
@@ -80,7 +79,7 @@ class Controller:
         return loc
 
     def get_shopping_lists(self):
-        return self.foodplan.shopping_lists
+        return self.food_plan.shopping_lists
 
     @staticmethod
     def get_always_on_list_items(location_id):
@@ -89,41 +88,7 @@ class Controller:
         return items
 
     def get_food_plan(self):
-        return self.foodplan
-
-    def reset_shopping_lists(self):
-        # supermarket_123 = ShoppingList(name="Supermarkt (Woche 1-3)",
-        #                                locations=[Location.query.filter_by(
-        #                                    name="Supermarkt").first()],
-        #                                weeks=[1, 2, 3], print_columns=4)
-        # market_1 = ShoppingList(name="Markt - Woche 1",
-        #                         locations=[Location.query.filter_by(
-        #                             name="Markt").first(),
-        #                                    Location.query.filter_by(
-        #                                        name="Metzger").first(),
-        #                                    Location.query.filter_by(
-        #                                        name="Bäckerei").first()],
-        #                         weeks=[1], print_columns=2)
-        # market_2 = ShoppingList(name="Markt - Woche 2",
-        #                         locations=[Location.query.filter_by(
-        #                             name="Markt").first(),
-        #                                    Location.query.filter_by(
-        #                                        name="Metzger").first(),
-        #                                    Location.query.filter_by(
-        #                                        name="Bäckerei").first()],
-        #                         weeks=[2], print_columns=2)
-        # market_3 = ShoppingList(name="Markt - Woche 3",
-        #                         locations=[Location.query.filter_by(
-        #                             name="Markt").first(),
-        #                                    Location.query.filter_by(
-        #                                        name="Metzger").first(),
-        #                                    Location.query.filter_by(
-        #                                        name="Bäckerei").first()],
-        #                         weeks=[3], print_columns=2)
-        #
-        # self.shopping_lists = [supermarket_123, market_1, market_2, market_3]
-
-        self.shopping_lists = ShoppingList.query.all()
+        return self.food_plan
 
     # @staticmethod
     def get_highest_order_id(self, model: Model, **filters):
@@ -227,11 +192,10 @@ def main(web=True):
 
         @app.route("/show_shopping_list", methods=["POST", "GET"])
         def show_shopping_list():
-            controller.reset_shopping_lists()
             recipes = controller.get_recipes()
             food_plan = FoodPlan(controller.shopping_lists)
             food_plan.set_shopping_lists(recipes)
-            controller.foodplan = food_plan
+            controller.food_plan = food_plan
             return render_template("main_screen.html",
                                    recipes=recipes,
                                    food_plan=food_plan)
@@ -254,14 +218,13 @@ def main(web=True):
                                    recipes=recipes,
                                    recipe=recipe,
                                    recipe_ingredients=recipe_ingredients,
-                                   # ingredients=controller.get_ingredients(),
                                    ingredients=controller.get_food_only_ingredients(),
                                    unit=Unit
                                    )
 
         @app.route("/print_shopping_list", methods=["POST"])
         def print_shopping_list():
-            food_plan = controller.foodplan
+            food_plan = controller.food_plan
             return render_template("print_shopping_list.html",
                                    food_plan=food_plan)
 
@@ -418,20 +381,11 @@ def main(web=True):
 
             form = json.loads(str(request.data, "utf-8"))
             name = form["ingredient_name"]
-
             always_on_list = bool_to_int(form["always_on_list"])
             section_id = controller.get_section_id(location_id,
                                                    section_order_id)
-
             existing_ingredient = Ingredient.query.filter_by(id=ingredient_id).first()
-
             order_id = controller.get_highest_order_id(Ingredient, section_id=section_id)
-
-            # if location_id != existing_ingredient.location_id \
-            #     or section_id is not existing_ingredient.section_id:
-            #
-            #     section_order_id = controller.get_highest_order_id(Ingredient,
-            #                                                section_id=section_id)
 
             try:
                 # TODO: add update method to Ingredient model class
@@ -451,8 +405,6 @@ def main(web=True):
                 return response
 
             return redirect("/ingredients")
-
-
 
         @app.route(
             "/update_ingredient_order/<int:location_id>/<signed_int:section_id"

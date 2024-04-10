@@ -190,19 +190,6 @@ class RecipeIngredient(_db.Model):
     amount_piece = 0
     amount = 0
 
-    # @orm.reconstructor  # called after object was loaded from database
-    # def assign_amount(self):
-    #     """
-    #     Maps per person quantity to total quantity
-    #     :return: None
-    #     """
-    #     if self.unit == "st.":
-    #         self.amount = 0
-    #         self.amount_piece = self.quantity_per_person
-    #     else:
-    #         self.amount_piece = 0
-    #         self.amount = self.quantity_per_person
-
     def update(self, quantity_per_person: Union[float, int] = None,
                unit: str = None,
                ingredient_id: int = None):
@@ -267,27 +254,6 @@ class Section(_db.Model):
         return False
 
 
-    # def add(self, ingredient):
-    #     # TODO: ShoppingListIngredient must be put into shopping_list > location > section
-    #     if ingredient.unit == Unit.PIECE:
-    #         ingredient.amount_piece = ingredient.quantity_per_person
-    #     else:
-    #         ingredient.amount = ingredient.quantity_per_person
-    #
-    #     for existing_ingredient in self.ingredients:
-    #         if ingredient.ingredient.name == existing_ingredient.name:
-    #             if ingredient.unit == Unit.PIECE:
-    #                 # TODO: Add multiplied by 'persons' once added to recipe
-    #                 existing_ingredient.amount_piece += ingredient.amount_piece
-    #             else:
-    #                 existing_ingredient.amount += ingredient.amount
-    #             return True
-    #     # self.ingredients.append(ShoppingListIngredient(ingredient))
-    #     # Copy required since shopping list otherwise alters the ingredient
-    #     # amount in the recipe, when adding them (not nice, I know)
-    #     self.ingredients.append(ShoppingListItem(copy.deepcopy(ingredient)))
-
-
 class ShoppingList(_db.Model):
     __tablename__ = "shopping_list"
     id = _db.Column(_db.Integer, primary_key=True)
@@ -295,21 +261,11 @@ class ShoppingList(_db.Model):
     weeks = _db.relationship("Week",
                              secondary="shopping_list_week",
                              back_populates="shopping_lists")
-    # locations = None
-                            # backref=db.backref("shopping_lists"))
-    # locations = db.relationship("Location", secondary="shopping_list_location",
-    #                             backref=db.backref("shopping_list_id", lazy=False),
-    #                             lazy="joined")
-    # locations_association = db.relationship("Location", secondary="shopping_list_location",
-    #                         back_populates="shopping_lists")
     locations = _db.relationship("Location",
                                  secondary="shopping_list_location",
                                  back_populates="shopping_lists")
-    # locations = db.relationship("Location", secondary="shopping_list_location")
     ingredients = None
-    # locations = []
     print_columns = _db.Column(_db.Integer)
-    # locations = association_proxy('locations_association', 'name')
 
     # def __init__(self, name: str, locations: list, weeks: list,
     #              print_columns: int):
@@ -471,8 +427,6 @@ class ShoppingListItem:
         self.name = recipe_ingredient.ingredient.name
         self.order_id = recipe_ingredient.ingredient.order_id
         self.unit = recipe_ingredient.unit
-        # self.amount = recipe_ingredient.amount
-        # self.amount_piece = recipe_ingredient.amount_piece
 
     def __add__(self, other):
         if self.name is not other.name:
@@ -483,7 +437,6 @@ class ShoppingListItem:
         self.amount += other.amount
         self.amount_piece += other.amount_piece
         return self
-        # TODO: I am caring about the unit here. Might be an issue...
 
     def print_amounts(self):
         """Prints the amount per gram or/and per piece"""
