@@ -5,7 +5,13 @@
 import json
 
 # Third-party imports
-from flask import render_template, redirect, session, request, make_response
+from flask import (
+    make_response,
+    redirect,
+    render_template,
+    request,
+    session
+)
 from flask_sqlalchemy.model import Model
 from sqlalchemy import func
 from werkzeug.routing import IntegerConverter
