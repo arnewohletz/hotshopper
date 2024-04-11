@@ -1,7 +1,9 @@
 # Standard library imports
+from abc import ABC
 from dataclasses import dataclass
 from typing import Union, NewType
 
+import sqlalchemy.sql.sqltypes
 # Third-Party library imports
 from sqlalchemy import orm
 
@@ -17,8 +19,14 @@ _db = get_db()
 # used as type hint only
 RecipeIngredient = NewType("RecipeIngredient", None)
 
+
+class OrderedModel(_db.Model):
+    __abstract__ = True
+    def __init__(self):
+        self.order_id: int = -1
+
 @dataclass
-class Ingredient(_db.Model):
+class Ingredient(OrderedModel):
     __tablename__ = "ingredient"
     id = _db.Column("id", _db.Integer, primary_key=True)
     name = _db.Column("name", _db.String)
@@ -82,7 +90,7 @@ class Ingredient(_db.Model):
 
 
 @dataclass
-class Location(_db.Model):
+class Location(OrderedModel):
     __tablename__ = "location"
     id = _db.Column(_db.Integer, primary_key=True)
     name = _db.Column(_db.String)
