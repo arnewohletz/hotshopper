@@ -15,15 +15,10 @@ from hotshopper.errors import (DuplicateIngredientError,
 
 _db = get_db()
 
-# used as type hint only
-# RecipeIngredientType = NewType("RecipeIngredient", None)
-
 
 class OrderedModel(_db.Model):
     __abstract__ = True
     order_id = -1
-    # def __init__(self):
-    #     self.order_id: int = -1
 
 
 class Ingredient(OrderedModel):
@@ -89,7 +84,6 @@ class Ingredient(OrderedModel):
         return self.shopping_list_item[week_index] is not None
 
 
-@dataclass
 class Location(OrderedModel):
     __tablename__ = "location"
     id = _db.Column(_db.Integer, primary_key=True)
@@ -119,7 +113,6 @@ class Location(OrderedModel):
         return False
 
 
-# @dataclass
 class Recipe(_db.Model):
     __tablename__ = "recipe"
     __allow_unmapped__ = True
@@ -186,7 +179,6 @@ class Recipe(_db.Model):
         _db.session.commit()
 
 
-# @dataclass
 class RecipeIngredient(_db.Model):
     __tablename__ = "recipe_ingredient"
     recipe_id = _db.Column(_db.ForeignKey("recipe.id"),
@@ -236,7 +228,6 @@ class RecipeIngredient(_db.Model):
             f" is not found in recipe")
 
 
-@dataclass
 class Section(_db.Model):
     __tablename__ = "section"
     id = _db.Column(_db.Integer, primary_key=True)
@@ -416,7 +407,6 @@ class ShoppingList(_db.Model):
         raise NotImplementedError
 
 
-@dataclass
 class ShoppingListItem:
     """
     Stripped down, non-database model representation of
@@ -474,7 +464,6 @@ class ShoppingListItem:
         return int(amount % 1) == 0
 
 
-@dataclass
 class ShoppingListLocation(_db.Model):
     __tablename__ = "shopping_list_location"
     shopping_list_id = _db.Column(_db.Integer,
@@ -485,7 +474,6 @@ class ShoppingListLocation(_db.Model):
                              primary_key=True)
 
 
-@dataclass
 class ShoppingListWeek(_db.Model):
     __tablename__ = "shopping_list_week"
     shopping_list_id = _db.Column(_db.Integer,
@@ -502,7 +490,6 @@ class Unit:
     PIECE: str = "St."
 
 
-@dataclass
 class Week(_db.Model):
     __tablename__ = "week"
     id = _db.Column(_db.Integer, primary_key=True)
