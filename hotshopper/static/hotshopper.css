@@ -177,6 +177,10 @@ td.header_buttons, td.menu_buttons {
     text-align: right;
 }
 
+td.header_text {
+    text-align: center;
+}
+
 td.shopping_list_item_name {
     padding-left: 10px;
 }
