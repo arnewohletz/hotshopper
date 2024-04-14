@@ -46,8 +46,7 @@ class Controller:
     """
     def __init__(self):
         self.db = get_db()
-        self.shopping_lists = ShoppingList.query.all()
-        self.food_plan = FoodPlan(self.shopping_lists)
+        self.food_plan = FoodPlan(self.get_shopping_lists())
         self.recipes = []
         self.ingredients = []
 
@@ -63,6 +62,12 @@ class Controller:
             if recipe not in all_recipes:
                 self.recipes.remove(recipe)
         return sorted(self.recipes, key=lambda r: r.name.lower())
+
+    def get_shopping_lists(self) -> list:
+        """
+        Get all shopping lists from the database.
+        """
+        return self.db.session.query(ShoppingList).all()
 
     def get_ingredients(self) -> list:
         """
@@ -296,7 +301,8 @@ def main() -> None:
         :return: The rendered shopping list page.
         """
         recipes = controller.get_recipes()
-        food_plan = FoodPlan(controller.shopping_lists)
+        shopping_lists = controller.get_shopping_lists()
+        food_plan = FoodPlan(shopping_lists)
         food_plan.set_shopping_lists(recipes)
         controller.food_plan = food_plan
         return render_template("main_screen.html",
@@ -490,14 +496,6 @@ def main() -> None:
         :param non_food: A boolean string ("true"/"false") defining if ingredient is food or not.
         :return: Navigate back to the ingredients list page.
         """
-        # def bool_to_int(s: str) -> int:
-        #     if s.lower() == "true":
-        #         return 1
-        #     elif s.lower() == "false":
-        #         return 0
-        #     else:
-        #         var_name = f'{s=}'.split('=')[0]
-        #         raise ValueError(f"'{var_name}' has illegal value: ${s}")
 
         form = json.loads(str(request.data, "utf-8"))
         name = form["ingredient_name"]
@@ -539,15 +537,6 @@ def main() -> None:
         :param non_food: A boolean string ("true"/"false") defining if ingredient is food or not.
         :return: Navigate back to the ingredients list page.
         """
-
-        # def bool_to_int(s: str) -> int:
-        #     if s.lower() == "true":
-        #         return 1
-        #     elif s.lower() == "false":
-        #         return 0
-        #     else:
-        #         var_name = f'{s=}'.split('=')[0]
-        #         raise ValueError(f"'{var_name}' has illegal value: ${s}")
 
         form = json.loads(str(request.data, "utf-8"))
         name = form["ingredient_name"]
