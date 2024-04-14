@@ -12,12 +12,16 @@ from flask import (
     request,
     session
 )
-from flask_sqlalchemy.model import Model
 from sqlalchemy import func
-from typing import List
+from typing import (
+    List,
+    Type
+)
 from werkzeug.routing import IntegerConverter
+from werkzeug.wrappers import Response as BaseResponse
 
 # Intra-package imports
+from hotshopper.helper import Helper
 from hotshopper import get_app, get_db
 from hotshopper.errors import (
     DuplicateIndexError,
@@ -58,7 +62,7 @@ class Controller:
         for recipe in self.recipes:
             if recipe not in all_recipes:
                 self.recipes.remove(recipe)
-        return sorted(self.recipes, key=lambda recipe: recipe.name.lower())
+        return sorted(self.recipes, key=lambda r: r.name.lower())
 
     def get_ingredients(self) -> list:
         """
@@ -106,8 +110,6 @@ class Controller:
         loc = Location.query.filter_by(id=location_id).first()
         return loc
 
-    # def get_shopping_lists(self):
-    #     return self.food_plan.shopping_lists
 
     @staticmethod
     def get_always_on_list_items(location_id: int) -> List[Ingredient]:
@@ -120,14 +122,11 @@ class Controller:
                                            always_on_list=1).all()
         return items
 
-    # def get_food_plan(self):
-    #     return self.food_plan
-
-    def get_highest_order_id(self, model: OrderedModel, **filters) -> int:
+    def get_highest_order_id(self, model: Type[OrderedModel], **filters) -> int:
         """
         Return the highest order ID for a :param:`model`'s database data.
 
-        :param model: The model class to query.
+        :param model: A class type of OrderedModel to query.
         :param filters: Dictionary of filters to apply
         """
         result = self.db.session.query(
@@ -177,8 +176,16 @@ def main() -> None:
     app.url_map.converters['signed_int'] = SignedIntConverter
     controller = Controller()
 
-    @app.route("/", methods=["GET", "POST"])
-    def show_init_app():
+    @app.route("/", methods=["GET"])  # remove 'POST' - see if it causes issues
+    def show_main_page() -> str:
+        """
+        Returns the rendered main page of the application.
+
+        It handles displaying the main screen of the application, which
+        includes a list of defined recipes and various control elements.
+        It applies the scroll height of the session to maintain the user's
+        current scroll position.
+        """
         try:
             scroll_height = session.pop("scroll_height")
         except KeyError:
@@ -188,15 +195,26 @@ def main() -> None:
                                scroll_height=scroll_height)
 
     @app.route("/ingredients")
-    def show_ingredients():
+    def show_ingredients() -> str:
+        """
+        Returns the rendered ingredients page.
+
+        The ingredients page is displayed on top of the main screen and
+        shows a list of all :type:`Ingredient` data rows that are saved
+        in the database.
+        """
         ingredients = controller.get_ingredients()
         recipes = controller.get_recipes()
         return render_template("ingredients.html", ingredients=ingredients,
                                recipes=recipes)
 
-    @app.route("/shopping_list")
     @app.route("/shopping_list/<int:scroll_height>")
-    def show_shopping_list_screen(scroll_height=None):
+    def show_shopping_list_screen(scroll_height: int) -> str:
+        """
+        RReturns the rendered shopping list page.
+
+        :param scroll_height: The current scroll height of the shopping list page.
+        """
         ingredients = controller.get_ingredients()
         recipes = controller.get_recipes()
         locations = controller.get_locations()
@@ -207,7 +225,10 @@ def main() -> None:
                                scroll_height=scroll_height)
 
     @app.route("/shopping_list/edit")
-    def show_shopping_list_edit_screen():
+    def show_shopping_list_edit_screen() -> str:
+        """
+        Returns the rendered edit shopping list page.
+        """
         locations = controller.get_locations()
         ingredients = controller.get_ingredients()
         recipes = controller.get_recipes()
@@ -218,7 +239,12 @@ def main() -> None:
                                recipes=recipes)
 
     @app.route("/shopping_list/edit/<int:location_id>")
-    def show_section_edit_screen(location_id):
+    def show_section_edit_screen(location_id: int) -> str:
+        """
+        Return the rendered edit shopping list page of a particular location.
+
+        :param location_id: The primary integer key of the location.
+        """
         locations = controller.get_locations()
         selected_location = controller.get_location(location_id)
         ingredients = controller.get_ingredients()
@@ -230,24 +256,45 @@ def main() -> None:
                                recipes=recipes)
 
     @app.route("/check_recipe/<recipe_id>_<int:week>_<int:scroll_height>")
-    def check_recipe(recipe_id, week, scroll_height):
+    def check_recipe(recipe_id: int, week: int, scroll_height: int) -> BaseResponse:
+        """
+        Select recipe in shopping list for a particular week.
+
+        :param recipe_id: The primary integer key of the recipe.
+        :param week: The week number the recipe is added for.
+        :param scroll_height: The current scroll height of the page
+        :return: The rendered shopping list page with the recipe selected.
+        """
         for r in controller.get_recipes():
             if r.id == int(recipe_id):
                 r.select(week)
                 session["scroll_height"] = scroll_height
                 return redirect("/")
 
-    @app.route(
-        "/uncheck_recipe/<recipe_id>_<int:week>_<int:scroll_height>")
-    def uncheck_recipe(recipe_id, week, scroll_height):
+    @app.route("/uncheck_recipe/<recipe_id>_<int:week>_<int:scroll_height>")
+    def uncheck_recipe(recipe_id: int, week: int, scroll_height: int) -> BaseResponse:
+        """
+        Unselect recipe in shopping list for a particular week.
+
+        :param recipe_id: The primary integer key of the recipe to uncheck
+        :param week: The week number the recipe is unchecked for
+        :param scroll_height: The current scroll height of the page
+        :return: The rendered shopping list page with the recipe unselected.
+        """
         for i in controller.get_recipes():
             if i.id == int(recipe_id):
                 i.unselect(week)
                 session["scroll_height"] = scroll_height
         return redirect("/")
 
-    @app.route("/show_shopping_list", methods=["POST", "GET"])
-    def show_shopping_list():
+    # @app.route("/show_shopping_list", methods=["POST", "GET"])
+    @app.route("/show_shopping_list", methods=["POST"])
+    def show_shopping_list() -> str:
+        """
+        Display the shopping list page.
+
+        :return: The rendered shopping list page.
+        """
         recipes = controller.get_recipes()
         food_plan = FoodPlan(controller.shopping_lists)
         food_plan.set_shopping_lists(recipes)
@@ -257,7 +304,12 @@ def main() -> None:
                                food_plan=food_plan)
 
     @app.route("/add_recipe")
-    def show_add_recipe_screen():
+    def show_add_recipe_screen() -> str:
+        """
+        Display the screen to add a recipe.
+
+        :return: The rendered add recipe page.
+        """
         ingredients = controller.get_ingredients()
         recipes = controller.get_recipes()
         return render_template("add_recipe_screen.html",
@@ -266,7 +318,13 @@ def main() -> None:
                                unit=Unit)
 
     @app.route("/edit_recipe/<int:recipe_id>")
-    def show_edit_recipe_screen(recipe_id):
+    def show_edit_recipe_screen(recipe_id) -> str:
+        """
+        Display the screen to edit a recipe.
+
+        :param recipe_id: The primary integer key of the recipe to edit.
+        :return: The rendered edit recipe page.
+        """
         recipes = controller.get_recipes()
         recipe = controller.get_recipe(recipe_id)
         recipe_ingredients = controller.get_recipe_ingredients(recipe_id)
@@ -279,16 +337,28 @@ def main() -> None:
                                )
 
     @app.route("/print_shopping_list", methods=["POST"])
-    def print_shopping_list():
+    def print_shopping_list() -> str:
+        """
+        Display the printable shopping list page.
+
+        :return: The rendered shopping list page.
+        """
         food_plan = controller.food_plan
         return render_template("print_shopping_list.html",
                                food_plan=food_plan)
 
     @app.route(
         "/confirm_edit_recipe/<int:recipe_id>_<int:amount_ingredients>_"
-        "<int:scroll_height>",
-        methods=["POST"])
-    def confirm_edit_recipe(recipe_id, amount_ingredients, scroll_height):
+        "<int:scroll_height>", methods=["POST"])
+    def confirm_edit_recipe(recipe_id: int, amount_ingredients: int,
+                            scroll_height: int) -> BaseResponse:
+        """
+        Confirms the current recipe data and close the screen.
+
+        :param recipe_id: The primary integer key of the edited recipe.
+        :param amount_ingredients: The amount of ingredients that the recipe has.
+        :param scroll_height: The current scroll height on the main page.
+        """
 
         r_name = request.form["recipe_name"]
         recipe = Recipe.query.filter_by(id=recipe_id).first()
@@ -317,7 +387,13 @@ def main() -> None:
         return redirect("/")
 
     @app.route("/delete_recipe/<int:recipe_id>_<int:scroll_height>")
-    def delete_recipe(recipe_id, scroll_height):
+    def delete_recipe(recipe_id, scroll_height) -> BaseResponse:
+        """
+        Delete the specified recipe.
+
+        :param recipe_id: The primary integer key of the recipe to delete.
+        :param scroll_height: The current scroll height on the main page.
+        """
         recipe = Recipe.query.filter_by(id=recipe_id).first()
         recipe.delete()
         session["scroll_height"] = scroll_height
@@ -325,8 +401,15 @@ def main() -> None:
 
     @app.route(
         "/confirm_new_recipe/<int:amount_ingredients>_<int:scroll_height>",
-        methods=["POST", "GET"])
-    def add_new_recipe(amount_ingredients, scroll_height):
+        methods=["POST"])
+    def add_new_recipe(amount_ingredients: int, scroll_height: int) -> BaseResponse:
+        """
+        Confirm a new recipe and closing the editing screen.
+
+        :param amount_ingredients: The amount of ingredients that the recipe has.
+        :param scroll_height: The current scroll height on the main page.
+        :return: Navigate back to the main page.
+        """
         name = request.form["recipe_name"]
         recipe = Recipe(name=name, ingredients=[])
         r_id = recipe.add()
@@ -347,7 +430,10 @@ def main() -> None:
         return redirect("/")
 
     @app.route("/ingredients/new")
-    def show_add_ingredient_screen():
+    def show_add_ingredient_screen() -> str:
+        """
+        Display the screen to add a new ingredient.
+        """
         return render_template("add_ingredient_screen.html",
                                recipes=controller.get_recipes(),
                                ingredients=controller.get_ingredients(),
@@ -356,7 +442,12 @@ def main() -> None:
                                )
 
     @app.route("/ingredients/edit/<int:ingredient_id>")
-    def show_edit_ingredient_screen(ingredient_id):
+    def show_edit_ingredient_screen(ingredient_id: int) -> str:
+        """
+        Display the screen to edit an existing ingredient.
+
+        :param ingredient_id: The primary integer key of the ingredient to edit.
+        """
         ingredients = Ingredient.query.filter_by(id=ingredient_id).all()
         if len(ingredients) > 1:
             raise DuplicateIndexError(
@@ -375,7 +466,13 @@ def main() -> None:
                                )
 
     @app.route("/ingredients/delete/<int:ingredient_id>")
-    def delete_ingredient(ingredient_id):
+    def delete_ingredient(ingredient_id: int) -> BaseResponse:
+        """
+        Deletes the ingredient which matches the :param:`ingredient_id`.
+
+        :param ingredient_id: THe primary integer key of the ingredient to delete.
+        :return: Navigates to the ingredients list page.
+        """
         ingredient = Ingredient.query.filter_by(id=ingredient_id).first()
         ingredient.delete()
         return redirect("/ingredients")
@@ -384,20 +481,27 @@ def main() -> None:
         "/confirm_new_ingredient/<int:location_id>_<signed_int"
         ":section_order_id>_<string:non_food>",
         methods=["POST", "GET"])
-    def add_ingredient(location_id, section_order_id, non_food):
+    def add_ingredient(location_id: int, section_order_id: int, non_food: str) -> BaseResponse:
+        """
+        Add a new ingredient to the list of ingredients.
 
-        def bool_to_int(s: str) -> int:
-            if s.lower() == "true":
-                return 1
-            elif s.lower() == "false":
-                return 0
-            else:
-                var_name = f'{s=}'.split('=')[0]
-                raise ValueError(f"'{var_name}' has illegal value: ${s}")
+        :param location_id: The primary integer key of the location to add.
+        :param section_order_id: The primary integer key of the section the ingredient is added to.
+        :param non_food: A boolean string ("true"/"false") defining if ingredient is food or not.
+        :return: Navigate back to the ingredients list page.
+        """
+        # def bool_to_int(s: str) -> int:
+        #     if s.lower() == "true":
+        #         return 1
+        #     elif s.lower() == "false":
+        #         return 0
+        #     else:
+        #         var_name = f'{s=}'.split('=')[0]
+        #         raise ValueError(f"'{var_name}' has illegal value: ${s}")
 
         form = json.loads(str(request.data, "utf-8"))
         name = form["ingredient_name"]
-        always_on_list = bool_to_int(form["always_on_list"])
+        always_on_list = Helper.bool_string_to_int(form["always_on_list"])
         section_id = controller.get_section_id(location_id,
                                                section_order_id)
         current_max_order_id = controller.get_highest_order_id(Ingredient,
@@ -406,7 +510,7 @@ def main() -> None:
         i = Ingredient(name=name, always_on_list=always_on_list,
                        location_id=location_id,
                        section_id=section_id,
-                       non_food=bool_to_int(non_food),
+                       non_food=Helper.bool_string_to_int(non_food),
                        order_id=current_max_order_id + 1)
 
         try:
@@ -424,20 +528,30 @@ def main() -> None:
                "<int:location_id>_"
                "<signed_int:section_order_id>_"
                "<string:non_food>", methods=["POST", "GET"])
-    def confirm_edit_ingredient(ingredient_id, location_id, section_order_id, non_food):
+    def confirm_edit_ingredient(ingredient_id: int, location_id: int,
+                                section_order_id: int, non_food: str) -> BaseResponse:
+        """
+        Apply edited changes to ingredient.
 
-        def bool_to_int(s: str) -> int:
-            if s.lower() == "true":
-                return 1
-            elif s.lower() == "false":
-                return 0
-            else:
-                var_name = f'{s=}'.split('=')[0]
-                raise ValueError(f"'{var_name}' has illegal value: ${s}")
+        :param ingredient_id: The primary integer key of the edited ingredient.
+        :param location_id: The primary integer key of the location of the edited ingredient.
+        :param section_order_id: The primary integer key of the section of the edited ingredient.
+        :param non_food: A boolean string ("true"/"false") defining if ingredient is food or not.
+        :return: Navigate back to the ingredients list page.
+        """
+
+        # def bool_to_int(s: str) -> int:
+        #     if s.lower() == "true":
+        #         return 1
+        #     elif s.lower() == "false":
+        #         return 0
+        #     else:
+        #         var_name = f'{s=}'.split('=')[0]
+        #         raise ValueError(f"'{var_name}' has illegal value: ${s}")
 
         form = json.loads(str(request.data, "utf-8"))
         name = form["ingredient_name"]
-        always_on_list = bool_to_int(form["always_on_list"])
+        always_on_list = Helper.bool_string_to_int(form["always_on_list"])
         section_id = controller.get_section_id(location_id,
                                                section_order_id)
         existing_ingredient = Ingredient.query.filter_by(id=ingredient_id).first()
@@ -450,7 +564,7 @@ def main() -> None:
             existing_ingredient.order_id = order_id + 1
             existing_ingredient.section_id = section_id
             existing_ingredient.always_on_list = always_on_list
-            existing_ingredient.non_food = bool_to_int(non_food)
+            existing_ingredient.non_food = Helper.bool_string_to_int(non_food)
 
             controller.db.session.commit()
 
@@ -463,10 +577,19 @@ def main() -> None:
         return redirect("/ingredients")
 
     @app.route(
-        "/update_ingredient_order/<int:location_id>/<signed_int:section_id"
-        ">/<string:new_ingr_id_order>/<int:scroll_height>")
-    def set_new_ingredient_order(location_id, section_id,
-                                 new_ingr_id_order, scroll_height):
+        "/update_ingredient_order/<int:location_id>/<signed_int:section_id>/"
+        "<string:new_ingr_id_order>/<int:scroll_height>")
+    def set_new_ingredient_order(location_id: int, section_id: int,
+                                 new_ingr_id_order: str, scroll_height: int) -> BaseResponse:
+        """
+        Change the order of the ingredient within the section.
+
+        :param location_id: The primary integer key of the location of the edited ingredient.
+        :param section_id: The primary integer key of the section of the edited ingredient.
+        :param new_ingr_id_order: The section's ingredients primary keys in their new order.
+        :param scroll_height: The current scroll height of the ingredients list page.
+        :return: Navigate back to the ingredients list page.
+        """
         new_ingr_id_order = new_ingr_id_order.split("_")
         section = Section.query.filter_by(location_id=location_id,
                                           id=section_id).first()
@@ -482,7 +605,12 @@ def main() -> None:
         return redirect(f"/shopping_list/{scroll_height}")
 
     @app.route("/update_location_order/<string:new_loc_id_order>")
-    def set_new_location_order(new_loc_id_order):
+    def set_new_location_order(new_loc_id_order: str) -> BaseResponse:
+        """
+        Change the order of a location on the shopping list.
+
+        :param new_loc_id_order: The location primary keys in their new order.
+        """
         new_loc_id_order = new_loc_id_order.split("_")
         locations = controller.get_locations()
         current_loc_id_order = [i.id for i in locations]
@@ -497,10 +625,15 @@ def main() -> None:
         return redirect("/shopping_list/edit")
 
     @app.route(
-        "/update_section_order/<int:location_id>/<string"
-        ":new_sec_id_order>")
-    def set_new_section_order(location_id, new_sec_id_order):
-        # TODO: Implement update section order
+        "/update_section_order/<int:location_id>/<string:new_sec_id_order>")
+    def set_new_section_order(location_id: str, new_sec_id_order: str) -> BaseResponse:
+        """
+        Change the order of a section inside a location on the shopping list.
+
+        :param location_id: The location primary key.
+        :param new_sec_id_order: The location primary keys in their new order.
+        """
+        # TODO: Implement update section order (it does not work)
         return redirect(f"/shopping_list/edit/{location_id}")
 
         # for i, new in enumerate(new_ingr_id_order):

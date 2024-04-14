@@ -30,7 +30,7 @@ function show_ingredients_screen() {
 }
 
 function show_shopping_list_screen() {
-    window.location.href = "/shopping_list"
+    window.location.href = "/shopping_list/0"
 }
 
 function formcheck() {

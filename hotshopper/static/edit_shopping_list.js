@@ -10,6 +10,7 @@
 // let y = 0;
 
 function init() {
+    document.getElementById("cover").style.display = "block";
     document.getElementById("edit_shopping_list_screen").style.display = "block";
 
     let tables = document.getElementsByClassName("rows_draggable")
@@ -27,13 +28,12 @@ function init() {
             row.addEventListener("mousedown", mouseDownHandler);
         });
     }
-
 }
 
 function close_edit_shopping_list_screen() {
     document.getElementById("edit_shopping_list_screen").style.display = "none";
     // document.getElementById("cover").style.display = "none";
-    window.location.href = "/shopping_list";
+    window.location.href = "/shopping_list/0";
 }
 
 function display_sections(location_id) {

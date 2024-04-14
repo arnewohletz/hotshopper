@@ -1,9 +1,8 @@
 # Standard library imports
-from abc import ABC
+from __future__ import annotations
 from dataclasses import dataclass
 from typing import Union, NewType
 
-import sqlalchemy.sql.sqltypes
 # Third-Party library imports
 from sqlalchemy import orm
 
@@ -17,15 +16,16 @@ from hotshopper.errors import (DuplicateIngredientError,
 _db = get_db()
 
 # used as type hint only
-RecipeIngredient = NewType("RecipeIngredient", None)
+# RecipeIngredientType = NewType("RecipeIngredient", None)
 
 
 class OrderedModel(_db.Model):
     __abstract__ = True
-    def __init__(self):
-        self.order_id: int = -1
+    order_id = -1
+    # def __init__(self):
+    #     self.order_id: int = -1
 
-@dataclass
+
 class Ingredient(OrderedModel):
     __tablename__ = "ingredient"
     id = _db.Column("id", _db.Integer, primary_key=True)
@@ -119,7 +119,7 @@ class Location(OrderedModel):
         return False
 
 
-@dataclass
+# @dataclass
 class Recipe(_db.Model):
     __tablename__ = "recipe"
     __allow_unmapped__ = True
@@ -186,7 +186,7 @@ class Recipe(_db.Model):
         _db.session.commit()
 
 
-@dataclass
+# @dataclass
 class RecipeIngredient(_db.Model):
     __tablename__ = "recipe_ingredient"
     recipe_id = _db.Column(_db.ForeignKey("recipe.id"),
