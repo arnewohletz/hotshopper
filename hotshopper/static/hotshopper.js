@@ -33,6 +33,32 @@ function show_shopping_list_screen() {
     window.location.href = "/shopping_list/0"
 }
 
+function filterRecipes() {
+    let total_filtered = 0;
+    let filter_input = document.getElementById("recipeFilter");
+    let filter = filter_input.value.toUpperCase();
+    let recipe_table = document.getElementById("recipeTableBody");
+    let recipe_row = recipe_table.getElementsByTagName("tr");
+    for (let i = 0; i < recipe_row.length; i++) {
+        let name = recipe_row[i].getElementsByClassName("recipe_name")[0];
+        if (name) {
+            let txtValue = name.textContent || name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                recipe_row[i].style.display = "";
+                total_filtered++;
+                if (total_filtered % 2 === 0) {
+                    recipe_row[i].style.background = "#76c081"
+                } else {
+                    recipe_row[i].style.background = "#57a162"
+                }
+                recipe_row[i].classList.add('filtered');
+            } else {
+                recipe_row[i].style.display = "none";
+            }
+        }
+    }
+}
+
 function formcheck() {
     let fields = document.querySelectorAll("select, textarea, input, [required]")
     let complete = true;
