@@ -306,8 +306,8 @@ input#recipe_name {
 /* Special: Food plan */
 
 #recipeTableHeader.header tr th.header_text,
-#recipeTableBody.recipes tr td input {
-    width: 16px;
+#recipeTableBody.recipes tr td.checkbox {
+    width: 21px;
 }
 
 .food_plan tr {

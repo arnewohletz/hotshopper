@@ -244,4 +244,12 @@ function add_recipe_ingredient() {
     DeleteButtonCell.appendChild(DeleteButton);
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+    let recipeFilterResetButton = document.getElementById("recipeFilterResetButton");
+    recipeFilterResetButton.addEventListener("click", function() {
+        document.getElementById('recipeFilter').value = '';
+        filterRecipes()
+    });
+});
+
 window.onload = init;

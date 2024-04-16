@@ -33,7 +33,10 @@
                 <tr>
                     <th class="header_text" colspan="3">Woche</th>
                     <th rowspan="2" class="menu_buttons">
-                        <input type="text" id="recipeFilter" onkeyup="filterRecipes()" placeholder="Finde Rezept ...">
+                        <form>
+                            <input type="search" id="recipeFilter" onkeyup="filterRecipes()" placeholder="Finde Rezept ...">
+                            <input type="button" id="recipeFilterResetButton" value="X">
+                        </form>
                         <button type="button" class="menu_buttons"
                             onclick="show_add_recipe_screen()"> Neues Rezept ...
                         </button>
@@ -49,7 +52,7 @@
             <tbody class="recipes" id="recipeTableBody">
             {% for recipe in recipes %}
             <tr>
-                <td>
+                <td class="checkbox">
                     {% if recipe.selected == True and 1 in recipe.weeks %}
                     <input type="checkbox"
                            id="{{recipe.id}}_1"
@@ -60,7 +63,7 @@
                            onchange="set_selected(this)">
                     {% endif %}
                 </td>
-                <td>
+                <td class="checkbox">
                     {% if recipe.selected == True and 2 in recipe.weeks %}
                     <input type="checkbox"
                            id="{{recipe.id}}_2"
@@ -71,7 +74,7 @@
                            onchange="set_selected(this)">
                     {% endif %}
                 </td>
-                <td>
+                <td class="checkbox">
                     {% if recipe.selected == True and 3 in recipe.weeks %}
                     <input type="checkbox"
                            id="{{recipe.id}}_3"
