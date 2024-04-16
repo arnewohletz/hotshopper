@@ -305,6 +305,11 @@ input#recipe_name {
 
 /* Special: Food plan */
 
+#recipeTableHeader.header tr th.header_text,
+#recipeTableBody.recipes tr td input {
+    width: 16px;
+}
+
 .food_plan tr {
     line-height: 24px;
 }
