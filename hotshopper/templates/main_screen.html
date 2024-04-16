@@ -33,14 +33,12 @@
                 <tr>
                     <th class="header_text" colspan="3">Woche</th>
                     <th rowspan="2" class="menu_buttons">
-                        <form>
-                            <input type="search" id="recipeFilter" onkeyup="filterRecipes()" placeholder="Finde Rezept ...">
-                            <input type="button" id="recipeFilterResetButton" value="X">
-                        </form>
-                        <button type="button" class="menu_buttons"
+                            <input class="menu_buttons" type="search" id="recipeFilter" onkeyup="filterRecipes()" placeholder="Finde Rezept ...">
+                            <input class="menu_buttons" type="button" id="recipeFilterResetButton" value="X">
+                        <input type="submit" value="Berechne" id="calc_button">
+                        <button type="button" class="menu_buttons" id="show_add_recipe_screen"
                             onclick="show_add_recipe_screen()"> Neues Rezept ...
                         </button>
-                        <input type="submit" value="Berechne" id="calc_button">
                     </th>
                 </tr>
             <tr>
@@ -104,63 +102,68 @@
     </form>
     {% if food_plan %}
     <table class="all_shopping_lists">
-        <tr>
-            <th class="list_header">Einkaufsliste</th>
-        </tr>
-        <tr>
-            <td class="menu_buttons" colspan="2">
-                <form action="/print_shopping_list" method="post">
-                    <input type="submit" id="print_shopping_list_button"
-                           value="Ausdrucken" >
-                </form>
-            </td>
-        </tr>
+        <thead>
+            <tr>
+                <th class="list_header">Einkaufsliste</th>
+            </tr>
+            <tr>
+                <th class="menu_buttons">
+                    <form action="/print_shopping_list" method="post">
+                        <input type="submit" id="print_shopping_list_button"
+                               value="Ausdrucken">
+                    </form>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
         {% for list in food_plan.get_shopping_lists() %}
-        <tr>
-            <td>
-            <table class="shopping_list">
-                <tr>
-                    <th colspan="2" class="shopping_list_header"> {{ "#"*((32 - list.name|length) / 2)|round|int }} {{ list.name }} {{ "#"*((32 - list.name|length) / 2)|round|int }}</th>
-                </tr>
-                {% for location in list.locations %}
-                <tr>
-                    <td colspan="2">
-                    <table class="shopping_list_location">
-                        <tr>
-                            <th class="shopping_list_location_name" colspan="2">{{ location.name }}</th>
-                        </tr>
-                        {% for section in location.sections %}
-                        <tr>
-                            <td>
-                            <table class="shopping_list_section">
-                                {% if section.name == "NONE" %}
-                                {% else %}
-                                <tr>
-                                    <th class="shopping_list_section_name" colspan="2">{{ section.name }}</th>
-                                </tr>
-                                {% endif %}
-                                {% for ingredient in section.ingredients %}
-                                {% if ingredient.shopping_list_item[list.weeks[0].number - 1] %}
-                                <tr class="shopping_list_item">
-                                    <td class="fld_amount">{{ ingredient.shopping_list_item[list.weeks[0].number - 1].print_amounts() }}</td>
-                                    <td class="fld_ingredient_name">{{ ingredient.name }}</td>
-                                </tr>
-                                {% endif %}
-                                {% endfor %}
-                            </table>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </table>
-                    </td>
-                </tr>
-            {% endfor %}
-            </table>
-            </td>
-        </tr>
+            <tr>
+                <td>
+                <table class="shopping_list">
+                    <tr>
+                        <th colspan="2" class="shopping_list_header"> {{ "#"*((32 - list.name|length) / 2)|round|int }} {{ list.name }} {{ "#"*((32 - list.name|length) / 2)|round|int }}</th>
+                    </tr>
+                    {% for location in list.locations %}
+                    <tr>
+                        <td colspan="2">
+                        <table class="shopping_list_location">
+                            <tr>
+                                <th class="shopping_list_location_name" colspan="2">{{ location.name }}</th>
+                            </tr>
+                            {% for section in location.sections %}
+                            <tr>
+                                <td>
+                                <table class="shopping_list_section">
+                                    {% if section.name == "NONE" %}
+                                    {% else %}
+                                    <tr>
+                                        <th class="shopping_list_section_name" colspan="2">{{ section.name }}</th>
+                                    </tr>
+                                    {% endif %}
+                                    {% for ingredient in section.ingredients %}
+                                    {% if ingredient.shopping_list_item[list.weeks[0].number - 1] %}
+                                    <tr class="shopping_list_item">
+                                        <td class="fld_amount">{{ ingredient.shopping_list_item[list.weeks[0].number - 1].print_amounts() }}</td>
+                                        <td class="fld_ingredient_name">{{ ingredient.name }}</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% endfor %}
+                                </table>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </table>
+                </td>
+            </tr>
         {% endfor %}
+        </tbody>
     </table>
     {% endif %}
+
 </div>
 <script>
     // Maintain initial width of food_plan table

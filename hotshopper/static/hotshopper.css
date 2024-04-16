@@ -113,6 +113,12 @@ div#edit_locations, div#edit_sections {
     top: 10%;
 }
 
+/* Forms */
+
+th.menu_buttons form {
+    text-align: left;
+}
+
 /* Tables */
 
 h2 table {
@@ -122,7 +128,7 @@ h2 table {
 table.all_shopping_lists {
     background-color: lightgrey;
     border-radius: 15px;
-    display: flex;
+    display: block;
     flex: 1;
     margin: 0 10px 10px 0;
     max-width: max-content;
@@ -172,7 +178,7 @@ td.fld_amount {
     text-align: right;
 }
 
-td.header_buttons, td.menu_buttons {
+td.header_buttons, td.menu_buttons input.menu_buttons {
     padding-right: 10px;
     text-align: right;
 }
@@ -266,7 +272,7 @@ input.quantity {
     min-width: 70px;
     width: fit-content;
 }
-html.ss.idc0_343 body div#add_recipe_screen.ontop_screen form#add_recipe_form div#recipe_screen_close_buttons input#confirm_recipe.menu_buttons
+
 input#recipe_name {
     box-sizing: border-box;
     width: 100%;
@@ -308,6 +314,17 @@ input#recipe_name {
 #recipeTableHeader.header tr th.header_text,
 #recipeTableBody.recipes tr td.checkbox {
     width: 21px;
+}
+
+#recipeFilterResetButton {
+    margin-right: 50px;
+    margin-left: -6px;
+}
+
+#show_add_recipe_screen,
+#calc_button {
+    float: right;
+    margin-right: 5px;
 }
 
 .food_plan tr {
