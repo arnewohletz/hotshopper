@@ -33,7 +33,7 @@ function show_shopping_list_screen() {
     window.location.href = "/shopping_list/0"
 }
 
-function filterRecipes() {
+function filter_recipes() {
     let total_filtered = 0;
     let filter_input = document.getElementById("recipeFilter");
     let filter = filter_input.value.toUpperCase();
@@ -57,6 +57,10 @@ function filterRecipes() {
             }
         }
     }
+}
+
+function reset_recipe_selection() {
+    window.location.href ="/reset_recipe_selection"
 }
 
 function formcheck() {

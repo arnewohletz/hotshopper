@@ -292,7 +292,19 @@ def main() -> None:
                 session["scroll_height"] = scroll_height
         return redirect("/")
 
-    # @app.route("/show_shopping_list", methods=["POST", "GET"])
+    @app.route("/reset_recipe_selection")
+    def reset_recipe_selection() -> BaseResponse:
+        """
+        Resets the food plan's current recipe selection.
+
+        :return: Return to main page
+        """
+
+        for recipe in controller.get_recipes():
+            recipe.selected = False
+            recipe.weeks = []
+        return redirect("/")
+
     @app.route("/show_shopping_list", methods=["POST"])
     def show_shopping_list() -> str:
         """
