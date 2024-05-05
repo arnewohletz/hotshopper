@@ -252,7 +252,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let recipeFilterResetButton = document.getElementById("recipeFilterResetButton");
     recipeFilterResetButton.addEventListener("click", function() {
         document.getElementById('recipeFilter').value = '';
-        filterRecipes()
+        filter_recipes()
     });
 });
 
