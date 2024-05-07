@@ -34,7 +34,7 @@
         <tr>
             <td>
                 <div id="edit_locations" class="10px_margin">
-                    <table class="selection">
+                    <table class="selection" id="shopping_list_locations">
                         <tr></tr>
                         {% for location in locations %}
                         <tr class="location" data-index-number="{{ location.id }}">
@@ -50,7 +50,7 @@
             <td class="column_spacer"></td>
             <td>
                 <div id="edit_sections">
-                    <table id="sections" class="selection" data-index-number="{{ selected_location.id }}">
+                    <table id="shopping_list_location_sections" class="selection" data-index-number="{{ selected_location.id }}">
                         {% if selected_location is not none %}
                         <tr></tr>
                         {% for section in selected_location.sections %}

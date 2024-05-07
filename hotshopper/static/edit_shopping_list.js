@@ -52,10 +52,10 @@ function post_drag_action(table) {
     });
     new_order = new_order.substring(0, new_order.length - 1)
 
-    if (table.id === "locations") {
+    if (table.id === "shopping_list_locations") {
         window.location.href = `/update_location_order/${new_order}`
     }
-    if (table.id === "sections") {
+    if (table.id === "shopping_list_location_sections") {
         window.location.href = `/update_section_order/${location_id}/${new_order}`
     }
 

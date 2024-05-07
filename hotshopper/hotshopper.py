@@ -108,7 +108,7 @@ class Controller:
         Get all locations from the database
         """
         ls = Location.query.all()
-        return sorted(ls, key=lambda location: location.id)
+        return sorted(ls, key=lambda location: location.order_id)
 
     @staticmethod
     def get_location(location_id) -> Location:

@@ -89,7 +89,8 @@ class Location(OrderedModel):
     id = _db.Column(_db.Integer, primary_key=True)
     name = _db.Column(_db.String)
     order_id = _db.Column(_db.String)
-    sections = _db.relationship("Section", backref="location")
+    sections = _db.relationship("Section", backref="location",
+                                order_by="asc(Section.order_id)")
     shopping_lists = _db.relationship("ShoppingList",
                                      secondary="shopping_list_location",
                                      back_populates="locations")
@@ -262,7 +263,8 @@ class ShoppingList(_db.Model):
                              back_populates="shopping_lists")
     locations = _db.relationship("Location",
                                  secondary="shopping_list_location",
-                                 back_populates="shopping_lists")
+                                 back_populates="shopping_lists",
+                                 order_by="asc(Location.order_id)")
     ingredients = None
     print_columns = _db.Column(_db.Integer)
 
