@@ -112,9 +112,19 @@ class Controller:
 
     @staticmethod
     def get_location(location_id) -> Location:
+        """
+        Get Location object which matches the given :param:`location_id`.
+        """
         loc = Location.query.filter_by(id=location_id).first()
         return loc
 
+    @staticmethod
+    def get_sections(location_id) -> List[Section]:
+        """
+        Get all Sections objects associated with the matching :param:`location_id`.
+        """
+        secs = Section.query.filter_by(location_id=location_id).all()
+        return sorted(secs, key=lambda section: section.order_id)
 
     @staticmethod
     def get_always_on_list_items(location_id: int) -> List[Ingredient]:
@@ -614,7 +624,7 @@ def main() -> None:
         """
         new_loc_id_order = new_loc_id_order.split("_")
         locations = controller.get_locations()
-        current_loc_id_order = [i.id for i in locations]
+        current_loc_id_order = [l.id for l in locations]
 
         for i in range(len(new_loc_id_order)):
             if new_loc_id_order[i] == current_loc_id_order[i]:
@@ -627,42 +637,26 @@ def main() -> None:
 
     @app.route(
         "/update_section_order/<int:location_id>/<string:new_sec_id_order>")
-    def set_new_section_order(location_id: str, new_sec_id_order: str) -> BaseResponse:
+    def set_new_section_order(location_id: int, new_sec_id_order: str) -> BaseResponse:
         """
         Change the order of a section inside a location on the shopping list.
 
         :param location_id: The location primary key.
         :param new_sec_id_order: The location primary keys in their new order.
         """
-        # TODO: Implement update section order (it does not work)
+        new_sec_id_order = new_sec_id_order.split("_")
+        sections = controller.get_sections(location_id)
+
+        current_sec_id_order = [s.id for s in sections]
+
+        for i in range(len(new_sec_id_order)):
+            if new_sec_id_order[i] == current_sec_id_order[i]:
+                continue
+            else:
+                Section.query.filter_by(
+                    id=new_sec_id_order[i]).first().update_order_id(i)
+
         return redirect(f"/shopping_list/edit/{location_id}")
 
-        # for i, new in enumerate(new_ingr_id_order):
-        #     if int(new) == current_ingr_id_order[i]:
-        #         continue
-        #     else:
-        #         Ingredient.query.filter_by(section_id=section_id,
-        #                                    order_id=i).first(
-        #                                    ).update_order_id(
-        #             int(new))
-
-        # for i, ingredient in enumerate(ingredients, start=0):
-        #     if ingredient.order_id == int(new_ingr_id_order[i]):
-        #         continue
-        #     else:
-        #         Ingredient.query.filter_by(section_id=section_id,
-        #                                    order_id=ingredient.order_id).first().update_order_id(
-        #             new_ingr_id_order[i])
-        # db.session.query(Ingredient).filter(
-        #     Ingredient.section_id == int(section_id),
-        #     Ingredient.order_id == int(current_order_id)).update(
-        #     {"order_id": new_order_id}, synchronize_session=False)
-        # ingredients = Ingredient.query.filter_by(
-        #     section_id=section_id).all()
-        # db.session.commit()
-
-        # TODO: Find another way to end function -> refresh
-        #  /shopping_list sucks
-        # return redirect("/shopping_list")
 
     app.run(port=port, debug=True)

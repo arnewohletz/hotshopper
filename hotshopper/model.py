@@ -253,6 +253,10 @@ class Section(_db.Model):
                 return True
         return False
 
+    def update_order_id(self, order_id):
+        self.order_id = order_id
+        _db.session.commit()
+
 
 class ShoppingList(_db.Model):
     __tablename__ = "shopping_list"
