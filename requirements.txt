@@ -34,7 +34,7 @@ typing-extensions==4.11.0
     # via sqlalchemy
 units==0.7
     # via hotshopper (pyproject.toml)
-werkzeug==3.0.2
+werkzeug==3.0.3
     # via flask
 zipp==3.18.1
     # via importlib-metadata
