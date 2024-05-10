@@ -110,18 +110,22 @@ deps-pin-versions: verify-pip-tools ## Pin version for all dependencies
 	pip-compile --strip-extras -o requirements.txt pyproject.toml
 	pip-compile --strip-extras --extra=dev -o requirements_dev.txt pyproject.toml
 
-deps-upgrade-all: verify-pip-tools ## Upgrade and pin version for all dependencies
+deps-upgrade: verify-pip-tools
 	pip-compile \
 		--upgrade \
 		--strip-extras \
 		-o requirements.txt \
 		pyproject.toml
+
+deps-upgrade-dev: verify-pip-tools
 	pip-compile \
 		--extra=dev \
 		--upgrade \
 		--strip-extras \
 		-o requirements_dev.txt \
 		pyproject.toml
+
+deps-upgrade-all: deps-upgrade deps-upgrade-dev ## Upgrade and pin version for all dependencies
 
 deps-install: verify-pip-tools ## Install user dependencies
 	pip-sync requirements.txt
