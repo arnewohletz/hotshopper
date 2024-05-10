@@ -130,5 +130,7 @@ deps-upgrade-all: deps-upgrade deps-upgrade-dev ## Upgrade and pin version for a
 deps-install: verify-pip-tools ## Install user dependencies
 	pip-sync requirements.txt
 
-deps-install-all: verify-pip-tools deps-install ## Install dev & user dependencies
+deps-install-dev: verify-pip-tools ## Install dev dependencies
 	pip-sync requirements_dev.txt
+
+deps-install-all: deps-install deps-install-dev ## Install dev & user dependencies
