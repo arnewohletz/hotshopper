@@ -42,9 +42,11 @@ dependencies = [
 dev = [
     "black",
     "build",
+    "coverage",
     "flake8",
     "mypy",
     "pytest",
+    "pytest-cov",
     "pytest-env",
     "setuptools-scm",
     "wheel"
@@ -62,7 +64,6 @@ include-package-data = true
 TEST_MODE = "True"
 
 [tool.pytest.ini_options]
-#addopts = "--cov=hotshopper.foodplan"
 testpaths = [
     "tests/unit"
 ]

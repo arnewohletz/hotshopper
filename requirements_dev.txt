@@ -14,6 +14,10 @@ click==8.1.7
     # via
     #   black
     #   flask
+coverage==7.5.1
+    # via
+    #   hotshopper (pyproject.toml)
+    #   pytest-cov
 exceptiongroup==1.2.1
     # via pytest
 flake8==7.0.0
@@ -69,7 +73,10 @@ pyproject-hooks==1.1.0
 pytest==8.2.0
     # via
     #   hotshopper (pyproject.toml)
+    #   pytest-cov
     #   pytest-env
+pytest-cov==5.0.0
+    # via hotshopper (pyproject.toml)
 pytest-env==1.1.3
     # via hotshopper (pyproject.toml)
 setuptools-scm==8.1.0
@@ -82,6 +89,7 @@ tomli==2.0.1
     # via
     #   black
     #   build
+    #   coverage
     #   mypy
     #   pytest
     #   pytest-env
