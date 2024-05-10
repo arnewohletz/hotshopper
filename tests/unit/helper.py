@@ -21,7 +21,7 @@ def get_random_string(length: int):
 class RandomTestDataGenerator:
 
     def __init__(self, db):
-        self.db = db
+        self.db = db  # test PR creation from IDE
         self.next_recipe_id = 0
         self.next_ingredient_id = 0
 
