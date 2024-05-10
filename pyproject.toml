@@ -62,4 +62,7 @@ include-package-data = true
 TEST_MODE = "True"
 
 [tool.pytest.ini_options]
-addopts = "--cov=hotshopper.foodplan"
+#addopts = "--cov=hotshopper.foodplan"
+testpaths = [
+    "tests/unit"
+]

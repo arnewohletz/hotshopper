@@ -2,7 +2,7 @@ import pytest
 
 from hotshopper import hotshopper
 from hotshopper import model, _db, get_app
-from hotshopper.constants import Unit
+from hotshopper.model import Unit
 from hotshopper.errors import (
     DuplicateRecipeIngredientError,
     DuplicateRecipeError
@@ -11,7 +11,7 @@ from hotshopper.model import Recipe, RecipeIngredient
 
 @pytest.fixture
 def app():
-    return get_app(test=True)
+    return get_app()
 
 
 @pytest.fixture(scope="function")
@@ -68,12 +68,13 @@ class TestRecipe:
         r = model.Recipe(id=1, name="TestRecipe", ingredients=[])
         r.select(1)
         r.unselect(1)
-        assert r.weeks is None
+        assert r.weeks == []
         assert not r.selected
 
     def test_add_ingredient_to_recipe(self, app, setup_teardown):
         r = model.Recipe(id=1, name="TestRecipe", ingredients=[])
         _db.session.add(r)
+        _db.session.commit()
         result = RecipeIngredient.query.all()
         assert len(result) == 0
         i = model.Ingredient(id=1, name="TestIngredient")
@@ -107,6 +108,7 @@ class TestRecipe:
         _db.session.add(r)
         _db.session.add(ri)
         _db.session.add(ri_2)
+        _db.session.commit()
 
         assert len(Recipe.query.all()) == 1
         assert len(RecipeIngredient.query.all()) == 2
