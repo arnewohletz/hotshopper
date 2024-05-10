@@ -4,9 +4,9 @@
 #
 #    pip-compile --extra=dev --output-file=requirements_dev.txt --strip-extras pyproject.toml
 #
-black==24.3.0
+black==24.4.2
     # via hotshopper (pyproject.toml)
-blinker==1.7.0
+blinker==1.8.2
     # via flask
 build==1.2.1
     # via hotshopper (pyproject.toml)
@@ -14,7 +14,7 @@ click==8.1.7
     # via
     #   black
     #   flask
-exceptiongroup==1.2.0
+exceptiongroup==1.2.1
     # via pytest
 flake8==7.0.0
     # via hotshopper (pyproject.toml)
@@ -32,9 +32,9 @@ importlib-metadata==7.1.0
     #   flask
 iniconfig==2.0.0
     # via pytest
-itsdangerous==2.1.2
+itsdangerous==2.2.0
     # via flask
-jinja2==3.1.3
+jinja2==3.1.4
     # via flask
 markupsafe==2.1.5
     # via
@@ -42,7 +42,7 @@ markupsafe==2.1.5
     #   werkzeug
 mccabe==0.7.0
     # via flake8
-mypy==1.9.0
+mypy==1.10.0
     # via hotshopper (pyproject.toml)
 mypy-extensions==1.0.0
     # via
@@ -56,25 +56,25 @@ packaging==24.0
     #   setuptools-scm
 pathspec==0.12.1
     # via black
-platformdirs==4.2.0
+platformdirs==4.2.1
     # via black
-pluggy==1.4.0
+pluggy==1.5.0
     # via pytest
 pycodestyle==2.11.1
     # via flake8
 pyflakes==3.2.0
     # via flake8
-pyproject-hooks==1.0.0
+pyproject-hooks==1.1.0
     # via build
-pytest==8.1.1
+pytest==8.2.0
     # via
     #   hotshopper (pyproject.toml)
     #   pytest-env
 pytest-env==1.1.3
     # via hotshopper (pyproject.toml)
-setuptools-scm==8.0.4
+setuptools-scm==8.1.0
     # via hotshopper (pyproject.toml)
-sqlalchemy==2.0.29
+sqlalchemy==2.0.30
     # via
     #   flask-sqlalchemy
     #   hotshopper (pyproject.toml)
@@ -83,7 +83,6 @@ tomli==2.0.1
     #   black
     #   build
     #   mypy
-    #   pyproject-hooks
     #   pytest
     #   pytest-env
     #   setuptools-scm
@@ -95,7 +94,7 @@ typing-extensions==4.11.0
     #   sqlalchemy
 units==0.7
     # via hotshopper (pyproject.toml)
-werkzeug==3.0.2
+werkzeug==3.0.3
     # via flask
 wheel==0.43.0
     # via hotshopper (pyproject.toml)
