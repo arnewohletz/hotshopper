@@ -18,7 +18,7 @@ def get_random_string(length: int):
     return result_str
 
 
-class TestDataGenerator:
+class RandomTestDataGenerator:
 
     def __init__(self, db):
         self.db = db

@@ -74,13 +74,13 @@ def test_db():
 
 
 # @pytest.fixture
-def test_data_generator(test_db):
-    return helper.TestDataGenerator(test_db)
+def random_test_data_generator(test_db):
+    return helper.RandomTestDataGenerator(test_db)
 
 
 class TestFoodPlan:
     def test_get_shopping_list(self, test_db):
-        tdg = test_data_generator(test_db)
+        tdg = random_test_data_generator(test_db)
         s = tdg.create_shopping_list()
         foodplan = FoodPlan([s])
         amount_shopping_lists = len(foodplan.get_shopping_lists())
@@ -100,7 +100,7 @@ class TestFoodPlan:
         assert len(foodplan.recipes) == 0
 
     def test_single_recipe_selected(self, test_db):
-        tdg = test_data_generator(test_db)
+        tdg = random_test_data_generator(test_db)
         r = tdg.create_recipe()
         r_id = r.add()
 
@@ -118,7 +118,7 @@ class TestFoodPlan:
         assert foodplan.recipes[0].weeks == [1]
 
     def test_single_recipe_multiple_weeks_selected(self, test_db):
-        tdg = test_data_generator(test_db)
+        tdg = random_test_data_generator(test_db)
 
         r = tdg.create_recipe()
         r.select(week=1)
@@ -136,7 +136,7 @@ class TestFoodPlan:
         assert foodplan.recipes[0].weeks == [1, 2]
 
     def test_unselected_recipe_is_omitted(self, test_db):
-        tdg = test_data_generator(test_db)
+        tdg = random_test_data_generator(test_db)
         r = tdg.create_recipe()
         r_id = r.add()
 
