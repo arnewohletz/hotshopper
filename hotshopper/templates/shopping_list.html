@@ -1,0 +1,70 @@
+{% extends 'main_screen.html' %}
+
+{% block shopping_list_screen %}
+<script type="text/javascript">
+    ingredients = "{{ ingredients }}"
+    locations = "{{ locations }}"
+</script>
+<script src="{{ url_for('static', filename='shopping_list.js') }}"></script>
+<script src="{{ url_for('static', filename='drag_table_elements.js')}}"></script>
+<div id="shopping_list_screen" class="ontop_screen">
+    <h2>
+        <table>
+            <tr>
+                <td>Einkaufliste</td>
+                <td class="spacer"></td>
+                <td class="header_buttons">
+                    <button type="button"
+                            id="show_new_location_screen"
+                            class="header_button"
+                            onclick="open_edit_shopping_list_screen()">Bearbeiten ...
+                    </button>
+                    <button type="button"
+                            id="close_ingredients_screen"
+                            class="header_button"
+                            onclick="close_shopping_list_screen()">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </h2>
+    <div id="shopping_list_template_table" class="scroll">
+        <table class="noselect scroll">
+            {% for location in locations %}
+            <tr>
+                <td>
+                    <table class="location" data-index-number="{{ location.id }}">
+                        <tr>
+                            <td class="location_header">{{ location.name }}</td>
+                        </tr>
+                        {% for section in location.sections %}
+                        <tr>
+                            <td>
+                                <table id="{{ section.name }}" class="rows_draggable"
+                                       data-index-number="{{ location.id }}_{{ section.id }}">
+                                    <tr>
+                                        <td class="section_header">{{ section.name }}</td>
+                                    </tr>
+                                    {% for ingredient in section.get_ingredients() %}
+                                    <tr data-index-number="{{ location.id }}_{{ section.id }}_{{ ingredient.id }}">
+                                        <td class="ingredient">{{ ingredient.name }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </table>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+{% block edit_shopping_list %}
+{% endblock %}
+
+
+{% endblock %}

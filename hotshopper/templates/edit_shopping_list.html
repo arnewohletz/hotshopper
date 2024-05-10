@@ -1,0 +1,98 @@
+{% extends 'shopping_list.html' %}
+
+{% block edit_shopping_list %}
+<script type="text/javascript">
+    locations = "{{ locations }}"
+    selected_location = "{{ location }}"
+    recipes = "{{ recipes }}"
+    ingredients = "{{ ingredients }}"
+</script>
+<script src="{{ url_for('static', filename='edit_shopping_list.js') }}"></script>
+<div id="edit_shopping_list_screen" class="ontop_screen">
+    <h2>
+        <table>
+            <tr>
+                <td>Einkaufsliste bearbeiten</td>
+                <td class="spacer"></td>
+                <td class="header_buttons">
+                    <button type="button"
+                            id="close_ingredients_screen"
+                            class="header_button"
+                            onclick="close_edit_shopping_list_screen()">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </h2>
+    <table id="shopping_list_parameters" class="rows_draggable">
+        <tr>
+            <th class="list_header">Einkaufsorte</th>
+            <th class="column_spacer"></th>
+            <th class="list_header">Sektionen</th>
+        </tr>
+        <tr>
+            <td>
+                <div id="edit_locations" class="10px_margin">
+                    <table class="selection" id="shopping_list_locations">
+                        <tr></tr>
+                        {% for location in locations %}
+                        <tr class="location" data-index-number="{{ location.id }}">
+                            <td>{{ location.name }}</td>
+                            <td class="show_sections">
+                                <button onclick="display_sections('{{ location.id }}')">>></button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </td>
+            <td class="column_spacer"></td>
+            <td>
+                <div id="edit_sections">
+                    <table id="shopping_list_location_sections" class="selection" data-index-number="{{ selected_location.id }}">
+                        {% if selected_location is not none %}
+                        <tr></tr>
+                        {% for section in selected_location.sections %}
+                        <tr class="section" data-index-number="{{ section.id }}">
+                            <td>{{ section.name }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% if selected_location.sections == [] %}
+                        <tr>
+                            <td>-</td>
+                        </tr>
+                        {% endif %}
+                        {% endif %}
+                    </table>
+                </div>
+            </td>
+        <tr>
+            <td>
+                <button type="button">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+                <button type="button">
+                    <i class=" fa-solid fa-pen-to-square"></i>
+                </button>
+                <button type="button">
+                    <i class=" fa-solid fa-trash-can"></i>
+                </button>
+            </td>
+            <td class="column_spacer"></td>
+            <td>
+                <button type="button">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+                <button type="button">
+                    <i class=" fa-solid fa-pen-to-square"></i>
+                </button>
+                <button type="button">
+                    <i class=" fa-solid fa-trash-can"></i>
+                </button>
+            </td>
+        </tr>
+    </table>
+</div>
+
+{% endblock %}

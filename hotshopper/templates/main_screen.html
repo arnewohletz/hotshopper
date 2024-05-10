@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<script src="{{ url_for('static', filename='hotshopper.js') }}"></script>
+<script type="text/javascript">
+    recipes = "{{ recipes }}"
+    scroll_height = "{{ scroll_height }}"
+    ingredients = "{{ ingredients }}"
+</script>
+<h2>
+    <table>
+        <tr>
+            <td>Hotshopper</td>
+            <td class="header_buttons">
+                <button type="button" id="show_ingredients_screen"
+                        class="header_button"
+                        onclick="show_ingredients_screen()">Zutaten ...
+                </button>
+                <button type="button" id="show_shopping_list_screen" class="header_button"
+                        onclick="show_shopping_list_screen()">Einkaufsliste ...
+                </button>
+            </td>
+        </tr>
+    </table>
+</h2>
+<div class="content">
+    <form method="POST" action="/show_shopping_list">
+        <table class="food_plan">
+            <thead class="header" id ="recipeTableHeader">
+                <tr>
+                    <th colspan="3">
+                        <div style="display: flex; justify-content: center;">
+                        <button class="menu_buttons" type="button" id="cleanRecipeSectionButton" onclick="reset_recipe_selection()">
+                            <i class="fa-solid fa-rotate-left"></i>
+                        </button>
+                        </div>
+                    </th>
+                    <th class="list_header" colspan="4">Essensplan</th>
+                </tr>
+                <tr>
+                    <th class="header_text" colspan="3">Woche</th>
+                    <th rowspan="2" class="menu_buttons">
+                        <input class="menu_buttons" type="search" id="recipeFilter" onkeyup="filter_recipes()" placeholder="Finde Rezept ...">
+                        <button class="menu_buttons" type="reset" id="recipeFilterResetButton" value="X">
+                            <i class="fa-solid fa-delete-left"></i>
+                        </button>
+                        <input type="submit" value="Berechne" id="calc_button">
+                        <button type="button" class="menu_buttons" id="show_add_recipe_screen"
+                            onclick="show_add_recipe_screen()"> Neues Rezept ...
+                        </button>
+                    </th>
+                </tr>
+            <tr>
+                <th class="header_text">1</th>
+                <th class="header_text">2</th>
+                <th class="header_text">3</th>
+            </tr>
+            </thead>
+            <tbody class="recipes" id="recipeTableBody">
+            {% for recipe in recipes %}
+            <tr>
+                <td class="checkbox">
+                    {% if recipe.selected == True and 1 in recipe.weeks %}
+                    <input type="checkbox"
+                           id="{{recipe.id}}_1"
+                           onchange="set_selected(this)" checked>
+                    {% else %}
+                    <input type="checkbox"
+                           id="{{recipe.id}}_1"
+                           onchange="set_selected(this)">
+                    {% endif %}
+                </td>
+                <td class="checkbox">
+                    {% if recipe.selected == True and 2 in recipe.weeks %}
+                    <input type="checkbox"
+                           id="{{recipe.id}}_2"
+                           onchange="set_selected(this)" checked>
+                    {% else %}
+                    <input type="checkbox"
+                           id="{{recipe.id}}_2"
+                           onchange="set_selected(this)">
+                    {% endif %}
+                </td>
+                <td class="checkbox">
+                    {% if recipe.selected == True and 3 in recipe.weeks %}
+                    <input type="checkbox"
+                           id="{{recipe.id}}_3"
+                           onchange="set_selected(this)" checked>
+                    {% else %}
+                    <input type="checkbox"
+                           id="{{recipe.id}}_3"
+                           onchange="set_selected(this)">
+                    {% endif %}
+                </td>
+                <td style="padding-left: 8px" class="recipe_name">
+                    {{recipe.name}}
+                    <button type="button" id="edit_recipe/{{recipe.id}}"
+                            onclick="edit_recipe(this)">
+                        <i class=" fa-solid fa-pen-to-square"></i>
+                    </button>
+                    <button type="button" id="delete_recipe/{{recipe.id}}"
+                            name="{{ recipe.name }}"
+                            onclick="delete_recipe(this)">
+                        <i class=" fa-solid fa-trash-can"></i>
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </form>
+    {% if food_plan %}
+    <table class="all_shopping_lists">
+        <thead>
+            <tr>
+                <th class="list_header">Einkaufsliste</th>
+            </tr>
+            <tr>
+                <th class="menu_buttons">
+                    <form action="/print_shopping_list" method="post">
+                        <input type="submit" id="print_shopping_list_button"
+                               value="Ausdrucken">
+                    </form>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for list in food_plan.get_shopping_lists() %}
+            <tr>
+                <td>
+                <table class="shopping_list">
+                    <tr>
+                        <th colspan="2" class="shopping_list_header"> {{ "#"*((32 - list.name|length) / 2)|round|int }} {{ list.name }} {{ "#"*((32 - list.name|length) / 2)|round|int }}</th>
+                    </tr>
+                    {% for location in list.locations %}
+                    <tr>
+                        <td colspan="2">
+                        <table class="shopping_list_location">
+                            <tr>
+                                <th class="shopping_list_location_name" colspan="2">{{ location.name }}</th>
+                            </tr>
+                            {% for section in location.sections %}
+                            <tr>
+                                <td>
+                                <table class="shopping_list_section">
+                                    {% if section.name == "NONE" %}
+                                    {% else %}
+                                    <tr>
+                                        <th class="shopping_list_section_name" colspan="2">{{ section.name }}</th>
+                                    </tr>
+                                    {% endif %}
+                                    {% for ingredient in section.ingredients %}
+                                    {% if ingredient.shopping_list_item[list.weeks[0].number - 1] %}
+                                    <tr class="shopping_list_item">
+                                        <td class="fld_amount">{{ ingredient.shopping_list_item[list.weeks[0].number - 1].print_amounts() }}</td>
+                                        <td class="fld_ingredient_name">{{ ingredient.name }}</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% endfor %}
+                                </table>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </table>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+</div>
+<script>
+    // Maintain initial width of food_plan table
+    const food_plan = document.querySelector('.food_plan');
+    food_plan.style.width = `${food_plan.scrollWidth}px`;
+</script>
+
+<div id="cover"></div>
+
+{% block add_recipe_screen %}
+{% endblock %}
+
+{% block edit_recipe_screen %}
+{% endblock %}
+
+{% block ingredients_screen %}
+{% endblock %}
+
+{% block shopping_list_screen %}
+{% endblock %}
+
+{% endblock %}

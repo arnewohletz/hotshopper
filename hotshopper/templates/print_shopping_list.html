@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<script type="text/javascript">
+    food_plan = "{{ food_plan }}"
+</script>
+<script
+    src="{{ url_for('static', filename='print_shopping_list.js') }}"></script>
+<h2>Hotshopper</h2>
+<h3 id="print_instruction">DRUCKVORSCHAU: Diese Seite drucken im A4 Hochformat, 100 % Größe, ohne Hintergrund</h3>
+    {% for shopping_list in food_plan.shopping_lists %}
+    <div class="shopping_list_table" id="{{ shopping_list.name }}">
+        <div class="shopping_list_name" style="vertical-align: top; text-align: center;
+        font-size: 12pt; text-decoration-line: underline; text-decoration-thickness: 3px;
+        position: relative; top: 0; left: 0; margin-bottom: 10px; overflow: auto">
+        {{ shopping_list.name }}
+        </div>
+        <div class="shopping_list_content" style="columns: {{ shopping_list.print_columns }};">
+            {% for week_index in shopping_list.weeks %}
+            {% if loop.index0 < 1 %}
+            {% for location in shopping_list.locations %}
+            {% if location.has_shopping_list_items(week_index.number - 1) %}
+            <p style="font-size: 12pt; font-weight: bold">- {{ location.name }} -</p>
+            {% for section in location.sections %}
+            {% if section.name != "NONE" %}
+            <p>
+            <p style="font-size: 11pt; font-weight: bold; font-variant-caps: small-caps;">
+                {{ section.name }}</p>
+            </p>
+            {% endif %}
+            {% for ingredient in section.get_ingredients() %}
+            {% if ingredient.shopping_list_item[week_index.number - 1] %}
+            <p style="font-size: 8pt; width: 50mm">
+                <a class="fld_amount" style="width: 12mm; display: inline-block; vertical-align: middle">
+                    {{ ingredient.shopping_list_item[week_index.number - 1].print_amounts() }}
+                    {% if ingredient.always_on_list %}
+                    + ____
+                    {% else %}
+                    {% endif %}
+                </a>
+                <a>
+                    {{ ingredient.name }}
+                </a>
+            </p>
+            {% elif ingredient.always_on_list %}
+            <p style="font-size: 8pt; width: 50mm">
+                <canvas class="print_shopping_list_amount"
+                   style="width: 12mm; height: 3mm; display: inline-block; vertical-align: middle">&#8203;</canvas>
+                <a>{{ ingredient.name }}</a>
+            </p>
+            {% endif %}
+            {% endfor %}
+            {% for i in range(2) %}
+            <p style="font-size: 8pt; width: 50mm">
+                <canvas class="print_shopping_list_amount"
+                style="width: 12mm; height: 3mm; display: inline-block; vertical-align: middle">&#8203;</canvas>
+                <a></a>
+            </p>
+            {% endfor %}
+            {% endfor %}
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+
+{% endblock %}

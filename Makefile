@@ -26,6 +26,9 @@ BROWSER := python -c "$$BROWSER_PYSCRIPT"
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
+
+### Clean
+
 clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
 
 clean-build: ## remove build artifacts
@@ -47,8 +50,14 @@ clean-test: ## remove test and coverage artifacts
 	rm -fr htmlcov/
 	rm -fr .pytest_cache
 
+
+### Linting
+
 lint: ## check style with flake8
 	flake8 hotshopper tests
+
+
+### Test
 
 test: ## run tests quickly with the default Python
 	pytest
@@ -61,6 +70,9 @@ coverage: ## check code coverage quickly with the default Python
 	coverage report -m
 	coverage html
 	$(BROWSER) htmlcov/index.html
+
+
+### Build
 
 docs: ## generate Sphinx HTML documentation, including API docs
 	rm -f docs/hotshopper.rst
@@ -76,10 +88,43 @@ servedocs: docs ## compile the docs watching for changes
 release: dist ## package and upload a release
 	twine upload dist/*
 
-dist: clean ## builds source and wheel package
-	python setup.py sdist
-	python setup.py bdist_wheel
+dist: clean ## builds wheel package
+	python -m build --wheel --outdir dist .
 	ls -l dist
 
+
+### Install
+
 install: clean ## install the package to the active Python's site-packages
-	python setup.py install
+	python -m pip install .
+
+install-e: clean ## install the package as editable to the active Python environment
+	python -m pip -e install .
+
+### Dependencies
+
+verify-pip-tools:
+	sh makefile_helper.sh verify-pip-tools
+
+deps-pin-versions: verify-pip-tools ## Pin version for all dependencies
+	pip-compile --strip-extras -o requirements.txt pyproject.toml
+	pip-compile --strip-extras --extra=dev -o requirements_dev.txt pyproject.toml
+
+deps-upgrade-all: verify-pip-tools ## Upgrade and pin version for all dependencies
+	pip-compile \
+		--upgrade \
+		--strip-extras \
+		-o requirements.txt \
+		pyproject.toml
+	pip-compile \
+		--extra=dev \
+		--upgrade \
+		--strip-extras \
+		-o requirements_dev.txt \
+		pyproject.toml
+
+deps-install: verify-pip-tools ## Install user dependencies
+	pip-sync requirements.txt
+
+deps-install-all: verify-pip-tools deps-install ## Install dev & user dependencies
+	pip-sync requirements_dev.txt

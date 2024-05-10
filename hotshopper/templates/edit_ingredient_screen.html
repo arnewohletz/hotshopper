@@ -1,0 +1,115 @@
+{% extends 'ingredients.html' %}
+
+{% block edit_ingredient_screen %}
+<script type="text/javascript">
+    ingredient = "{{ ingredient }}"
+    ingredients = "{{ ingredients }}"
+    locations = "{{ locations }}"
+    section = "{{ section }}"
+    selected_location_id = "{{ location.id }}"
+</script>
+<script src="{{ url_for('static', filename='edit_ingredient_screen.js') }}"></script>
+
+<div id="ingredient_screen" class="ontop_screen">
+    <form method="POST" id="ingredient_form" action="placeholder">
+        <h2 id="edit_ingredient_headline">Zutat bearbeiten</h2>
+        <div id="recipe_table">
+            <table>
+                <tr>
+                    <td>Name:</td>
+                    <td colspan="3">
+                        <input style="width: 100%" type="text" id="ingredient_name" name="ingredient_name" value="{{ ingredient.name }}" required>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Einkaufsort:</td>
+                    <td>
+                        <select id="location" name="location" onchange="set_location()" required>
+                            <option id="location_placeholder">&#45;&#45; Bitte Ort auswählen &#45;&#45;</option>-->
+                            {% for l in locations %}
+                            {% if l.id == location.id %}
+                            <option value="{{ l.name }}" location_id="{{ l.id }}"
+                                    id="location_{{ l.id }}" selected>{{ l.name }}
+                            </option>
+                            {% else %}
+                            <option value="{{ l.name }}" location_id="{{ l.id }}"
+                                    id="location_{{ l.id }}">{{ l.name }}
+                            </option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                {% if locations|length == 0 or location == None %}
+                <div id="selected_location_id" style="display: none;">-1</div>
+                {% else %}
+                <div id="selected_location_id" style="display: none;">{{ location.id }}</div>
+                {% endif %}
+                <tr id="section_placeholder" class="section">
+                    <td>Sektion:</td>
+                    <td>
+                        <select id="location_sections_placeholder" class="section_list" disabled>
+                            <option>-- Bitte Sektion auswählen --</option>
+                        </select>
+                    </td>
+                </tr>
+                {% for location in locations %}
+                <tr id="section_{{ location.id }}" class="section">
+                    <td>Sektion:</td>
+                    <td>
+                        <select id="location_{{ location.id }}_sections" class="section_list">
+                            <option>-- Bitte Sektion auswählen --</option>
+                            {% for s in location.sections %}
+                            {% if s.id > 0 %}
+                            {% if s.id == section.id %}
+                            <option id="section_{{ s.id }}" selected>{{ s.name }}</option>
+                            {% else %}
+                            <option id="section_{{ s.id }}">{{ s.name }}</option>
+                            {% endif %}
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td>Immer auf Einkaufsliste:</td>
+                    <td id="always_on_shopping_list">
+                        {% if ingredient.always_on_list == 1 %}
+                        <input type="radio" name="always_on_list" checked value="true">Ja</input>
+                        <input type="radio" name="always_on_list" value="false">Nein</input>
+                        {% else %}
+                        <input type="radio" name="always_on_list" value="true">Ja</input>
+                        <input type="radio" name="always_on_list" checked value="false">Nein</input>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="non_food">Non-Food:</label>
+                        {% if ingredient.non_food == 1 %}
+                        <input type="checkbox" id="non_food" name="non_food" checked>
+                        {% else %}
+                        <input type="checkbox" id="non_food" name="non_food">
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="recipe_screen_close_buttons">
+            <button type="button"
+                    class="menu_buttons"
+                    id="cancel_ingredient"
+                    onclick="cancel_close_add_ingredient()">X</button>
+            <input type="submit"
+                   class="menu_buttons"
+                   id="confirm_ingredient"
+                   onclick="confirm_edit_ingredient()"
+                   value="OK">
+        </div>
+    </form>
+</div>
+
+<div id="cover"></div>
+
+{% endblock %}

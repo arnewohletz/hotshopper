@@ -1,0 +1,62 @@
+{% extends 'main_screen.html' %}
+
+{% block ingredients_screen %}
+<script type="text/javascript">
+    ingredients = "{{ ingredients }}"
+</script>
+<script src="{{ url_for('static', filename='ingredients_screen.js') }}"></script>
+
+<div id="ingredients_screen" class="ontop_screen">
+    <h2>
+        <table>
+            <tr>
+                <td>Zutaten</td>
+                <td class="header_buttons">
+                    <button type="button"
+                            id="show_ingredients_screen"
+                            class="header_button"
+                            onclick="show_add_ingredient_screen()">Neue Zutat ...
+                    </button>
+                    <button type="button"
+                            id="close_ingredients_screen"
+                            class="header_button"
+                            onclick="close_ingredients_screen()">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </h2>
+    <div class="scroll" id="ingredients_table">
+        <table>
+            {% for i in ingredients %}
+            <tr>
+                <td>
+                    {{ i.name }}
+                    <button type="button" id="ingredients/edit/{{i.id}}"
+                            onclick="edit_ingredient(this.id)">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                    <button type="button" id="ingredients/delete/{{i.id}}"
+                            name="{{ i.name }}"
+                            data-uses-recipes="{{ i.used_by() }}"
+                            onclick="delete_ingredient(this)">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </td>
+                <td>
+                    <div class="invisible">AAA</div>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+{% block add_ingredient_screen %}
+{% endblock %}
+
+{% block edit_ingredient_screen %}
+{% endblock %}
+
+{% endblock %}
