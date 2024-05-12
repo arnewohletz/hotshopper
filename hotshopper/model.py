@@ -1,7 +1,7 @@
 # Standard library imports
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import Union, NewType
+from typing import Union
 
 # Third-Party library imports
 from sqlalchemy import orm
@@ -92,13 +92,14 @@ class Location(OrderedModel):
     sections = _db.relationship("Section", backref="location",
                                 order_by="asc(Section.order_id)")
     shopping_lists = _db.relationship("ShoppingList",
-                                     secondary="shopping_list_location",
-                                     back_populates="locations")
+                                      secondary="shopping_list_location",
+                                      back_populates="locations")
 
     def __init__(self, name, order_id):
         self.name = name
         self.order_id = order_id
-        self.existing_sections = Section.query.filter_by(location_id=self.id).all()
+        self.existing_sections = Section.query.filter_by(
+            location_id=self.id).all()
         self.sections = []
         for section in self.existing_sections:
             self.sections.append(Section(section.name, section.order_id))
@@ -145,8 +146,9 @@ class Recipe(_db.Model):
         print(f"{self.name} is deselected from week {str(week)}")
 
     def add_ingredient(self, ingredient: RecipeIngredient):
-        existing = RecipeIngredient.query.filter_by(recipe_id=self.id,
-                                                    ingredient_id=ingredient.ingredient_id).all()
+        existing = RecipeIngredient.query.filter_by(
+            recipe_id=self.id,
+            ingredient_id=ingredient.ingredient_id).all()
         if existing:
             raise DuplicateRecipeIngredientError(
                 "Ingredient already exists for this recipe. Won't add")
@@ -195,8 +197,8 @@ class RecipeIngredient(_db.Model):
                unit: str = None,
                ingredient_id: int = None):
         if quantity_per_person is not None:
-            if not isinstance(quantity_per_person, (int, float)) \
-                or not 1.0 <= quantity_per_person <= 10000:
+            if (not isinstance(quantity_per_person, (int, float))
+                    or not 1.0 <= quantity_per_person <= 10000):
                 raise ValueError("Enter value between 1.0 and 10000.0")
             self.quantity_per_person = quantity_per_person
         if ingredient_id is not None:
@@ -219,14 +221,15 @@ class RecipeIngredient(_db.Model):
 
     def delete(self):
         ingredient = RecipeIngredient.query.filter_by(
-            ingredient_id=self.ingredient_id, recipe_id=self.recipe_id).first()
+            ingredient_id=self.ingredient_id,
+            recipe_id=self.recipe_id).first()
         if ingredient:
             _db.session.delete(ingredient)
             _db.session.commit()
             return True
         raise RecipeIngredientNotFoundError(
-            f"Can't delete ingredient, as it"
-            f" is not found in recipe")
+            f"Can't delete ingredient {ingredient.name}, "
+            f"as it is not found in recipe")
 
 
 class Section(_db.Model):
@@ -272,47 +275,13 @@ class ShoppingList(_db.Model):
     ingredients = None
     print_columns = _db.Column(_db.Integer)
 
-    # def __init__(self, name: str, locations: list, weeks: list,
-    #              print_columns: int):
-    #     self.ingredients = None
-    #     self.name = name
-    #     self.locations = locations
-    #     self.weeks = weeks
-    #     self.print_columns = print_columns
-        # self.existing_locations = db.session.query(Location).all()
-        # self.locations = db.relationship("Location", secondary="shopping_list_location",
-        #                     back_populates="shopping_lists")
-        # for location in self.existing_locations:
-        #     self.locations.append(copy.copy(Location(location.name, location.order_id)))
-
-    a = None     # TODO: changing this value does only affect one shopping list instance
-                 #  but changing 'locations' does affect all - why?
-    # print_columns_width = db.Column(db.Integer)
-
-    # TODO: Add print options:
-    #   - Columns total
-    #   - Columns width
-    #   Rule:
-    #   1/2 Columns total <= Columns width <= Columns total
-
-
     @orm.reconstructor  # called after object was loaded from database
     def initialize(self):
         self.ingredients = []
-        # self.locations = copy.deepcopy(self.locations)
-    # ingredients = db.relationship("RecipeIngredient",
-    #                               backref=db.backref("recipe", lazy=False),
-    #                               lazy="joined")
 
-    # def __init__(self, name, locations, weeks):
-    #     super().__init__()
-    #     self.name = name
-    #     self.locations = locations
-    #     self.weeks = weeks
-
-    def __contains__(self, type):
+    def __contains__(self, class_type):
         for ingredient in self.ingredients:
-            if isinstance(ingredient, type):
+            if isinstance(ingredient, class_type):
                 return True
             return False
 
@@ -329,7 +298,6 @@ class ShoppingList(_db.Model):
         return self.name
 
     def add(self, recipe_ingredient: RecipeIngredient):
-        matching_ingredient = None
         list_item = ShoppingListItem(recipe_ingredient)
 
         for location in self.locations:
@@ -337,80 +305,19 @@ class ShoppingList(_db.Model):
                 for ingredient in section.ingredients:
                     if ingredient.id == recipe_ingredient.ingredient_id:
                         week_index = self.weeks[0].number - 1
-                        # if ingredient.must_be_on_list():
-                        #     ingredient.shopping_list_item[week_index] = list_item
-                            # TODO: Add a week_x attribute to ingredient, one for each entry in self.weeks
-                        if ingredient.has_shopping_list_item(week_index=week_index):
-                            #
-                            # if ingredient.shopping_list_item[self.weeks[0]-1]:
-                            ingredient.shopping_list_item[week_index] += list_item
+                        if ingredient.has_shopping_list_item(
+                                week_index=week_index):
+                            ingredient.shopping_list_item[
+                                week_index] += list_item
                         else:
-                            ingredient.shopping_list_item[week_index] = list_item
-                        # else:
-                        #     ingredient.shopping_list_item[self.weeks[0]-1] = list_item
-                            self.a = ShoppingListItem(recipe_ingredient)
+                            ingredient.shopping_list_item[
+                                week_index] = list_item
                         return True
-        # self.ingredients.append(
-        #     ShoppingListItem(copy.deepcopy(recipe_ingredient)))
-        raise KeyError(f"Cannot find ingredient entry for {recipe_ingredient.ingredient.name}")
-        # if matching_ingredient.has_shopping_list_item():
-        #     matching_ingredient.shopping_list_item += list_item
-        # else:
-        #     matching_ingredient.shopping_list_item = list_item
-        # return True
-        #
-        # ingredient = Ingredient.query.filter_by(id=recipe_ingredient.ingredient_id)
-        # ingredient = Ingredient.query.filter_by(id=recipe_ingredient.ingredient.location_id).first()
-        #
-        # if not self.list_item:
-        #     self.list_item = ShoppingListItem(recipe_ingredient)
-        #
-        # if self.list_item.unit == Unit.PIECE:
-        #     recipe_ingredient.amount_piece = recipe_ingredient.quantity_per_person
-        # else:
-        #     recipe_ingredient.amount = recipe_ingredient.quantity_per_person
-        #
-        #
-        # for location in self.locations:
-        #     if location.ingredients:
-        #         location.add_ingredient(recipe_ingredient)
-        #         for existing_ing in location.ingredients:
-        #             if existing_ing.id == recipe_ingredient.ingredient_id:
-        #                 existing_ing.amount_piece += recipe_ingredient.amount_piece
-        #                 existing_ing.amount += recipe_ingredient.amount
-        #                 return True
-        #     if location.sections:
-        #         for section in location.sections:
-        #             for existing_ing in section.ingredients:
-        #                 if existing_ing.id == recipe_ingredient.ingredient_id:
-        #                     existing_ing.amount_piece += recipe_ingredient.amount_piece
-        #                     existing_ing.amount += recipe_ingredient.amount
-        #                     return True
-        #             if section.id == recipe_ingredient.section_id:
-        #                 raise NotImplementedError
-        #
-        # for existing_ingredient in self.ingredients:
-        #     if recipe_ingredient.ingredient.name == existing_ingredient.name:
-        #         if recipe_ingredient.unit == Unit.PIECE:
-        #             # TODO: Add multiplied by 'persons' once added to recipe
-        #             # TODO: Add "ShoppingListItem" to Ingredient instance of ShoppingList
-        #             existing_ingredient.amount_piece += recipe_ingredient.amount_piece
-        #             recipe_ingredient.ingredient.shopping_list_item.amount_piece += recipe_ingredient.amount_piece
-        #         else:
-        #             existing_ingredient.amount += recipe_ingredient.amount
-        #             recipe_ingredient.ingredient.shopping_list_item.amount += existing_ingredient.amount
-        #         return True
-        # # self.ingredients.append(ShoppingListIngredient(ingredient))
-        # # Copy required since shopping list otherwise alters the ingredient
-        # # amount in the recipe, when adding them (not nice, I know)
-        # self.ingredients.append(ShoppingListItem(copy.deepcopy(recipe_ingredient)))
-    #
+        raise KeyError(f"Cannot find ingredient entry for "
+                       f"{recipe_ingredient.ingredient.name}")
+
     def sort_ingredients(self):
         self.ingredients.sort(key=lambda ri: ri.order_id)
-    #
-    def append_always_on_list_items(self):
-        # TODO: Implement append_always_on_list_items() method
-        raise NotImplementedError
 
 
 class ShoppingListItem:
@@ -434,10 +341,12 @@ class ShoppingListItem:
 
     def __add__(self, other):
         if self.name is not other.name:
-            raise ValueError(f"Name mismatch: Can't add '{other.name}' to {self.name}")
+            raise ValueError(f"Name mismatch: Can't add '{other.name}'"
+                             f"to {self.name}")
         if self.order_id is not other.order_id:
             raise ValueError(f"Order ID mismatch: Existing item has order id "
-                             f"{self.order_id}, but addend uses {other.order_id}")
+                             f"{self.order_id}, but added item "
+                             f"uses {other.order_id}")
         self.amount += other.amount
         self.amount_piece += other.amount_piece
         return self
@@ -501,5 +410,5 @@ class Week(_db.Model):
     id = _db.Column(_db.Integer, primary_key=True)
     number = _db.Column(_db.Integer)
     shopping_lists = _db.relationship("ShoppingList",
-                                     secondary="shopping_list_week",
-                                     back_populates="weeks")
+                                      secondary="shopping_list_week",
+                                      back_populates="weeks")
