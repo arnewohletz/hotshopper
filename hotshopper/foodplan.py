@@ -14,8 +14,8 @@ class FoodPlan:
         for week in recipe.weeks:
             for ri in recipe.ingredients:
                 for shopping_list in self.shopping_lists:
-                    if shopping_list.has_location(ri.ingredient.location_id) \
-                        and shopping_list.has_week(week):
+                    if (shopping_list.has_location(ri.ingredient.location_id)
+                            and shopping_list.has_week(week)):
                         shopping_list.add(ri)
                         break
 
