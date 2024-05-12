@@ -52,7 +52,8 @@ class Controller:
 
     def get_recipes(self) -> list:
         """
-        Get all recipes from the database, maintaining the state of preexisting recipes.
+        Get all recipes from the database, maintaining the state of
+        preexisting recipes.
         """
         all_recipes = self.db.session.query(Recipe).all()
         for recipe in all_recipes:
@@ -78,7 +79,8 @@ class Controller:
                       key=lambda ingredient: ingredient.name.lower())
 
     def get_food_only_ingredients(self):
-        self.ingredients = Ingredient.query.filter(Ingredient.non_food == 0).all()
+        self.ingredients = Ingredient.query.filter(
+            Ingredient.non_food == 0).all()
         return sorted(self.ingredients,
                       key=lambda ingredient: ingredient.name.lower())
 
@@ -95,7 +97,8 @@ class Controller:
     @staticmethod
     def get_recipe_ingredients(recipe_id: int) -> List[RecipeIngredient]:
         """
-        Get all RecipeIngredients of the Recipe matching the given :param:`recipe_id`.
+        Get all RecipeIngredients of the Recipe matching the given
+        :param:`recipe_id`.
 
         :param recipe_id: Primary integer key of the recipe.
         """
@@ -121,7 +124,8 @@ class Controller:
     @staticmethod
     def get_sections(location_id) -> List[Section]:
         """
-        Get all Sections objects associated with the matching :param:`location_id`.
+        Get all Sections objects associated with the matching
+        :param:`location_id`.
         """
         secs = Section.query.filter_by(location_id=location_id).all()
         return sorted(secs, key=lambda section: section.order_id)
@@ -129,7 +133,8 @@ class Controller:
     @staticmethod
     def get_always_on_list_items(location_id: int) -> List[Ingredient]:
         """
-        Get all items for given :param:`location_id` which must always be on the shopping list.
+        Get all items for given :param:`location_id`
+        which must always be on the shopping list.
 
         :param location_id: The primary integer key of the location.
         """
@@ -137,7 +142,9 @@ class Controller:
                                            always_on_list=1).all()
         return items
 
-    def get_highest_order_id(self, model: Type[OrderedModel], **filters) -> int:
+    def get_highest_order_id(self,
+                             model: Type[OrderedModel],
+                             **filters) -> int:
         """
         Return the highest order ID for a :param:`model`'s database data.
 
@@ -165,6 +172,39 @@ class Controller:
         result = Section.query.filter_by(location_id=location_id,
                                          order_id=order_id).first()
         return result.id
+
+    @staticmethod
+    def set_new_order(items: List[OrderedModel],
+                      new_id_order: List[str]) -> None:
+        """
+        Set the list index of :param:`new_id_order` to the item within
+        :param items: which matches the `ìd`.
+
+        :param items: The model elements which are subject to reorder.
+        :param new_id_order: The new order of the  model elements `ìd`s.
+        """
+        try:
+            expected_type = type(items[0])
+            if not all(isinstance(elem, expected_type) for elem in items):
+                raise TypeError("Element of unexpected type found."
+                                "Abort set of new order")
+            if len(items) != len(new_id_order):
+                raise ValueError("Amount of the order IDs list and "
+                                 "items must match. Abort set of new order")
+        except (TypeError, ValueError):
+            return None
+
+        current_ingr_id_order = [i.id for i in items]
+        model_class = type(items[0])
+
+        for i in range(len(new_id_order)):
+            if new_id_order[i] == current_ingr_id_order[i]:
+                continue
+            else:
+                model_class.query.filter_by(
+                    id=new_id_order[i]).first().update_order_id(i)
+
+        return None
 
 
 class SignedIntConverter(IntegerConverter):
@@ -226,9 +266,10 @@ def main() -> None:
     @app.route("/shopping_list/<int:scroll_height>")
     def show_shopping_list_screen(scroll_height: int) -> str:
         """
-        RReturns the rendered shopping list page.
+        Returns the rendered shopping list page.
 
-        :param scroll_height: The current scroll height of the shopping list page.
+        :param scroll_height: The current scroll height
+        of the shopping list page.
         """
         ingredients = controller.get_ingredients()
         recipes = controller.get_recipes()
@@ -271,7 +312,9 @@ def main() -> None:
                                recipes=recipes)
 
     @app.route("/check_recipe/<recipe_id>_<int:week>_<int:scroll_height>")
-    def check_recipe(recipe_id: int, week: int, scroll_height: int) -> BaseResponse:
+    def check_recipe(recipe_id: int,
+                     week: int,
+                     scroll_height: int) -> BaseResponse:
         """
         Select recipe in shopping list for a particular week.
 
@@ -287,7 +330,9 @@ def main() -> None:
                 return redirect("/")
 
     @app.route("/uncheck_recipe/<recipe_id>_<int:week>_<int:scroll_height>")
-    def uncheck_recipe(recipe_id: int, week: int, scroll_height: int) -> BaseResponse:
+    def uncheck_recipe(recipe_id: int,
+                       week: int,
+                       scroll_height: int) -> BaseResponse:
         """
         Unselect recipe in shopping list for a particular week.
 
@@ -356,11 +401,12 @@ def main() -> None:
         recipes = controller.get_recipes()
         recipe = controller.get_recipe(recipe_id)
         recipe_ingredients = controller.get_recipe_ingredients(recipe_id)
+        ingredients = controller.get_food_only_ingredients()
         return render_template("edit_recipe_screen.html",
                                recipes=recipes,
                                recipe=recipe,
                                recipe_ingredients=recipe_ingredients,
-                               ingredients=controller.get_food_only_ingredients(),
+                               ingredients=ingredients,
                                unit=Unit
                                )
 
@@ -384,7 +430,7 @@ def main() -> None:
         Confirms the current recipe data and close the screen.
 
         :param recipe_id: The primary integer key of the edited recipe.
-        :param amount_ingredients: The amount of ingredients that the recipe has.
+        :param amount_ingredients: The recipe's amount of ingredients.
         :param scroll_height: The current scroll height on the main page.
         """
 
@@ -430,11 +476,12 @@ def main() -> None:
     @app.route(
         "/confirm_new_recipe/<int:amount_ingredients>_<int:scroll_height>",
         methods=["POST"])
-    def add_new_recipe(amount_ingredients: int, scroll_height: int) -> BaseResponse:
+    def add_new_recipe(amount_ingredients: int,
+                       scroll_height: int) -> BaseResponse:
         """
         Confirm a new recipe and closing the editing screen.
 
-        :param amount_ingredients: The amount of ingredients that the recipe has.
+        :param amount_ingredients: The recipe's amount of ingredients.
         :param scroll_height: The current scroll height on the main page.
         :return: Navigate back to the main page.
         """
@@ -474,19 +521,20 @@ def main() -> None:
         """
         Display the screen to edit an existing ingredient.
 
-        :param ingredient_id: The primary integer key of the ingredient to edit.
+        :param ingredient_id: The primary key of the ingredient to edit.
         """
-        ingredients = Ingredient.query.filter_by(id=ingredient_id).all()
-        if len(ingredients) > 1:
+        matches = Ingredient.query.filter_by(id=ingredient_id).all()
+        if len(matches) > 1:
             raise DuplicateIndexError(
                 f"Index '{id}' is used more than once."
-                f"Also used by {[i.name for i in ingredients]}")
-        ingredient = ingredients[0]
+                f"It is also used by {[i.name for i in matches]}")
+        ingredient = matches[0]
         section = Section.query.filter_by(id=ingredient.section_id).first()
         location = Location.query.filter_by(id=section.location_id).first()
+        food_only_ingredients = controller.get_food_only_ingredients()
         return render_template("edit_ingredient_screen.html",
                                recipes=controller.get_recipes(),
-                               ingredients=controller.get_food_only_ingredients(),
+                               ingredients=food_only_ingredients,
                                locations=controller.get_locations(),
                                ingredient=ingredient,
                                location=location,
@@ -498,7 +546,7 @@ def main() -> None:
         """
         Deletes the ingredient which matches the :param:`ingredient_id`.
 
-        :param ingredient_id: THe primary integer key of the ingredient to delete.
+        :param ingredient_id: The primary key of the ingredient to delete.
         :return: Navigates to the ingredients list page.
         """
         ingredient = Ingredient.query.filter_by(id=ingredient_id).first()
@@ -509,13 +557,17 @@ def main() -> None:
         "/confirm_new_ingredient/<int:location_id>_<signed_int"
         ":section_order_id>_<string:non_food>",
         methods=["POST", "GET"])
-    def add_ingredient(location_id: int, section_order_id: int, non_food: str) -> BaseResponse:
+    def add_ingredient(location_id: int,
+                       section_order_id: int,
+                       non_food: str) -> BaseResponse:
         """
         Add a new ingredient to the list of ingredients.
 
-        :param location_id: The primary integer key of the location to add.
-        :param section_order_id: The primary integer key of the section the ingredient is added to.
-        :param non_food: A boolean string ("true"/"false") defining if ingredient is food or not.
+        :param location_id: The primary key of the location to add.
+        :param section_order_id: The primary key of the section to which
+        the ingredient is added to.
+        :param non_food: A boolean string ("true"/"false") which defines
+        if the ingredient is food or not.
         :return: Navigate back to the ingredients list page.
         """
 
@@ -524,14 +576,15 @@ def main() -> None:
         always_on_list = Helper.bool_string_to_int(form["always_on_list"])
         section_id = controller.get_section_id(location_id,
                                                section_order_id)
-        current_max_order_id = controller.get_highest_order_id(Ingredient,
-                                                               section_id=section_id)
+        next_available_order_id = controller.get_highest_order_id(
+            Ingredient,
+            section_id=section_id) + 1
 
         i = Ingredient(name=name, always_on_list=always_on_list,
                        location_id=location_id,
                        section_id=section_id,
                        non_food=Helper.bool_string_to_int(non_food),
-                       order_id=current_max_order_id + 1)
+                       order_id=next_available_order_id)
 
         try:
             i.add()
@@ -548,15 +601,20 @@ def main() -> None:
                "<int:location_id>_"
                "<signed_int:section_order_id>_"
                "<string:non_food>", methods=["POST", "GET"])
-    def confirm_edit_ingredient(ingredient_id: int, location_id: int,
-                                section_order_id: int, non_food: str) -> BaseResponse:
+    def confirm_edit_ingredient(ingredient_id: int,
+                                location_id: int,
+                                section_order_id: int,
+                                non_food: str) -> BaseResponse:
         """
         Apply edited changes to ingredient.
 
-        :param ingredient_id: The primary integer key of the edited ingredient.
-        :param location_id: The primary integer key of the location of the edited ingredient.
-        :param section_order_id: The primary integer key of the section of the edited ingredient.
-        :param non_food: A boolean string ("true"/"false") defining if ingredient is food or not.
+        :param ingredient_id: The primary key of the edited ingredient.
+        :param location_id:
+            The primary key of the edited ingredient's location.
+        :param section_order_id:
+            The primary key of the edited ingredient's section
+        :param non_food: A boolean string ("true"/"false") which defines
+            if ingredient is food or not.
         :return: Navigate back to the ingredients list page.
         """
 
@@ -565,8 +623,10 @@ def main() -> None:
         always_on_list = Helper.bool_string_to_int(form["always_on_list"])
         section_id = controller.get_section_id(location_id,
                                                section_order_id)
-        existing_ingredient = Ingredient.query.filter_by(id=ingredient_id).first()
-        order_id = controller.get_highest_order_id(Ingredient, section_id=section_id)
+        existing_ingredient = Ingredient.query.filter_by(
+            id=ingredient_id).first()
+        order_id = controller.get_highest_order_id(Ingredient,
+                                                   section_id=section_id)
 
         try:
             # TODO: add update method to Ingredient model class
@@ -589,30 +649,29 @@ def main() -> None:
 
     @app.route(
         "/update_ingredient_order/<int:location_id>/<signed_int:section_id>/"
-        "<string:new_ingr_id_order>/<int:scroll_height>")
-    def set_new_ingredient_order(location_id: int, section_id: int,
-                                 new_ingr_id_order: str, scroll_height: int) -> BaseResponse:
+        "<string:new_ingredient_id_order>/<int:scroll_height>")
+    def set_new_ingredient_order(location_id: int,
+                                 section_id: int,
+                                 new_ingredient_id_order: str,
+                                 scroll_height: int) -> BaseResponse:
         """
         Change the order of the ingredient within the section.
 
-        :param location_id: The primary integer key of the location of the edited ingredient.
-        :param section_id: The primary integer key of the section of the edited ingredient.
-        :param new_ingr_id_order: The section's ingredients primary keys in their new order.
-        :param scroll_height: The current scroll height of the ingredients list page.
+        :param location_id: The primary key of edited ingredient's location.
+        :param section_id: The primary key of the edited ingredient's section.
+        :param new_ingredient_id_order: The primary keys of the section's
+            ingredients, concatenated with underscores, in their new order.
+        :param scroll_height: The ingredients list page's
+            current scroll height.
         :return: Navigate back to the ingredients list page.
         """
-        new_ingr_id_order = new_ingr_id_order.split("_")
+        new_ingredient_id_order = new_ingredient_id_order.split("_")
         section = Section.query.filter_by(location_id=location_id,
                                           id=section_id).first()
         ingredients = section.get_ingredients()
-        current_ingr_id_order = [i.id for i in ingredients]
 
-        for i in range(len(new_ingr_id_order)):
-            if new_ingr_id_order[i] == current_ingr_id_order[i]:
-                continue
-            else:
-                Ingredient.query.filter_by(
-                    id=new_ingr_id_order[i]).first().update_order_id(i)
+        controller.set_new_order(ingredients, new_ingredient_id_order)
+
         return redirect(f"/shopping_list/{scroll_height}")
 
     @app.route("/update_location_order/<string:new_loc_id_order>")
@@ -624,20 +683,15 @@ def main() -> None:
         """
         new_loc_id_order = new_loc_id_order.split("_")
         locations = controller.get_locations()
-        current_loc_id_order = [l.id for l in locations]
 
-        for i in range(len(new_loc_id_order)):
-            if new_loc_id_order[i] == current_loc_id_order[i]:
-                continue
-            else:
-                Location.query.filter_by(
-                    id=new_loc_id_order[i]).first().update_order_id(i)
+        controller.set_new_order(locations, new_loc_id_order)
 
         return redirect("/shopping_list/edit")
 
     @app.route(
         "/update_section_order/<int:location_id>/<string:new_sec_id_order>")
-    def set_new_section_order(location_id: int, new_sec_id_order: str) -> BaseResponse:
+    def set_new_section_order(location_id: int,
+                              new_sec_id_order: str) -> BaseResponse:
         """
         Change the order of a section inside a location on the shopping list.
 
@@ -647,16 +701,8 @@ def main() -> None:
         new_sec_id_order = new_sec_id_order.split("_")
         sections = controller.get_sections(location_id)
 
-        current_sec_id_order = [s.id for s in sections]
-
-        for i in range(len(new_sec_id_order)):
-            if new_sec_id_order[i] == current_sec_id_order[i]:
-                continue
-            else:
-                Section.query.filter_by(
-                    id=new_sec_id_order[i]).first().update_order_id(i)
+        controller.set_new_order(sections, new_sec_id_order)
 
         return redirect(f"/shopping_list/edit/{location_id}")
-
 
     app.run(port=port, debug=True)
