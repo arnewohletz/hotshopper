@@ -12,14 +12,13 @@ from hotshopper.model import (
 
 
 def get_random_string(length: int):
-    # choose from all lowercase letter
+    """Return a random ASCII string of the defined length"""
     letters = string.ascii_lowercase
     result_str = ''.join(random.choice(letters) for i in range(length))
     return result_str
 
 
 class RandomTestDataGenerator:
-
     def __init__(self, db):
         self.db = db
         self.next_recipe_id = 0
@@ -32,13 +31,14 @@ class RandomTestDataGenerator:
 
         return r
 
-    @staticmethod
-    def create_shopping_list():
-        s = ShoppingList(name="some_name",
-            locations=[Location(name="some_location", order_id=1)],
-            weeks = [Week(number=1)],
-            print_columns = 1)
-        return s
+    # def create_shopping_list(self):
+    #     return ShoppingList(name="some_name")
+    #     # s = ShoppingList(name="some_name",
+    #     #     locations=[Location(name="some_location", order_id=1,
+    #     #                         session=self.db.session)],
+    #     #     weeks = [Week(number=1)],
+    #     #     print_columns = 1)
+    #     # return s
 
     def create_ingredient(self, where, name=None):
         if not name:

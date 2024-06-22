@@ -1,10 +1,12 @@
+# Standard library imports
+from typing import List
 
 # Intra-package imports
-from hotshopper.model import Recipe
+from hotshopper.model import Recipe, ShoppingList
 
 
 class FoodPlan:
-    def __init__(self, shopping_lists):
+    def __init__(self, shopping_lists: List[ShoppingList]):
         self.recipes = []
         self.shopping_lists = shopping_lists
 
@@ -19,7 +21,7 @@ class FoodPlan:
                         shopping_list.add(ri)
                         break
 
-    def set_shopping_lists(self, recipes: list):
+    def set_shopping_lists(self, recipes: List[Recipe]):
         for recipe in recipes:
             if recipe.selected:
                 self._add_recipe(recipe)

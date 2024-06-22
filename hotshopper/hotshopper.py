@@ -3,6 +3,10 @@
 
 # Standard library imports
 import json
+from typing import (
+    List,
+    Type
+)
 
 # Third-party imports
 from flask import (
@@ -13,22 +17,22 @@ from flask import (
     session
 )
 from sqlalchemy import func
-from typing import (
-    List,
-    Type
-)
 from werkzeug.routing import IntegerConverter
 from werkzeug.wrappers import Response as BaseResponse
 
 # Intra-package imports
-from hotshopper.helper import Helper
-from hotshopper import get_app, get_db
+from hotshopper import (
+    get_app,
+    get_db
+)
 from hotshopper.errors import (
     DuplicateIndexError,
     DuplicateIngredientError
 )
+from hotshopper.helper import Helper
 from hotshopper.foodplan import FoodPlan
 from hotshopper.model import (
+    Base,
     Ingredient,
     Location,
     OrderedModel,
@@ -44,8 +48,8 @@ class Controller:
     """
     Access controller for the database data.
     """
-    def __init__(self):
-        self.db = get_db()
+    def __init__(self, db):
+        self.db = db
         self.food_plan = FoodPlan(self.get_shopping_lists())
         self.recipes = []
         self.ingredients = []
@@ -79,67 +83,63 @@ class Controller:
                       key=lambda ingredient: ingredient.name.lower())
 
     def get_food_only_ingredients(self):
-        self.ingredients = Ingredient.query.filter(
+        self.ingredients = self.db.session.query(Ingredient).filter(
             Ingredient.non_food == 0).all()
         return sorted(self.ingredients,
                       key=lambda ingredient: ingredient.name.lower())
 
-    @staticmethod
-    def get_recipe(recipe_id: int) -> Recipe:
+    def get_recipe(self, recipe_id: int) -> Recipe:
         """
         Get single recipe which matches the given :param:`recipe_id`.
 
         :param recipe_id: Primary integer key of the recipe.
         """
-        recipe = Recipe.query.filter_by(id=recipe_id).first()
+        recipe = self.db.session.query(Recipe).filter_by(id=recipe_id).first()
         return recipe
 
-    @staticmethod
-    def get_recipe_ingredients(recipe_id: int) -> List[RecipeIngredient]:
+    def get_recipe_ingredients(self, recipe_id: int) -> List[RecipeIngredient]:
         """
         Get all RecipeIngredients of the Recipe matching the given
         :param:`recipe_id`.
 
         :param recipe_id: Primary integer key of the recipe.
         """
-        ris = RecipeIngredient.query.filter_by(recipe_id=recipe_id).all()
+        ris = self.db.session.query(RecipeIngredient).filter_by(
+            recipe_id=recipe_id).all()
         return ris
 
-    @staticmethod
-    def get_locations() -> List[Location]:
+    def get_locations(self) -> List[Location]:
         """
         Get all locations from the database
         """
-        ls = Location.query.all()
+        ls = self.db.session.query(Location).all()
         return sorted(ls, key=lambda location: location.order_id)
 
-    @staticmethod
-    def get_location(location_id) -> Location:
+    def get_location(self, location_id) -> Location:
         """
         Get Location object which matches the given :param:`location_id`.
         """
-        loc = Location.query.filter_by(id=location_id).first()
+        loc = self.db.session.query(Location).filter_by(id=location_id).first()
         return loc
 
-    @staticmethod
-    def get_sections(location_id) -> List[Section]:
+    def get_sections(self, location_id) -> List[Section]:
         """
         Get all Sections objects associated with the matching
         :param:`location_id`.
         """
-        secs = Section.query.filter_by(location_id=location_id).all()
+        secs = self.db.session.query(Section).filter_by(
+            location_id=location_id).all()
         return sorted(secs, key=lambda section: section.order_id)
 
-    @staticmethod
-    def get_always_on_list_items(location_id: int) -> List[Ingredient]:
+    def get_always_on_list_items(self, location_id: int) -> List[Ingredient]:
         """
         Get all items for given :param:`location_id`
         which must always be on the shopping list.
 
         :param location_id: The primary integer key of the location.
         """
-        items = Ingredient.query.filter_by(id=location_id,
-                                           always_on_list=1).all()
+        items = self.db.session.query(Ingredient).filter_by(
+            id=location_id, always_on_list=1).all()
         return items
 
     def get_highest_order_id(self,
@@ -158,8 +158,7 @@ class Controller:
         else:
             return 0
 
-    @staticmethod
-    def get_section_id(location_id: int, order_id: int) -> int:
+    def get_section_id(self, location_id: int, order_id: int) -> int:
         """
         Return the section ID for a :type:`Section` database entry which
         matches the given :param:`location_id` and :param:`order_id`.
@@ -169,12 +168,11 @@ class Controller:
         """
         if order_id == -1:
             return order_id
-        result = Section.query.filter_by(location_id=location_id,
-                                         order_id=order_id).first()
+        result = self.db.session.query(Section).filter_by(
+            location_id=location_id, order_id=order_id).first()
         return result.id
 
-    @staticmethod
-    def set_new_order(items: List[OrderedModel],
+    def set_new_order(self, items: List[Base],
                       new_id_order: List[str]) -> None:
         """
         Set the list index of :param:`new_id_order` to the item within
@@ -201,8 +199,9 @@ class Controller:
             if new_id_order[i] == current_ingr_id_order[i]:
                 continue
             else:
-                model_class.query.filter_by(
-                    id=new_id_order[i]).first().update_order_id(i)
+                (self.db.session.query(model_class).filter_by(
+                    id=new_id_order[i]
+                ).first().update_order_id(i, self.db.session))
 
         return None
 
@@ -228,8 +227,9 @@ def main() -> None:
     """
     port = 5002
     app = get_app()
+    db = get_db()
     app.url_map.converters['signed_int'] = SignedIntConverter
-    controller = Controller()
+    controller = Controller(db)
 
     @app.route("/", methods=["GET"])  # remove 'POST' - see if it causes issues
     def show_main_page() -> str:
@@ -260,7 +260,8 @@ def main() -> None:
         """
         ingredients = controller.get_ingredients()
         recipes = controller.get_recipes()
-        return render_template("ingredients.html", ingredients=ingredients,
+        return render_template("ingredients.html",
+                               ingredients=ingredients,
                                recipes=recipes)
 
     @app.route("/shopping_list/<int:scroll_height>")
@@ -435,25 +436,26 @@ def main() -> None:
         """
 
         r_name = request.form["recipe_name"]
-        recipe = Recipe.query.filter_by(id=recipe_id).first()
-        recipe.update(r_name)
+        recipe = db.session.query(Recipe).filter_by(id=recipe_id).first()
+        recipe.update(db.session, r_name)
 
-        all_ingredients = RecipeIngredient.query.filter_by(
+        all_ingredients = db.session.query(RecipeIngredient).filter_by(
             recipe_id=recipe_id).all()
         for ingredient in all_ingredients:
-            ingredient.delete()
+            ingredient.delete(db.session)
 
         for j in range(amount_ingredients):
             ri_unit = request.form[f"unit_{j}"]
             ri_quantity = float(request.form[f"quantity_{j}"])
             ri_name = request.form[f"ingredient_{j}"]
-            i_id = Ingredient.query.filter_by(name=ri_name).first().id
+            i_id = db.session.query(Ingredient).filter_by(
+                name=ri_name).first().id
 
             ri = RecipeIngredient(recipe_id=recipe_id,
                                   ingredient_id=i_id,
                                   quantity_per_person=ri_quantity,
                                   unit=ri_unit)
-            ri.add()
+            ri.add(db.session)
 
         controller.db.session.expire_on_commit = False
         controller.db.session.commit()
@@ -468,8 +470,8 @@ def main() -> None:
         :param recipe_id: The primary integer key of the recipe to delete.
         :param scroll_height: The current scroll height on the main page.
         """
-        recipe = Recipe.query.filter_by(id=recipe_id).first()
-        recipe.delete()
+        recipe = db.session.query(Recipe).filter_by(id=recipe_id).first()
+        recipe.delete(db.session)
         session["scroll_height"] = scroll_height
         return redirect("/")
 
@@ -487,17 +489,18 @@ def main() -> None:
         """
         name = request.form["recipe_name"]
         recipe = Recipe(name=name, ingredients=[])
-        r_id = recipe.add()
+        r_id = recipe.add(db.session)
 
         for j in range(amount_ingredients):
             ri_name = request.form[f"ingredient_{j}"]
             ri_unit = request.form[f"unit_{j}"]
-            ri_quantity = request.form[f"quantity_{j}"]
-            i_id = Ingredient.query.filter_by(name=ri_name).first().id
+            ri_quantity = float(request.form[f"quantity_{j}"])
+            i_id = db.session.query(Ingredient).filter_by(
+                name=ri_name).first().id
             ri = RecipeIngredient(recipe_id=r_id, ingredient_id=i_id,
                                   quantity_per_person=ri_quantity,
                                   unit=ri_unit)
-            ri.add()
+            ri.add(db.session)
 
         controller.db.session.expire_on_commit = False
         controller.db.session.commit()
@@ -523,14 +526,17 @@ def main() -> None:
 
         :param ingredient_id: The primary key of the ingredient to edit.
         """
-        matches = Ingredient.query.filter_by(id=ingredient_id).all()
+        matches = db.session.query(Ingredient).filter_by(
+            id=ingredient_id).all()
         if len(matches) > 1:
             raise DuplicateIndexError(
                 f"Index '{id}' is used more than once."
                 f"It is also used by {[i.name for i in matches]}")
         ingredient = matches[0]
-        section = Section.query.filter_by(id=ingredient.section_id).first()
-        location = Location.query.filter_by(id=section.location_id).first()
+        section = db.session.query(Section).filter_by(
+            id=ingredient.section_id).first()
+        location = db.session.query(Location).filter_by(
+            id=section.location_id).first()
         food_only_ingredients = controller.get_food_only_ingredients()
         return render_template("edit_ingredient_screen.html",
                                recipes=controller.get_recipes(),
@@ -549,8 +555,9 @@ def main() -> None:
         :param ingredient_id: The primary key of the ingredient to delete.
         :return: Navigates to the ingredients list page.
         """
-        ingredient = Ingredient.query.filter_by(id=ingredient_id).first()
-        ingredient.delete()
+        ingredient = db.session.query(Ingredient).filter_by(
+            id=ingredient_id).first()
+        ingredient.delete(db.session)
         return redirect("/ingredients")
 
     @app.route(
@@ -587,7 +594,7 @@ def main() -> None:
                        order_id=next_available_order_id)
 
         try:
-            i.add()
+            i.add(db.session)
         except DuplicateIngredientError:
             response = make_response()
             response.status = 409
@@ -623,7 +630,7 @@ def main() -> None:
         always_on_list = Helper.bool_string_to_int(form["always_on_list"])
         section_id = controller.get_section_id(location_id,
                                                section_order_id)
-        existing_ingredient = Ingredient.query.filter_by(
+        existing_ingredient = db.session.query(Ingredient).filter_by(
             id=ingredient_id).first()
         order_id = controller.get_highest_order_id(Ingredient,
                                                    section_id=section_id)
@@ -666,8 +673,8 @@ def main() -> None:
         :return: Navigate back to the ingredients list page.
         """
         new_ingredient_id_order = new_ingredient_id_order.split("_")
-        section = Section.query.filter_by(location_id=location_id,
-                                          id=section_id).first()
+        section = db.session.query(Section).filter_by(
+            location_id=location_id, id=section_id).first()
         ingredients = section.get_ingredients()
 
         controller.set_new_order(ingredients, new_ingredient_id_order)

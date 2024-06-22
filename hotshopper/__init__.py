@@ -17,33 +17,42 @@ from flask_sqlalchemy import SQLAlchemy
 
 # import to make models visible to create_all() if database is not existing
 # WARNING: creating an empty DB currently makes hotshopper unusable
-# from hotshopper.model import *
+from hotshopper.model import *
 
 
-_app = Flask(__name__)
+_app = None
+_db = None
 
-if os.environ.get("TEST_MODE") == "True":
-    _app.config.update({
-        "TESTING": True,
-    })
-    _app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
-    _app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
-else:
-    with Path(__file__).parent.resolve() / "recipes.db" as path:
-        _app.config[
-            "SQLALCHEMY_DATABASE_URI"] = \
+
+def create_application():
+    global _app, _db
+    _app = Flask(__name__)
+    if os.environ.get("TEST_MODE", "False") == "True":
+        _app.config.update({"TESTING": True})
+        _app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
+        _app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
+    else:
+        path = Path(__file__).parent.resolve() / "recipes.db"
+        _app.config["SQLALCHEMY_DATABASE_URI"] = \
             f"sqlite:///{path}?check_same_thread=False"
         _app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
-    _app.secret_key = secrets.token_hex()
+        _app.secret_key = secrets.token_hex()
 
-_db = SQLAlchemy(_app, session_options={"autoflush": False})
+    _db = SQLAlchemy(model_class=Base,
+                     session_options={"autoflush": False})
 
-with _app.app_context():
-    _db.create_all()
-_app.app_context().push()
+    _db.init_app(_app)
+    with _app.app_context():
+        _db.create_all()
+    _app.app_context().push()
+
 
 def get_app():
     return _app
 
+
 def get_db():
     return _db
+
+
+create_application()
