@@ -1,39 +1,41 @@
+
+# Third-party imports
 import pytest
 
-from hotshopper import hotshopper
-from hotshopper import model, _db, get_app
-from hotshopper.model import Unit
+# Intra-package imports
+from hotshopper import (
+    get_app,
+    hotshopper,
+    model
+)
 from hotshopper.errors import (
     DuplicateRecipeIngredientError,
     DuplicateRecipeError
 )
-from hotshopper.model import Recipe, RecipeIngredient
+from hotshopper.model import (
+    Recipe,
+    RecipeIngredient,
+    Unit
+)
+
 
 @pytest.fixture
 def app():
     return get_app()
 
 
-@pytest.fixture(scope="function")
-def setup_teardown():
-    _db.create_all()
-    yield
-    _db.session.remove()
-    _db.drop_all()
-
-
 class TestController:
 
-    def test_get_recipe(self, app, setup_teardown):
-        controller = hotshopper.Controller()
-        r1 = model.Recipe(id=1, name="TestRecipe1", ingredients=[])
-        r2 = model.Recipe(id=2, name="TestRecipe2", ingredients=[])
-        r3 = model.Recipe(id=3, name="TestRecipe3", ingredients=[])
-        r1.add()
-        r2.add()
-        r3.add()
-        r1.delete()
-        _db.session.commit()
+    def test_get_recipe(self, test_db):
+        controller = hotshopper.Controller(test_db)
+        r1 = model.Recipe(id=1, name="TestRecipe1")
+        r2 = model.Recipe(id=2, name="TestRecipe2")
+        r3 = model.Recipe(id=3, name="TestRecipe3")
+        r1.add(test_db.session)
+        r2.add(test_db.session)
+        r3.add(test_db.session)
+        r1.delete(test_db.session)
+        test_db.session.commit()
         recipes = controller.get_recipes()
         assert len(recipes) == 2
         assert recipes[0].name in ["TestRecipe2", "TestRecipe3"]
@@ -43,80 +45,83 @@ class TestController:
 class TestRecipe:
     # INCOMING COMMANDS
 
-    def test_add_new_recipe(self, app, setup_teardown):
-        r = model.Recipe(id=1, name="TestRecipe", ingredients=[])
-        r.add()
-        r_added = Recipe.query.filter_by(name="TestRecipe").first()
+    def test_add_new_recipe(self, test_db):
+        r = model.Recipe(id=1, name="TestRecipe")
+        r.add(test_db.session)
+        r_added = test_db.session.query(Recipe).filter_by(
+            name="TestRecipe").first()
         assert r.name == r_added.name
 
-    def test_add_duplicate_recipe(self, app, setup_teardown):
-        r = model.Recipe(id=1, name="TestRecipe", ingredients=[])
-        r.add()
-        r2 = model.Recipe(id=2, name="TestRecipe", ingredients=[])
+    def test_add_duplicate_recipe(self, test_db):
+        r = model.Recipe(id=1, name="TestRecipe")
+        r.add(test_db.session)
+        r2 = model.Recipe(id=2, name="TestRecipe")
         with pytest.raises(DuplicateRecipeError):
-            r2.add()
+            r2.add(test_db.session)
 
-    def test_recipe_select(self, app, setup_teardown):
-        r = model.Recipe(id=1, name="TestRecipe", ingredients=[])
+    def test_recipe_select(self, test_db):
+        r = model.Recipe(id=1, name="TestRecipe")
         r.select(week=1)
         r.select(week=3)
         selected_weeks = [1, 3]
         assert r.selected
         assert r.weeks == selected_weeks
 
-    def test_recipe_unselect(self, app, setup_teardown):
-        r = model.Recipe(id=1, name="TestRecipe", ingredients=[])
+    def test_recipe_unselect(self, test_db):
+        r = model.Recipe(id=1, name="TestRecipe")
         r.select(1)
         r.unselect(1)
         assert r.weeks == []
         assert not r.selected
 
-    def test_add_ingredient_to_recipe(self, app, setup_teardown):
-        r = model.Recipe(id=1, name="TestRecipe", ingredients=[])
-        _db.session.add(r)
-        _db.session.commit()
-        result = RecipeIngredient.query.all()
+    def test_add_ingredient_to_recipe(self, test_db):
+        r = model.Recipe(id=1, name="TestRecipe")
+        test_db.session.add(r)
+        test_db.session.commit()
+        result = test_db.session.query(RecipeIngredient).all()
         assert len(result) == 0
         i = model.Ingredient(id=1, name="TestIngredient")
         ri = model.RecipeIngredient(ingredient_id=r.id, recipe_id=i.id,
                                     quantity_per_person=100, unit=Unit.GRAM)
-        r.add_ingredient(ri)
-        _db.session.commit()
-        result = RecipeIngredient.query.filter_by(ingredient_id=1).all()
+        r.add_ingredient(ri, test_db.session)
+        test_db.session.commit()
+        result = test_db.session.query(RecipeIngredient).filter_by(
+            ingredient_id=1).all()
         assert len(result) == 1
 
         with pytest.raises(DuplicateRecipeIngredientError):
-            r.add_ingredient(ri)
+            r.add_ingredient(ri, test_db.session)
 
-    def test_remove_ingredient(self, app, setup_teardown):
-        r = model.Recipe(id=1, name="TestRecipe",
-                         ingredients=[])
+    def test_remove_ingredient(self, test_db):
+        r = model.Recipe(id=1, name="TestRecipe")
         i = model.Ingredient(id=1, name="TestIngredient")
         ri = model.RecipeIngredient(ingredient_id=r.id, recipe_id=i.id,
                                     quantity_per_person=100, unit=Unit.GRAM)
-        r.add_ingredient(ri)
-        ri.delete()
-        result = RecipeIngredient.query.filter_by(ingredient_id=1).all()
+        r.add_ingredient(ri, test_db.session)
+        ri.delete(test_db.session)
+        result = test_db.session.query(RecipeIngredient).filter_by(
+            ingredient_id=1).all()
         assert len(result) == 0
 
-    def test_delete_recipe(self, app, setup_teardown):
-        r = model.Recipe(id=1, name="TestRecipeA", ingredients=[])
+    def test_delete_recipe(self, test_db):
+        r = model.Recipe(id=1, name="TestRecipeA")
         ri = model.RecipeIngredient(recipe_id=r.id, ingredient_id=1,
-                                    amount=100, unit=Unit.GRAM)
+                                    unit=Unit.GRAM)
         ri_2 = model.RecipeIngredient(recipe_id=1000, ingredient_id=1,
-                                      amount=100, unit=Unit.GRAM)
-        _db.session.add(r)
-        _db.session.add(ri)
-        _db.session.add(ri_2)
-        _db.session.commit()
+                                      unit=Unit.GRAM)
+        test_db.session.add(r)
+        test_db.session.add(ri)
+        test_db.session.add(ri_2)
+        test_db.session.commit()
 
-        assert len(Recipe.query.all()) == 1
-        assert len(RecipeIngredient.query.all()) == 2
+        assert len(test_db.session.query(Recipe).all()) == 1
+        assert len(test_db.session.query(RecipeIngredient).all()) == 2
 
-        r.delete()
+        r.delete(test_db.session)
 
-        remain_recipe = Recipe.query.all()
-        remain_recipe_ingredients = RecipeIngredient.query.all()
+        remain_recipe = test_db.session.query(Recipe).all()
+        remain_recipe_ingredients = test_db.session.query(
+            RecipeIngredient).all()
 
         assert len(remain_recipe) == 0
         assert len(remain_recipe_ingredients) == 1
@@ -124,15 +129,16 @@ class TestRecipe:
 
 class TestRecipeIngredient:
 
-    def test_change_ingredient_quantity_per_person(self, app, setup_teardown):
-        r = model.Recipe(id=1, name="TestRecipe", ingredients=[])
-        _db.session.add(r)
+    def test_change_ingredient_quantity_per_person(self, test_db):
+        r = model.Recipe(id=1, name="TestRecipe")
+        test_db.session.add(r)
         i = model.Ingredient(id=1, name="TestIngredient")
         ri = model.RecipeIngredient(ingredient_id=r.id, recipe_id=i.id,
                                     quantity_per_person=100, unit=Unit.GRAM)
-        r.add_ingredient(ri)
-        ri.update(quantity_per_person=2, unit=Unit.PIECE)
-        result = RecipeIngredient.query.filter_by(ingredient_id=1).first()
+        r.add_ingredient(ri, test_db.session)
+        ri.update(test_db.session, quantity_per_person=2, unit=Unit.PIECE)
+        result = test_db.session.query(RecipeIngredient).filter_by(
+            ingredient_id=1).first()
         assert result.quantity_per_person == 2
         assert result.unit == Unit.PIECE
 
@@ -140,4 +146,4 @@ class TestRecipeIngredient:
 
         for value in illegal_quantities:
             with pytest.raises(ValueError):
-                ri.update(quantity_per_person=value)
+                ri.update(test_db.session, quantity_per_person=value)

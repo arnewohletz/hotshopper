@@ -1,152 +1,62 @@
+
+# Third-party library imports
 import pytest
-import random
-import string
 
-# from pathlib import Path
-# from sqlalchemy import create_engine, MetaData
-# from flask_sqlalchemy import SQLAlchemy
-
-from hotshopper import get_db, get_app
+# Intra-package imports
 from hotshopper.foodplan import FoodPlan
-from hotshopper.model import Location, Recipe, ShoppingList, Week
-from tests.unit import helper
+from hotshopper.model import Recipe, ShoppingList
 
 
-# app = get_app()
-# _db = get_db()
-
-# @pytest.fixture
-# def test_db():
-#     # Configuration for the test database
-#     with Path(__file__).parent.resolve() / "test_recipes.db" as test_path:
-#         app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{test_path}?check_same_thread=False"
-#
-#     # Create a new engine and session for the test database
-#     test_db = SQLAlchemy(app, session_options={"autoflush": False})
-#     test_engine = test_db.engine
-#     test_metadata = test_db.metadata
-#
-#     # Reflect the original database schema into the metadata
-#     test_metadata.reflect()
-#
-#     # Create tables in the test database
-#     test_metadata.create_all(test_engine)
-#
-#     # Copy data from the original to the test database
-#     with app.app_context():
-#         with _db.engine.connect() as orig_conn, test_engine.connect() as test_conn:
-#             for table in test_metadata.sorted_tables:
-#                 data = orig_conn.execute(table.select()).fetchall()
-#                 test_conn.execute(table.insert().values(data))
-#
-#     return test_db
-
-
-
-def get_random_string(length: int):
-    """
-    Returns a string of given length.
-
-    :param length: length of the returned string
-    :return: str
-    """
-    letters = string.ascii_lowercase
-    result_str = ''.join(random.choice(letters) for i in range(length))
-    return result_str
-
-
-def create_app():
-    app = get_app()
-    # Use the testing configuration and an in-memory SQLite database
-    app.config['TESTING'] = True
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
-    return app
-
-
-# @pytest.fixture(scope="function")
-@pytest.fixture()
-def test_db():
-    test_db = get_db()
-    test_db.create_all()
-    yield test_db
-    test_db.session.remove()
-    test_db.drop_all()
-
-
-# @pytest.fixture
-def random_test_data_generator(test_db):
-    return helper.RandomTestDataGenerator(test_db)
+@pytest.fixture
+def three_recipes():
+    recipe_1 = Recipe(name="some_name")
+    recipe_2 = Recipe(name="some_other_name")
+    recipe_3 = Recipe(name="yet_another_name")
+    return [recipe_1, recipe_2, recipe_3]
 
 
 class TestFoodPlan:
-    def test_get_shopping_list(self, test_db):
-        tdg = random_test_data_generator(test_db)
-        s = tdg.create_shopping_list()
-        foodplan = FoodPlan([s])
+
+    def test_get_shopping_lists(self):
+        shopping_list_1 = ShoppingList(name="some_name")
+        shopping_list_2 = ShoppingList(name="some_other_name")
+        shopping_list_3 = ShoppingList(name="yet_another_name")
+        foodplan = FoodPlan([shopping_list_1,
+                             shopping_list_2,
+                             shopping_list_3])
+
         amount_shopping_lists = len(foodplan.get_shopping_lists())
 
-        assert amount_shopping_lists == 1
+        assert amount_shopping_lists == 3
 
-    def test_no_recipe_selected(self, test_db):
-        sl_s = ShoppingList(name="supermarket",
-                            locations=[
-                                Location(name="supermarket", order_id=1)],
-                            weeks=[Week(number=1), Week(number=2),
-                                   Week(number=3)],
-                            print_columns=1)
-        foodplan = FoodPlan([sl_s])
+    def test_set_empty_recipes_list(self):
+        shopping_list = ShoppingList(name="some_name")
+
+        foodplan = FoodPlan([shopping_list])
         foodplan.set_shopping_lists([])
 
         assert len(foodplan.recipes) == 0
 
-    def test_single_recipe_selected(self, test_db):
-        tdg = random_test_data_generator(test_db)
-        r = tdg.create_recipe()
-        r_id = r.add()
+    def test_set_recipes(self, three_recipes):
+        shopping_list = ShoppingList(name="some_name")
+        food_plan = FoodPlan(shopping_lists=[shopping_list])
 
-        recipe = Recipe.query.filter_by(id=r_id).first()
-        recipe.select(week=1)
+        three_recipes[0].select(week=1)
+        three_recipes[1].select(week=2)
+        three_recipes[2].select(week=3)
+        food_plan.set_shopping_lists(recipes=three_recipes)
 
-        sl_s = ShoppingList(name="supermarket",
-                            locations=[Location(name="supermarket", order_id=1)],
-                            weeks=[Week(number=1), Week(number=2), Week(number=3)],
-                            print_columns=1)
-        foodplan = FoodPlan([sl_s])
-        foodplan.set_shopping_lists([recipe])
+        assert len(food_plan.recipes) == 3
 
-        assert len(foodplan.recipes) == 1
-        assert foodplan.recipes[0].weeks == [1]
+    def test_omit_unselected_recipes(self, three_recipes):
+        shopping_list = ShoppingList(name="some_name")
+        food_plan = FoodPlan(shopping_lists=[shopping_list])
 
-    def test_single_recipe_multiple_weeks_selected(self, test_db):
-        tdg = random_test_data_generator(test_db)
+        three_recipes[0].select(week=1)
+        three_recipes[1].select(week=2)
+        three_recipes[2].select(week=3)
 
-        r = tdg.create_recipe()
-        r.select(week=1)
-        r.select(week=2)
+        three_recipes[0].unselect(week=1)
+        food_plan.set_shopping_lists(recipes=three_recipes)
 
-        sl_s = ShoppingList(name="supermarket",
-                            locations=[
-                                Location(name="supermarket", order_id=1)],
-                            weeks=[Week(number=1), Week(number=2)],
-                            print_columns=1)
-        foodplan = FoodPlan([sl_s])
-        foodplan.set_shopping_lists([r])
-
-        assert len(foodplan.recipes) == 1
-        assert foodplan.recipes[0].weeks == [1, 2]
-
-    def test_unselected_recipe_is_omitted(self, test_db):
-        tdg = random_test_data_generator(test_db)
-        r = tdg.create_recipe()
-        r_id = r.add()
-
-        recipe = Recipe.query.filter_by(id=r_id).first()
-        recipe.select(week=1)
-        recipe.unselect(week=1)
-
-        sl_s = ShoppingList(name="supermarket",
-                            locations=[Location(name="supermarket", order_id=1)],
-                            weeks=[Week(number=1), Week(number=2), Week(number=3)],
-                            print_columns=1)
-        foodplan = FoodPlan([sl_s])
-        assert len(foodplan.recipes) == 0
+        assert len(food_plan.recipes) == 2
