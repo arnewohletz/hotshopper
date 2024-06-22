@@ -134,3 +134,12 @@ deps-install-dev: verify-pip-tools ## Install dev dependencies
 	pip-sync requirements_dev.txt
 
 deps-install-all: deps-install deps-install-dev ## Install dev & user dependencies
+
+
+# Generate PlantUML diagrams
+
+plantuml:
+	pyreverse -o plantuml --module-names yes -s 1 -d hotshopper \
+	hotshopper/hotshopper.py hotshopper/model.py hotshopper/foodplan.py
+	sed -i "" "s/set namespaceSeparator none/set namespaceSeparator ./g" hotshopper/classes.plantuml
+	@echo "DONE!"
