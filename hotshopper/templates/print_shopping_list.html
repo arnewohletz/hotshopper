@@ -29,10 +29,10 @@
             </p>
             {% endif %}
             {% for ingredient in section.get_ingredients() %}
-            {% if ingredient.shopping_list_item[week_index.number - 1] %}
+            {% if ingredient.shopping_list_items[week_index.number - 1] %}
             <p style="font-size: 8pt; width: 50mm">
                 <a class="fld_amount" style="width: 12mm; display: inline-block; vertical-align: middle">
-                    {{ ingredient.shopping_list_item[week_index.number - 1].print_amounts() }}
+                    {{ ingredient.shopping_list_items[week_index.number - 1].print_amounts() }}
                     {% if ingredient.always_on_list %}
                     + ____
                     {% else %}

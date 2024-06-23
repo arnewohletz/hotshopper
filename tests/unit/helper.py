@@ -1,6 +1,10 @@
+
+# Standard library imports
+import math
 import random
 import string
 
+# Intra-package imports
 from hotshopper.model import (
     Ingredient,
     Location,
@@ -16,6 +20,13 @@ def get_random_string(length: int):
     letters = string.ascii_lowercase
     result_str = ''.join(random.choice(letters) for i in range(length))
     return result_str
+
+
+def get_random_int(length: int):
+    """Return a random integer of the defined length"""
+    minimum = int(math.pow(10, length - 1))
+    maximum = int(math.pow(10, length) - 1)
+    return random.randint(minimum, maximum)
 
 
 class RandomTestDataGenerator:
@@ -50,14 +61,17 @@ class RandomTestDataGenerator:
 
         return i.id
 
-    def create_recipe_ingredient(self, recipe_id, ingredient_id,
-                                 quantity_per_person=100, unit="gram"):
+    def create_recipe_ingredient(self,
+                                 recipe_id=get_random_int(3),
+                                 ingredient_id=get_random_int(3),
+                                 quantity_per_person=get_random_int(3),
+                                 unit="gram"):
         ri = RecipeIngredient(recipe_id=recipe_id,
                               ingredient_id=ingredient_id,
                               quantity_per_person=quantity_per_person,
                               unit=unit)
-        self.db.session.add(ri)
-        return None
+        # self.db.session.add(ri)
+        return ri
 
     def get_recipe(self, recipe_id):
         return self.db.session.query(Recipe).filter_by(id=recipe_id).first()

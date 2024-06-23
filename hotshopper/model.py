@@ -49,11 +49,11 @@ class Ingredient(OrderedModel):
     section_id = Column(Integer, ForeignKey("section.id"))
     always_on_list = Column("always_on_list", Integer)
     non_food = Column("non_food", Integer)
-    shopping_list_item = None
+    shopping_list_items = [None, None, None]
 
     @orm.reconstructor
     def _initialize(self):
-        self.shopping_list_item = [None, None, None]
+        self.shopping_list_items = [None, None, None]
 
     def update_order_id(self, order_id, session):
         self.order_id = order_id
@@ -97,7 +97,7 @@ class Ingredient(OrderedModel):
             return True
 
     def has_shopping_list_item(self, week_index):
-        return self.shopping_list_item[week_index] is not None
+        return self.shopping_list_items[week_index] is not None
 
 
 class Location(OrderedModel):
@@ -323,10 +323,10 @@ class ShoppingList(Base):
                         week_index = self.weeks[0].number - 1
                         if ingredient.has_shopping_list_item(
                                 week_index=week_index):
-                            ingredient.shopping_list_item[
+                            ingredient.shopping_list_items[
                                 week_index] += list_item
                         else:
-                            ingredient.shopping_list_item[
+                            ingredient.shopping_list_items[
                                 week_index] = list_item
                         return True
         raise KeyError(f"Cannot find ingredient entry for "
