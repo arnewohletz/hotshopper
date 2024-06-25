@@ -85,7 +85,8 @@ class Ingredient(OrderedModel):
 
     def used_by(self, session) -> list:
         result = []
-        ris = session.query(RecipeIngredient).filter_by(ingredient_id=self.id).all()
+        ris = session.query(RecipeIngredient).filter_by(
+            ingredient_id=self.id).all()
         for ri in ris:
             r = session.query(Recipe).filter_by(id=ri.recipe_id).first()
             result.append(r.name)

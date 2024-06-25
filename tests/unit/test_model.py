@@ -9,6 +9,7 @@ from hotshopper import (
     model
 )
 from hotshopper.errors import (
+    DuplicateIngredientError,
     DuplicateRecipeIngredientError,
     DuplicateRecipeError
 )
@@ -17,6 +18,7 @@ from hotshopper.model import (
     RecipeIngredient,
     Unit
 )
+from tests.unit.helper import get_random_int, get_random_string
 
 
 @pytest.fixture
@@ -40,6 +42,76 @@ class TestController:
         assert len(recipes) == 2
         assert recipes[0].name in ["TestRecipe2", "TestRecipe3"]
         assert recipes[1].name in ["TestRecipe2", "TestRecipe3"]
+
+
+class TestIngredient:
+
+    def _minimal_populate_database(self, test_db):
+        self.ingredient = model.Ingredient(
+            id=get_random_int(3),
+            name=get_random_string(10))
+        self.recipe = model.Recipe(id=get_random_int(3),
+                                   name=get_random_string(10))
+        self.recipe_ingredient = model.RecipeIngredient(
+            ingredient_id=self.ingredient.id,
+            recipe_id=self.recipe.id)
+        self.recipe.add_ingredient(self.recipe_ingredient, test_db.session)
+        self.ingredient.add(test_db.session)
+        test_db.session.add_all([self.ingredient,
+                                 self.recipe,
+                                 self.recipe_ingredient])
+        test_db.session.commit()
+
+    def test_add_new_ingredient(self, test_db):
+        i = model.Ingredient(id=1, name="Ingredient")
+        i.add(test_db.session)
+        existing_i = test_db.session.query(
+            model.Ingredient).filter_by(name="Ingredient").first()
+        assert existing_i is not None
+        assert i.name == existing_i.name
+
+    def test_attempt_add_already_existing_ingredient(self, test_db):
+        i_1 = model.Ingredient(id=1, name="some_ingredient")
+        i_1.add(test_db.session)
+        with pytest.raises(DuplicateIngredientError):
+            i_1.add(test_db.session)
+
+    def test_update_order_id(self, test_db):
+        i_1 = model.Ingredient(id=1, name="ingredient_1", order_id=1)
+
+        new_order_id = 2
+        i_1.update_order_id(new_order_id, test_db.session)
+
+        assert i_1.order_id == new_order_id
+
+    def test_delete_existing_ingredient(self, test_db):
+        self._minimal_populate_database(test_db)
+
+        self.ingredient.delete(test_db.session)
+
+        ingredient = test_db.session.query(model.Ingredient).first()
+        recipe = test_db.session.query(
+            model.Recipe).filter_by(name=self.recipe.name).first()
+        assert ingredient is None
+        assert recipe.ingredients == []
+
+    def test_ingredient_is_used_by_recipe(self, test_db):
+        self._minimal_populate_database(test_db)
+
+        used_by_recipe_names = self.ingredient.used_by(test_db.session)
+
+        assert self.recipe.name == used_by_recipe_names[0]
+
+    def test_ingredient_not_used_by_any_recipe(self, test_db):
+        ingredient = model.Ingredient(id=get_random_int(3),
+                                      name="some_ingredient")
+        recipe = model.Recipe(id=get_random_int(3), name="some_recipe")
+        test_db.session.add_all([ingredient, recipe])
+        test_db.session.commit()
+
+        used_by_recipe_names = ingredient.used_by(test_db.session)
+
+        assert used_by_recipe_names == []
 
 
 class TestRecipe:
