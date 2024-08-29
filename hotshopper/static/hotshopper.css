@@ -321,7 +321,7 @@ input#recipe_name {
     margin-left: -6px;
 }
 
-#show_add_recipe_screen,
+#showAddRecipeScreen,
 #calc_button {
     float: right;
     margin-right: 5px;

@@ -22,7 +22,7 @@ function show_add_recipe_screen() {
 }
 
 function show_add_ingredient_screen() {
-    window.location.href ="/ingredients/new"
+    window.location.href = "/ingredients/new"
 }
 
 function show_ingredients_screen() {
