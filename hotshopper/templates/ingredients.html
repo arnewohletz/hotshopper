@@ -39,7 +39,7 @@
                     </button>
                     <button type="button" id="ingredients/delete/{{i.id}}"
                             name="{{ i.name }}"
-                            data-uses-recipes="{{ i.used_by() }}"
+                            data-uses-recipes="{{ i.used_by(db_session) }}"
                             onclick="delete_ingredient(this)">
                         <i class="fa-solid fa-trash-can"></i>
                     </button>

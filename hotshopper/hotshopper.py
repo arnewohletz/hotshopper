@@ -231,6 +231,9 @@ def main() -> None:
     app.url_map.converters['signed_int'] = SignedIntConverter
     controller = Controller(db)
 
+    def render_template_with_db_session(template, **kwargs):
+        return render_template(template, db_session=db.session, **kwargs)
+
     @app.route("/", methods=["GET"])  # remove 'POST' - see if it causes issues
     def show_main_page() -> str:
         """
@@ -260,9 +263,10 @@ def main() -> None:
         """
         ingredients = controller.get_ingredients()
         recipes = controller.get_recipes()
-        return render_template("ingredients.html",
-                               ingredients=ingredients,
-                               recipes=recipes)
+        return render_template_with_db_session(
+            "ingredients.html",
+            ingredients=ingredients,
+            recipes=recipes)
 
     @app.route("/shopping_list/<int:scroll_height>")
     def show_shopping_list_screen(scroll_height: int) -> str:
@@ -538,14 +542,15 @@ def main() -> None:
         location = db.session.query(Location).filter_by(
             id=section.location_id).first()
         food_only_ingredients = controller.get_food_only_ingredients()
-        return render_template("edit_ingredient_screen.html",
-                               recipes=controller.get_recipes(),
-                               ingredients=food_only_ingredients,
-                               locations=controller.get_locations(),
-                               ingredient=ingredient,
-                               location=location,
-                               section=section
-                               )
+        return render_template_with_db_session(
+            "edit_ingredient_screen.html",
+            recipes=controller.get_recipes(),
+            ingredients=food_only_ingredients,
+            locations=controller.get_locations(),
+            ingredient=ingredient,
+            location=location,
+            section=section
+            )
 
     @app.route("/ingredients/delete/<int:ingredient_id>")
     def delete_ingredient(ingredient_id: int) -> BaseResponse:
