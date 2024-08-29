@@ -1,6 +1,7 @@
 
 # Third-party imports
 import pytest
+from unittest import mock
 
 # Intra-package imports
 from hotshopper import (
@@ -14,6 +15,7 @@ from hotshopper.errors import (
     DuplicateRecipeError
 )
 from hotshopper.model import (
+    Location,
     Recipe,
     RecipeIngredient,
     Unit
@@ -114,6 +116,96 @@ class TestIngredient:
         assert used_by_recipe_names == []
 
 
+class TestLocation:
+
+    def test_init(self, test_db):
+        l = model.Location(test_db.session, name=get_random_string(10),
+                           order_id=get_random_int(3), id=get_random_int(3))
+        s = model.Section(name=get_random_string(10),
+                          order_id=get_random_int(3), location_id=l.id)
+        test_db.session.add_all([l, s])
+        test_db.session.commit()
+
+        l_with_s = model.Location(test_db.session, name=l.name,
+                                  order_id=l.order_id, id=l.id)
+        assert s.id == l_with_s.sections[0].id
+
+    def test_section_is_appended(self, test_db):
+        l = model.Location(test_db.session, name=get_random_string(10),
+                           order_id=get_random_int(3))
+        test_db.session.add(l)
+        test_db.session.commit()
+
+        s = model.Section(name=get_random_string(10),
+                          order_id=get_random_int(3), location_id=l.id)
+        test_db.session.add(s)
+        test_db.session.commit()
+
+        l_added = test_db.session.query(Location).filter_by(
+            id=l.id).first()
+        assert s in l_added.sections
+
+    def test_update_order_id(self, test_db):
+        l = model.Location(test_db.session, name=get_random_string(10),
+                           order_id=get_random_int(3))
+        test_db.session.add(l)
+
+        new_order_id = str(get_random_int(10))
+        l.update_order_id(new_order_id, test_db.session)
+
+        l_updated = test_db.session.query(Location).filter_by(name=l.name).first()
+        assert l_updated.order_id == new_order_id
+
+    def test_location_has_shopping_list_item(self, test_db):
+        l = model.Location(test_db.session, name=get_random_string(10),
+                           order_id=get_random_int(3))
+        with mock.patch("hotshopper.model.Section") as SectionMock:
+            s = SectionMock(location_id=l.id)
+            s.has_shopping_list_items.return_value = True
+
+            l.sections = [s]
+            assert l.has_shopping_list_items(1) is True
+
+    def test_location_has_no_shopping_list_item(self, test_db):
+        l = model.Location(test_db.session, name=get_random_string(10),
+                           order_id=get_random_int(3))
+        with mock.patch("hotshopper.model.Section") as SectionMock:
+            s = SectionMock(location_id=l.id)
+            s.has_shopping_list_items.return_value = False
+
+            l.sections = [s]
+            assert l.has_shopping_list_items(1) is False
+
+    def test_location_has_shopping_list_item_no_mocks(self, test_db):
+        """
+        Maybe remove this test.
+        """
+        l = model.Location(test_db.session, name=get_random_string(10),
+                           order_id=get_random_int(1))
+        s = model.Section(name=get_random_string(10),
+                          order_id=get_random_int(1), location=l)
+        i = model.Ingredient(name=get_random_string(10),
+                             always_on_list=1, section_id=s.id)
+        s.ingredients = [i]
+        test_db.session.add_all([l, s, i])
+        assert l.has_shopping_list_items(1) is True
+
+
+    def test_location_does_not_have_shopping_list_item_no_mocks(self, test_db):
+        """
+        Maybe remove this test.
+        """
+        l = model.Location(test_db.session, name=get_random_string(10),
+                           order_id=get_random_int(1))
+        s = model.Section(name=get_random_string(10),
+                          order_id=get_random_int(1), location=l)
+        i = model.Ingredient(name=get_random_string(10),
+                             always_on_list=0, section_id=s.id)
+        s.ingredients = [i]
+        test_db.session.add_all([l, s, i])
+        assert l.has_shopping_list_items(1) is False
+
+
 class TestRecipe:
     # INCOMING COMMANDS
 
@@ -152,7 +244,7 @@ class TestRecipe:
         test_db.session.commit()
         result = test_db.session.query(RecipeIngredient).all()
         assert len(result) == 0
-        i = model.Ingredient(id=1, name="TestIngredient")
+        i = model.Ingredient(id=1, name="∞")
         ri = model.RecipeIngredient(ingredient_id=r.id, recipe_id=i.id,
                                     quantity_per_person=100, unit=Unit.GRAM)
         r.add_ingredient(ri, test_db.session)

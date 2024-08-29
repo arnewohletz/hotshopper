@@ -43,14 +43,14 @@ class TestFoodPlan:
                     shopping_list_id=self.shopping_list.id,
                     week_id=self.weeks[n].id)
             )
-        self.location = Location(name="some_location",
+        self.location = Location(session=test_db,
+                                 name="some_location",
                                  id=get_random_int(3),
-                                 session=test_db.session,
                                  order_id=get_random_int(3))
-        self.section = Section(id=get_random_int(3),
-                               name="some_section",
+        self.section = Section(name="some_section",
                                location_id=self.location.id,
-                               order_id=1)
+                               order_id=1,
+                               id=get_random_int(3))
         self.shopping_list_location = ShoppingListLocation(
             shopping_list_id=self.shopping_list.id,
             location_id=self.location.id
@@ -64,7 +64,7 @@ class TestFoodPlan:
             recipe_id=self.recipe.id,
             ingredient_id=self.ingredient.id)
 
-        test_db.session.add_all(
+        test_db.add_all(
             [self.ingredient,
              self.location,
              self.recipe,
@@ -75,7 +75,7 @@ class TestFoodPlan:
              *self.shopping_list_weeks,
              *self.weeks]
         )
-        test_db.session.commit()
+        test_db.commit()
 
     def test_get_shopping_lists(self):
         shopping_list_1 = ShoppingList(name="some_name")
@@ -125,12 +125,14 @@ class TestFoodPlan:
         shopping_list_week = 1
         shopping_list_item_index = shopping_list_week - 1
         self._minimal_populate_database(
-            test_db,
+            test_db.session,
             shopping_list_week_indices=[shopping_list_week]
         )
         food_plan = FoodPlan(shopping_lists=[self.shopping_list])
 
         self.recipe.select(week=shopping_list_week)
+        i = test_db.session.query(Ingredient).filter_by(
+            location_id=self.location.id).first()
         food_plan.set_shopping_lists(recipes=[self.recipe])
 
         ingredients = test_db.session.query(Ingredient).filter_by(

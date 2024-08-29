@@ -120,7 +120,9 @@ class Location(OrderedModel):
             location_id=self.id).all()
         self.sections = []
         for section in self.existing_sections:
-            self.sections.append(Section(section.name, section.order_id))
+            self.sections.append(section)
+            # self.sections.append(Section(session, section.id, section.name,
+            #                              section.order_id))
 
     def update_order_id(self, order_id, session):
         self.order_id = order_id
@@ -331,7 +333,7 @@ class ShoppingList(Base):
                                 week_index] = list_item
                         return True
         raise KeyError(f"Cannot find ingredient entry for "
-                       f"{recipe_ingredient.ingredient.name}")
+                       f"'{recipe_ingredient.ingredient.name}'")
 
     def sort_ingredients(self):
         self.ingredients.sort(key=lambda ri: ri.order_id)
