@@ -63,8 +63,8 @@ function reset_recipe_selection() {
     window.location.href ="/reset_recipe_selection"
 }
 
-function formcheck() {
-    let fields = document.querySelectorAll("select, textarea, input, [required]")
+function formcheck(element) {
+    let fields = element.querySelectorAll("select, textarea, input, [required]")
     let complete = true;
     for (let field of fields) {
         if (!field.value) {
@@ -82,7 +82,12 @@ function formcheck() {
 }
 
 function confirm_close_recipe_screen(edit = false) {
-    if (!formcheck()) {
+    // TODO: Find a better solution for having two recipe screens - maybe merge into one?
+    let element = document.getElementById("edit_recipe_screen");
+    if (!element) {
+        element = document.getElementById("add_recipe_screen");
+    }
+    if (!formcheck(element)) {
         return false;
     }
     let current_scroll_height = document.documentElement.scrollTop || document.body.scrollTop;
