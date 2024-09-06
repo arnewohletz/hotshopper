@@ -516,7 +516,7 @@ def main() -> None:
         """
         Display the screen to add a new ingredient.
         """
-        return render_template("add_ingredient_screen.html",
+        return render_template_with_db_session("add_ingredient_screen.html",
                                recipes=controller.get_recipes(),
                                ingredients=controller.get_ingredients(),
                                locations=controller.get_locations(),
