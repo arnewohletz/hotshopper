@@ -67,7 +67,7 @@ function formcheck(element) {
     let fields = element.querySelectorAll("select, textarea, input, [required]")
     let complete = true;
     for (let field of fields) {
-        if (!field.value) {
+        if (!recipe_field_contains_valid_value(field)) {
             field.style.borderColor = "red";
             complete = false;
         } else {
@@ -81,11 +81,20 @@ function formcheck(element) {
     return complete;
 }
 
+function recipe_field_contains_valid_value(field) {
+    const ingredient_regex = /ingredient_\d+/
+    if (ingredient_regex.test(field.id)) {
+        return field.options[field.selectedIndex].id !== "no_ingredient";
+    } else {
+        return field.value !== "";
+    }
+}
+
 function confirm_close_recipe_screen(edit = false) {
     // TODO: Find a better solution for having two recipe screens - maybe merge into one?
     let element = document.getElementById("edit_recipe_screen");
     if (!element) {
-        element = document.getElementById("add_recipe_screen");
+        element = document.getElementById("recipe_table");
     }
     if (!formcheck(element)) {
         return false;
