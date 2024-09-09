@@ -566,7 +566,7 @@ def main() -> None:
         return redirect("/ingredients")
 
     @app.route(
-        "/confirm_new_ingredient/<int:location_id>_<signed_int"
+        "/confirm_add_ingredient/<int:location_id>_<signed_int"
         ":section_order_id>_<string:non_food>",
         methods=["POST", "GET"])
     def add_ingredient(location_id: int,
@@ -609,7 +609,7 @@ def main() -> None:
         return redirect("/ingredients")
 
     @app.route("/confirm_edit_ingredient/"
-               "<int:ingredient_id>_"
+               "<int:ingredient_id>/"
                "<int:location_id>_"
                "<signed_int:section_order_id>_"
                "<string:non_food>", methods=["POST", "GET"])

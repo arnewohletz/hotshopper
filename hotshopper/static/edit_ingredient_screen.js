@@ -13,11 +13,11 @@ function init() {
     // document.getElementById(`location_${SELECTED_LOCATION_ID}`).selected = true;
 
     // TODO: Add edit mode + uncomment
-    // if (edit) {
-    //     document.getElementById("edit_add_ingredient_headline").innerText="Zutat bearbeiten";
-    // } else {
-    //     document.getElementById("edit_add_ingredient_headline").innerText="Neue Zutat";
-    // }
+    if (edit) {
+        document.getElementById("edit_add_ingredient_headline").innerText="Zutat bearbeiten";
+    } else {
+        document.getElementById("edit_add_ingredient_headline").innerText="Neue Zutat";
+    }
     document.getElementById("edit_ingredient_headline").innerText="Zutat bearbeiten";
 
 
@@ -142,7 +142,7 @@ function set_location() {
 
     if (SELECTED_LOCATION_ID >= 0) {
         decide_display_section(SELECTED_LOCATION_ID);
-        let available_sections = document.getElementById(`location_${SELECTED_LOCATION_ID}_sections`);
+        let available_sections = document.getElementById(`location_${SELECTED_LOCATION_ID}_section_selection`);
 
         if (available_sections.length > 1) {
             available_sections.disabled = false;

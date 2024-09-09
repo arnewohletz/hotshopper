@@ -5,12 +5,14 @@
     ingredients = "{{ ingredients }}"
     locations = "{{ locations }}"
     selected_location_id = "{{ location.id }}"
+    edit = false
 </script>
-<script src="{{ url_for('static', filename='add_ingredient_screen.js') }}"></script>
+<script src="{{ url_for('static', filename='add_edit_ingredient_screen.js') }}">
+</script>
 
 <div id="ingredient_screen" class="ontop_screen">
-    <form method="POST" id="ingredient_form" action="placeholder">
-        <h2 id="ingredient_headline">
+    <form method="POST" id="ingredient_form" action="javascript:void(0)">
+        <h2 id="ingredient_screen_headline">
             <td>Neue Zutat</td>
         </h2>
         <div>
@@ -65,10 +67,10 @@
                     </td>
                 </tr>
                 {% for location in locations %}
-                <tr id="section_{{ location.id }}" class="section">
+                <tr id="location_{{ location.id }}_sections" class="section">
                     <td>Sektion:</td>
                     <td>
-                        <select id="location_{{ location.id }}_sections" class="section_list" disabled>
+                        <select id="location_{{ location.id }}_section_selection" class="section_list" disabled>
                             <option>-- Bitte Sektion auswählen --</option>
                             {% for section in location.sections %}
                             {% if section.id > 0 %}
@@ -97,11 +99,11 @@
                 <button type="button"
                         class="menu_buttons"
                         id="cancel_ingredient"
-                        onclick="cancel_close_add_ingredient()">X</button>
+                        onclick="cancel_close_ingredient()">X</button>
                 <input type="submit"
                        class="menu_buttons"
-                       id="confirm_ingredient"
-                       onclick="confirm_edit_ingredient()"
+                       id="btn_confirm_ingredient"
+                       onclick="confirm_ingredient()"
                        value="OK">
             </div>
         </div>
