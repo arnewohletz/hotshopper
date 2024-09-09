@@ -1,4 +1,4 @@
-let SELECTED_LOCATION_ID;
+let SELECTED_LOCATION_ID = "";
 
 function init() {
     document.getElementById("ingredient_screen").style.display = "block";

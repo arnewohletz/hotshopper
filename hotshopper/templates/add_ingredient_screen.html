@@ -30,7 +30,7 @@
                     <td>
                         <select id="location" name="location" onchange="set_location()" required>
                             {% if location %}
-                            <option id="location_placeholder">-- Bitte Ort auswählen --</option>
+                            <option id="location_placeholder" location_id="-1">-- Bitte Ort auswählen --</option>
                             {% for l in locations %}
                             {% if location.id == l.id %}
                             <option value="{{ l.name }}" location_id="{{ l.id }}"
@@ -43,7 +43,7 @@
                             {% endif %}
                             {% endfor %}
                             {% else %}
-                            <option id="location_placeholder" selected>-- Bitte Ort auswählen --</option>
+                            <option id="location_placeholder" location_id="-1" selected>-- Bitte Ort auswählen --</option>
                             {% for l in locations %}
                             <option value="{{ l.name }}" location_id="{{ l.id }}"
                                     id="location_{{ l.id }}">{{ l.name }}

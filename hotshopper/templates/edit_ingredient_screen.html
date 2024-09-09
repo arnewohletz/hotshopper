@@ -26,7 +26,7 @@
                     <td>Einkaufsort:</td>
                     <td>
                         <select id="location" name="location" onchange="set_location()" required>
-                            <option id="location_placeholder">&#45;&#45; Bitte Ort auswählen &#45;&#45;</option>-->
+                            <option id="location_placeholder" location_id="-1">&#45;&#45; Bitte Ort auswählen &#45;&#45;</option>-->
                             {% for l in locations %}
                             {% if l.id == location.id %}
                             <option value="{{ l.name }}" location_id="{{ l.id }}"
