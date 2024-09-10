@@ -1,0 +1,125 @@
+{% extends 'ingredients.html' %}
+
+{% block add_edit_ingredient_screen %}
+
+{% block script %}
+<script type="text/javascript">
+    ingredients = "{{ ingredients }}"
+    locations = "{{ locations }}"
+    selected_location = "{{ location }}"
+</script>
+<script src="{{ url_for('static', filename='add_edit_ingredient_screen.js') }}"></script>
+{% endblock %}
+
+<div id="ingredient_screen" class="ontop_screen">
+    <form method="POST" id="ingredient_form" action="placeholder">
+        {% block header %}
+        <h2>
+            <td>Neue Zutat</td>
+        </h2>
+        {% endblock %}
+        <div>
+            <table>
+                <tr>
+                    <td>
+                        Name:
+                    </td>
+                    {% block name %}
+                    <td colspan="5">
+                        <input style="width: 100%" type="text" id="ingredient_name" name="ingredient_name" required>
+                    </td>
+                    {% endblock %}
+                </tr>
+                <tr>
+                    <td>Einkaufsort:</td>
+                    <td>
+                        {% block location %}
+                        <select id="location" name="location" onchange="set_location()" required>
+                            {% if location %}
+                            <option id="location_placeholder" location_iud="-1">-- Bitte Ort auswählen --</option>
+                            {% for l in locations %}
+                            {% if location.id == l.id %}
+                            <option value="{{ location.name }}" location_id="{{ l.id }}"
+                                    id="location_{{ l.id }}">{{ l.name }}
+                            </option>
+                            {% else %}
+                            <option value="{{ location.name }}" location_id="{{ l.id }}"
+                                    id="location_{{ l.id }}" selected>{{ l.name }}
+                            </option>
+                            {% endif %}
+                            {% endfor %}
+                            {% else %}
+                            <option id="location_placeholder" selected>-- Bitte Ort auswählen --</option>
+                            {% for l in locations %}
+                            <option value="{{ location.name }}" location_id="{{ l.id }}"
+                                    id="location_{{ l.id }}">{{ l.name }}
+                            </option>
+                            {% endfor %}
+                            {% endif %}
+                        </select>
+                        {% endblock %}
+                    </td>
+                </tr>
+                {% if locations|length == 0 or location == None %}
+                <div id="selected_location_id" style="display: none;">-1</div>
+                {% else %}
+                <div id="selected_location_id" style="display: none;">{{ location.id }}</div>
+                {% endif %}
+
+                {% block section %}
+                <tr id="section_placeholder" class="section">
+                    <td>Sektion:</td>
+                    <td>
+                        <select id="location_sections_placeholder" class="section_list" disabled>
+                            <option>-- Bitte Sektion auswählen --</option>
+                        </select>
+                    </td>
+                </tr>
+                {% for location in locations %}
+                <tr id="section_{{ location.id }}" class="section">
+                    <td>Sektion:</td>
+                    <td>
+                        <select id="location_{{ location.id }}_sections" class="section_list" disabled>
+                            <option>-- Bitte Sektion auswählen --</option>
+                            {% for section in location.sections %}
+                            <option id="section_{{ section.id }}">{{ section.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% endblock %}
+
+                {% block always_on_list %}
+                <tr>
+                    <td>Immer auf Einkaufsliste</td>
+                    <td id="always_on_shopping_list">
+                        <input type="radio" name="always_on_list" value="true">Ja</input>
+                        <input type="radio" name="always_on_list" checked value="false">Nein</input>
+                    </td>
+                </tr>
+                {% endblock %}
+                {% block non_food %}
+                <tr>
+                    <td>
+                        <label for="non_food">Non-Food</label>
+                        <input type="checkbox" id="non_food" name="non_food"></input>
+                    </td>
+                </tr>
+                {% endblock %}
+                <tr>
+                    <td>
+                        <button type="button" id="cancel_ingredient" onclick="cancel_close_add_ingredient()">X</button>
+                    </td>
+                    <td>
+                        <input type="submit" id="btn_confirm_ingredient" onclick="confirm_edit_ingredient()" value="OK">
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </form>
+</div>
+
+<div id="cover"></div>
+
+{% endblock %}

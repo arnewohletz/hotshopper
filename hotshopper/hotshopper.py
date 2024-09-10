@@ -520,7 +520,8 @@ def main() -> None:
                                recipes=controller.get_recipes(),
                                ingredients=controller.get_ingredients(),
                                locations=controller.get_locations(),
-                               location=None
+                               location=None,
+                               edit=False
                                )
 
     @app.route("/ingredients/edit/<int:ingredient_id>")
@@ -540,16 +541,17 @@ def main() -> None:
         section = db.session.query(Section).filter_by(
             id=ingredient.section_id).first()
         location = db.session.query(Location).filter_by(
-            id=section.location_id).first()
+            id=ingredient.location_id).first()
         food_only_ingredients = controller.get_food_only_ingredients()
         return render_template_with_db_session(
             "edit_ingredient_screen.html",
-            recipes=controller.get_recipes(),
-            ingredients=food_only_ingredients,
-            locations=controller.get_locations(),
             ingredient=ingredient,
+            ingredients=food_only_ingredients,
             location=location,
-            section=section
+            locations=controller.get_locations(),
+            recipes=controller.get_recipes(),
+            section=section,
+            edit=True
             )
 
     @app.route("/ingredients/delete/<int:ingredient_id>")

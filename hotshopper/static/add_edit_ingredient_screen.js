@@ -1,18 +1,16 @@
-let SELECTED_LOCATION_ID = "";
-
-function init() {
+function init(edit) {
     document.getElementById("ingredient_screen").style.display = "block";
     document.getElementById("ingredients_screen").style.display = "none";
     document.getElementById("cover").style.display = "block";
-    SELECTED_LOCATION_ID = document.getElementById("selected_location_id").childNodes[0].nodeValue;
 
-    if (edit) {
+    if (edit === "True") {
         document.getElementById("ingredient_screen_headline").innerText="Zutat bearbeiten";
+        document.getElementById("ingredient_name").innerText=`${ingredient.name}`;
     } else {
         document.getElementById("ingredient_screen_headline").innerText="Neue Zutat";
     }
 
-    decide_display_section(SELECTED_LOCATION_ID)
+    decide_display_section(selected_location_id)
     set_location()
 
     document.getElementById("location").addEventListener("selectionchange",
@@ -26,12 +24,13 @@ function cancel_close_ingredient() {
     window.location.href = "/ingredients";
 }
 
-function confirm_ingredient() {
+function confirm_ingredient(edit) {
     if (!formcheck()) {
         return false;
     }
 
-    const location_index = document.getElementById("location").selectedIndex;
+    let location_selection = document.getElementById("location")
+    const location_index = location_selection.options[location_selection.selectedIndex].getAttribute("location_id");
     let section_index = document.getElementById(`location_${location_index}_section_selection`).selectedIndex;
     if (section_index === 0) {
         section_index = -1;
@@ -41,7 +40,7 @@ function confirm_ingredient() {
     let non_food = !!elem_non_food.checked;
 
     let url;
-    if (edit) {
+    if (edit === "True") {
         let ingredient_id = window.location.href.substring(window.location.href.lastIndexOf('/') + 1);
         url = `/confirm_edit_ingredient/${ingredient_id}`
     } else {
@@ -116,11 +115,11 @@ function set_location() {
         section_lists[i].disabled = true;
     }
     let location_select = document.querySelector("#location");
-    SELECTED_LOCATION_ID = location_select.options[location_select.selectedIndex].getAttribute('location_id');
+    selected_location_id = location_select.options[location_select.selectedIndex].getAttribute('location_id');
 
-    if (SELECTED_LOCATION_ID >= 0) {
-        decide_display_section(SELECTED_LOCATION_ID);
-        let available_sections = document.getElementById(`location_${SELECTED_LOCATION_ID}_section_selection`);
+    if (selected_location_id >= 0) {
+        decide_display_section(selected_location_id);
+        let available_sections = document.getElementById(`location_${selected_location_id}_section_selection`);
 
         if (available_sections.length > 1) {
             available_sections.disabled = false;
@@ -128,4 +127,6 @@ function set_location() {
     }
 }
 
-window.onload = init;
+window.onload = function() {
+    init(edit);
+}
