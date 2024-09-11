@@ -25,19 +25,19 @@
                 <tr>
                     <!-- Name
                     ========= -->
-                    <td>Name:</td>
-                    <td colspan="3">
+                    <td>Name</td>
+                    <td>
                         {% if edit %}
-                        <input style="width: 100%" type="text" id="ingredient_name" name="ingredient_name" required value="{{ ingredient.name }}"/>
+                        <input type="text" id="ingredient_name" name="ingredient_name" required value="{{ ingredient.name }}"/>
                         {% else %}
-                        <input style="width: 100%" type="text" id="ingredient_name" name="ingredient_name" required/>
+                        <input type="text" id="ingredient_name" name="ingredient_name" required/>
                         {% endif %}
                     </td>
                 </tr>
                 <tr>
                     <!-- Location
                     ============= -->
-                    <td>Einkaufsort:</td>
+                    <td>Einkaufsort</td>
                     <td>
                         <select id="location" name="location" onchange="set_location()" required>
                             <option id="location_placeholder" location_id="-1">-- Bitte Ort auswählen --</option>
@@ -74,7 +74,7 @@
                 ============ -->
                 <tr id="section_placeholder" class="section">
 
-                    <td>Sektion:</td>
+                    <td>Sektion</td>
                     <td>
                         <select id="location_sections_placeholder" class="section_list" disabled>
                             <option>-- Bitte Sektion auswählen --</option>
@@ -83,7 +83,7 @@
                 </tr>
                 {% for location in locations %}
                 <tr id="location_{{ location.id }}_sections" class="section">
-                    <td>Sektion:</td>
+                    <td>Sektion</td>
                     <td>
                     {% if edit %}
                     <select id="location_{{ location.id }}_section_selection" class="section_list">
@@ -114,19 +114,16 @@
                 <!-- Always on shopping list
                 ============================ -->
                 <tr>
-                    <td>Immer auf Einkaufsliste:</td>
+                    <td>Immer auf<br>Einkaufsliste</td>
                     <td id="always_on_shopping_list">
                     {% if edit %}
                         {% if ingredient.always_on_list == 1 %}
-                        <input type="radio" name="always_on_list" checked value="true">Ja</input>
-                        <input type="radio" name="always_on_list" value="false">Nein</input>
+                        <input type="checkbox" name="always_on_list" checked>
                         {% else %}
-                        <input type="radio" name="always_on_list" value="true">Ja</input>
-                        <input type="radio" name="always_on_list" checked value="false">Nein</input>
+                        <input type="checkbox" name="always_on_list">
                         {% endif %}
                     {% else %}
-                        <input type="radio" name="always_on_list" value="true">Ja</input>
-                        <input type="radio" name="always_on_list" checked value="false">Nein</input>
+                        <input type="checkbox" name="always_on_list">
                     {% endif %}
                     </td>
                 </tr>
@@ -134,7 +131,7 @@
                 ============= -->
                 <tr>
                     <td>
-                        <label for="non_food">Non-Food:</label>
+                        <label for="non_food">Non-Food</label>
                     </td>
                     <td>
                     {% if edit %}
@@ -153,12 +150,15 @@
             <button type="button"
                     class="menu_buttons"
                     id="cancel_ingredient"
-                    onclick="cancel_close_ingredient()">X</button>
-            <input type="submit"
+                    onclick="cancel_close_ingredient()">
+                <i class="fa-solid fa-ban"></i>
+            </button>
+            <button type="submit"
                    class="menu_buttons"
                    id="btn_confirm_ingredient"
-                   onclick="confirm_ingredient(edit)"
-                   value="OK">
+                   onclick="confirm_ingredient(edit)">
+                <i class="fa-solid fa-check"></i>
+            </button>
             </div>
         </div>
     </form>

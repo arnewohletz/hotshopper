@@ -11,7 +11,7 @@ h2 {
     background-color: #9c9c9c;
     border-radius: 15px;
     margin: 18px 10px 10px;
-    padding: 5px 5px 5px 10px;
+    padding: 5px 5px 5px 15px;
 }
 
 /* Print special rules */
@@ -33,7 +33,7 @@ h2 {
 /* Div */
 
 div.content {
-    display: flex;
+    display: inline-grid;
 }
 
 div.invisible {
@@ -80,15 +80,15 @@ div#edit_locations, div#edit_sections {
     position: fixed;
     top: 15%;
     z-index: 10;
-}
 
-.ontop_screen div.scroll {
-    max-height: 60vh;
-    padding-bottom: 10px;
-    overflow-x: hidden;
-    overflow-y: auto;
-    width: 100%;
-    white-space: nowrap;
+    div.scroll {
+        max-height: 60vh;
+        padding-bottom: 10px;
+        overflow-x: hidden;
+        overflow-y: auto;
+        width: 100%;
+        white-space: nowrap;
+    }
 }
 
 #cover {
@@ -102,6 +102,21 @@ div#edit_locations, div#edit_sections {
     top: 0;
 }
 
+#ingredient_screen #ingredient_form {
+    td:nth-child(odd) {
+        padding-right: 5px;
+        text-align: right;
+    }
+
+    #ingredient_name {
+        width: 96%;
+    }
+
+    #location {
+        width: 100%
+    }
+}
+
 #ingredients_screen {
     max-height: 80vh;
     top: 10%;
@@ -111,6 +126,22 @@ div#edit_locations, div#edit_sections {
     color: #1e1e1e;
     overflow: hidden;
     top: 10%;
+
+    td.location_header {
+        font-size: 14pt;
+        text-transform: uppercase;
+        padding-bottom: 5px;
+        padding-top: 10px;
+        text-align: center;
+    }
+    td.ingredient {
+        font-size: 12pt;
+        padding-left: 20px;
+    }
+    td.section_header {
+        font-size: 14pt;
+        font-weight: bold;
+    }
 }
 
 /* Forms */
@@ -128,18 +159,25 @@ h2 table {
 table.all_shopping_lists {
     background-color: lightgrey;
     border-radius: 15px;
-    display: block;
+    display: table;
     flex: 1;
     margin: 0 10px 10px 0;
     max-width: max-content;
     padding: 10px;
     width: 100%;
+    grid-column: 2;
+    grid-row: 1;
+}
+
+table.food_plan,
+table.all_shopping_lists {
+    border-spacing: 0;
+    display: block;
 }
 
 table.food_plan {
     background-color: #57a162;
     border-radius: 15px;
-    border-spacing: 0;
     margin: 0 10px 10px;
     min-width: max-content;
     padding: 10px;
@@ -156,6 +194,10 @@ table.noselect {
 table.selection {
     min-width: 100%;
     padding: 5px;
+}
+
+table#shopping_list {
+
 }
 
 table#shopping_list_parameters {
@@ -202,6 +244,12 @@ td.spacer {
 th.list_header {
     font-size: 14pt;
     text-decoration: underline;
+    line-height: 35px;
+}
+
+th.menu_buttons {
+    line-height: 32px;
+    display: table;
 }
 
 th.shopping_list_location_name {
@@ -260,10 +308,16 @@ input.menu_buttons,
     border-radius: 5px;
 }
 
+#recipeFilter.menu_buttons {
+    margin-left: 50px;
+}
+
+button[type="submit"],
 input[type="submit"] {
     background-color: #aae0ff;
 }
 
+button[type="submit"]:hover,
 input[type="submit"]:hover {
     background-color: #76cdff;
 }
@@ -285,28 +339,8 @@ input#recipe_name {
 }
 
 #recipe_screen_close_buttons {
-    margin-top: 40px;
+    margin-top: 20px;
     text-align: center;
-}
-
-/* Special: Shopping list table parts */
-
-#shopping_list_screen td.location_header {
-    font-size: 14pt;
-    text-transform: uppercase;
-    padding-bottom: 5px;
-    padding-top: 10px;
-    text-align: center;
-}
-
-#shopping_list_screen td.section_header {
-    font-size: 14pt;
-    font-weight: bold;
-}
-
-#shopping_list_screen td.ingredient {
-    font-size: 12pt;
-    padding-left: 20px;
 }
 
 /* Special: Food plan */
@@ -323,7 +357,6 @@ input#recipe_name {
 
 #showAddRecipeScreen,
 #calc_button {
-    float: right;
     margin-right: 5px;
 }
 

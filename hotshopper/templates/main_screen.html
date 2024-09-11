@@ -48,10 +48,10 @@
                         <button class="menu_buttons" type="reset" id="recipeFilterResetButton" value="X">
                             <i class="fa-solid fa-delete-left"></i>
                         </button>
-                        <input type="submit" value="Berechne" id="calc_button">
                         <button type="button" class="menu_buttons" id="showAddRecipeScreen"
                             onclick="show_add_recipe_screen()"> Neues Rezept ...
                         </button>
+                        <input type="submit" value="Berechne" id="calc_button">
                     </th>
                 </tr>
             <tr>
@@ -120,10 +120,10 @@
                 <th class="list_header">Einkaufsliste</th>
             </tr>
             <tr>
-                <th class="menu_buttons">
+                <th rowspan="2" class="menu_buttons">
                     <form action="/print_shopping_list" method="post">
                         <input type="submit" id="print_shopping_list_button"
-                               value="Ausdrucken">
+                               value="Druckvorschau">
                     </form>
                 </th>
             </tr>
