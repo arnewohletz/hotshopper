@@ -38,13 +38,24 @@ def create_application():
         _app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
         _app.secret_key = secrets.token_hex()
 
+        # if not path.exists():
+        #     _db = _create_database()
+        # else:
+        #     _db = SQLAlchemy(model_class=Base,
+        #                      session_options={"autoflush": False})
     _db = SQLAlchemy(model_class=Base,
                      session_options={"autoflush": False})
-
     _db.init_app(_app)
     with _app.app_context():
         _db.create_all()
     _app.app_context().push()
+
+
+# def _create_database():
+#     db = SQLAlchemy(model_class=Base,
+#                     session_options={"autoflush": False})
+#     db.create_all()
+#     return db
 
 
 def get_app():
