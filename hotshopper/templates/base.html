@@ -11,10 +11,14 @@
     {% endblock %}
 </head>
 <body>
-{% block body %}
+<div id="base">
+    {% block main_screen %}
 
-{% endblock %}
-<hr id="copyright_ruler">
-<p id="copyright">Copyright 2021-2024. Arne Wohletz</p>
+    {% endblock %}
+    <div id="footer">
+        <hr id="copyright_ruler">
+        <p id="copyright">Copyright 2021-2024. Arne Wohletz</p>
+    </div>
+</div>
 </body>
 </html>

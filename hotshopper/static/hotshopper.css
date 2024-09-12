@@ -1,5 +1,7 @@
+/* COMMON */
 /* Body */
 
+/*OK*/
 body {
     background-color: #e1e1e1;
     font-family: \'Consolas\', \'Deja Vu Sans Mono\', \'Bitstream Vera Sans Mono\', monospace;
@@ -7,11 +9,12 @@ body {
 
 /* Headings */
 
+/*OK*/
 h2 {
-    background-color: #9c9c9c;
+    background-color: #315B38;
     border-radius: 15px;
-    margin: 18px 10px 10px;
     padding: 5px 5px 5px 15px;
+    color: #DEFFE4;
 }
 
 /* Print special rules */
@@ -32,17 +35,8 @@ h2 {
 
 /* Div */
 
-div.content {
-    display: inline-grid;
-}
-
 div.invisible {
     color: transparent;
-}
-
-div#shopping_lists {
-    display: inline-block;
-    width: 210mm;
 }
 
 div.shopping_list_content {
@@ -102,6 +96,20 @@ div#edit_locations, div#edit_sections {
     top: 0;
 }
 
+#base {
+    display: grid;
+    grid-template-areas:
+        "main_screen"
+        "footer"
+    ;
+
+}
+
+#footer {
+    grid-area: footer;
+    padding-top: 10px;
+}
+
 #ingredient_screen #ingredient_form {
     td:nth-child(odd) {
         padding-right: 5px;
@@ -121,6 +129,148 @@ div#edit_locations, div#edit_sections {
     max-height: 80vh;
     top: 10%;
 }
+
+#main_screen {
+    display: grid;
+    grid-area: main_screen;
+    grid-template-areas:
+        "main_screen_header     main_screen_header"
+        "main_screen_content    main_screen_content"
+        "main_screen_footer     main_screen_footer"
+    ;
+    margin: 10px;
+
+    & h2.header {
+        align-items: center;
+        display: grid;
+        grid-area: main_screen_header;
+        grid-template-areas:
+            "header_text header_buttons"
+        ;
+        margin-top: 0;
+        padding-right: 20px;
+
+        & .text {
+            grid-area: header_text;
+            justify-content: start;
+        }
+
+        & .buttons {
+            grid-area: header_buttons;
+            justify-self: end;
+        }
+    }
+    & .content {
+        display: grid;
+        gap: 20px;
+        grid-template-areas:
+            "main_screen_food_plan  main_screen_shopping_lists";
+        justify-self: start;
+
+        & .food_plan {
+            background-color: #7bb876;
+            border-radius: 15px;
+            display: inline-grid;
+            grid-template-columns: 80px 1fr;
+            grid-template-rows: 50px auto auto;
+            grid-area: main_screen_food_plan;
+            justify-self: start;
+            min-width: max-content;
+            padding: 10px;
+
+            & .title {
+                display: grid;
+                grid-column: 1 / 3;
+                grid-row-start: 1;
+                justify-content: center;
+            }
+
+            & .header {
+                align-self: start;
+                display: grid;
+                grid-column: 2 / 3;
+                grid-row-start: 2;
+                grid-template-areas:
+                    "recipe_elements control_buttons";
+                justify-self: start;
+                margin-top: 10px;
+                z-index: 10;
+
+                & .recipe_elements {
+                    align-content: start;
+                }
+
+                & .control_buttons {
+                    align-self: center;
+                    grid-column: 3 / 1;
+                    grid-area: control_buttons;
+                    justify-self: start;
+                    margin-left: 50px;
+                }
+            }
+
+            & table.recipes {
+                border-spacing: 0;
+                border-radius: 15px;
+                grid-column: 1 / 3;
+                grid-row: 2 / 2;
+                margin: 0 10px 10px;
+
+                & tr.recipe_selection td.recipe_name {
+                    padding-left: 10px;
+                }
+
+                tr:nth-child(even) {
+                    background: #9ddb99;
+                }
+
+                & tr.week_header,
+                  tr:nth-child(odd) {
+                    background: #7bb876;
+                }
+            }
+        }
+
+        & .all_shopping_lists {
+            display: grid;
+            grid-area: main_screen_shopping_lists;
+            grid-template-areas:
+                "all_shopping_lists_title"
+                "all_shopping_lists_header"
+                "all_shopping_lists_table"
+            ;
+            background-color: #bfbfbfff;
+            border-radius: 15px;
+            padding: 10px;
+            width: 100%;
+            max-width: max-content;
+
+            & .title {
+                display: grid;
+                justify-content: center;
+                grid-area: all_shopping_lists_title;
+            }
+
+            & .header {
+                display: grid;
+                justify-content: left;
+                grid-area: all_shopping_lists_header;
+                margin: 0 10px 10px 10px;
+            }
+
+            & .all_shopping_lists_table {
+                border-spacing: 0;
+                display: grid;
+                grid-area: all_shopping_lists_table;
+            }
+        }
+    }
+
+        div#shopping_lists {
+            display: inline-block;
+            width: 210mm;
+        }
+    }
 
 #shopping_list_screen {
     color: #1e1e1e;
@@ -154,33 +304,6 @@ th.menu_buttons form {
 
 h2 table {
     width: 100%;
-}
-
-table.all_shopping_lists {
-    background-color: lightgrey;
-    border-radius: 15px;
-    display: table;
-    flex: 1;
-    margin: 0 10px 10px 0;
-    max-width: max-content;
-    padding: 10px;
-    width: 100%;
-    grid-column: 2;
-    grid-row: 1;
-}
-
-table.food_plan,
-table.all_shopping_lists {
-    border-spacing: 0;
-    display: block;
-}
-
-table.food_plan {
-    background-color: #57a162;
-    border-radius: 15px;
-    margin: 0 10px 10px;
-    min-width: max-content;
-    padding: 10px;
 }
 
 table.noselect {
@@ -290,12 +413,12 @@ tr.shopping_list_section {
 
 /* Buttons */
 
-.buttons {
-    max-width: 0;
-    position: relative;
-    right: 70px;
-    z-index: 1;
-}
+/*.buttons {*/
+/*    max-width: 0;*/
+/*    position: relative;*/
+/*    right: 70px;*/
+/*    z-index: 1;*/
+/*}*/
 
 button.header_button,
 button.menu_buttons,
@@ -362,18 +485,6 @@ input#recipe_name {
 
 .food_plan tr {
     line-height: 24px;
-}
-
-.food_plan .header tr {
-    background: #57a162;
-}
-
-.food_plan .recipes tr:nth-child(even) {
-    background: #76c081;
-}
-
-.food_plan .recipes tr:nth-child(odd) {
-    background: #57a162;
 }
 
 /* Other special elements */
