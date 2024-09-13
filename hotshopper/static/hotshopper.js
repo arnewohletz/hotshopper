@@ -43,10 +43,6 @@ function show_ingredients_screen() {
     window.location.href = "/ingredients"
 }
 
-function show_print_preview() {
-    window.location.href = "/print_shopping_list"
-}
-
 function show_shopping_list_screen() {
     window.location.href = "/shopping_list/0"
 }

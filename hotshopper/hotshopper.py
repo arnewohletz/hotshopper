@@ -365,7 +365,7 @@ def main() -> None:
             recipe.weeks = []
         return redirect("/")
 
-    @app.route("/show_shopping_list", methods=["POST"])
+    @app.route("/show_shopping_list", methods=["GET", "POST"])
     def show_shopping_list() -> str:
         """
         Display the shopping list page.
@@ -415,15 +415,15 @@ def main() -> None:
                                unit=Unit
                                )
 
-    @app.route("/print_shopping_list", methods=["POST"])
-    def print_shopping_list() -> str:
+    @app.route("/shopping_lists_print_preview", methods=["POST"])
+    def show_shopping_lists_print_preview() -> str:
         """
         Display the printable shopping list page.
 
         :return: The rendered shopping list page.
         """
         food_plan = controller.food_plan
-        return render_template("print_shopping_list.html",
+        return render_template("shopping_lists_print_preview.html",
                                food_plan=food_plan)
 
     @app.route(

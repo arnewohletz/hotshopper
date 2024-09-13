@@ -49,6 +49,10 @@ function doubleWidthInMillimeters(element) {
     element.style.width = doubledWidthInMillimeters + 'mm'; // Apply the doubled width in millimeters to the element
 }
 
+function back_to_main_screen() {
+    window.location.href = "/show_shopping_list"
+}
+
 
 // function getOverflowingTextContent(element) {
 //     var previousOverflow = element.style.overflow;

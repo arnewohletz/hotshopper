@@ -124,7 +124,7 @@
         </div>
         </form>
         {% if food_plan %}
-        <form method="POST" action="/print_shopping_list">
+        <form method="POST" action="/shopping_lists_print_preview">
             <div class="all_shopping_lists">
                 <div class="title">
                     <div class="text">
@@ -133,10 +133,7 @@
                 </div>
                 <div class="header">
                     <div class="control_buttons">
-                        <button type="submit" id="show_print_preview"
-                                class="header_button"
-                                onclick="show_print_preview()">Druckvorschau
-                        </button>
+                        <input type="submit" class="submit_button" value="Druckvorschau">
                     </div>
                 </div>
                 <table class="all_shopping_lists_table">
