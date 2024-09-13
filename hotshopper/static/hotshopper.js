@@ -1,8 +1,22 @@
+let EVEN_ROW_BACKGROUND;
+let ODD_ROW_BACKGROUND;
+
 function init() {
     // document.getElementById("add_recipe_screen").style.display = "none";
     // document.getElementById("EDIT_RECIPE_screen").style.display = "none";
     // document.getElementById("cover").style.display = "none";
     // document.getElementById('add_recipe_form').reset();
+
+    // reset recipe filter input field
+    document.getElementById("recipesFilter").value = "";
+
+    // define recipe row background color
+    let even_row_elem = document.getElementsByClassName("recipe_selection").item(0)
+    let odd_row_elem = document.getElementsByClassName("recipe_selection").item(1)
+    EVEN_ROW_BACKGROUND = getComputedStyle(even_row_elem).getPropertyValue("background")
+    ODD_ROW_BACKGROUND = getComputedStyle(odd_row_elem).getPropertyValue("background")
+
+    // maintain scroll height
     window.scroll(0, scroll_height);
 }
 
@@ -39,25 +53,26 @@ function show_shopping_list_screen() {
 
 function filter_recipes() {
     let total_filtered = 0;
-    let filter_input = document.getElementById("recipeFilter");
+    let filter_input = document.getElementById("recipesFilter");
     let filter = filter_input.value.toUpperCase();
-    let recipe_table = document.getElementById("recipeTableBody");
-    let recipe_row = recipe_table.getElementsByTagName("tr");
-    for (let i = 0; i < recipe_row.length; i++) {
-        let name = recipe_row[i].getElementsByClassName("recipe_name")[0];
-        if (name) {
-            let txtValue = name.textContent || name.innerText;
-            if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                recipe_row[i].style.display = "";
+    let recipe_table = document.getElementById("recipesTableBody");
+    let recipe_rows = recipe_table.getElementsByClassName("recipe_selection");
+
+    for (let i = 0; i < recipe_rows.length; i++) {
+        let name_elem = recipe_rows[i].getElementsByClassName("recipe_name")[0];
+        if (name_elem) {
+            let name = name_elem.innerText || name_elem.textContent;
+            if (name.toUpperCase().indexOf(filter) > -1) {
+                recipe_rows[i].style.display = "";
                 total_filtered++;
                 if (total_filtered % 2 === 0) {
-                    recipe_row[i].style.background = "#76c081"
+                    recipe_rows[i].style.background = EVEN_ROW_BACKGROUND;
                 } else {
-                    recipe_row[i].style.background = "#57a162"
+                    recipe_rows[i].style.background = ODD_ROW_BACKGROUND;
                 }
-                recipe_row[i].classList.add('filtered');
+                recipe_rows[i].classList.add('filtered');
             } else {
-                recipe_row[i].style.display = "none";
+                recipe_rows[i].style.display = "none";
             }
         }
     }
@@ -267,9 +282,9 @@ function add_recipe_ingredient() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    let recipeFilterResetButton = document.getElementById("recipeFilterResetButton");
-    recipeFilterResetButton.addEventListener("click", function() {
-        document.getElementById('recipeFilter').value = '';
+    let recipesFilterResetButton = document.getElementById("recipesFilterResetButton");
+    recipesFilterResetButton.addEventListener("click", function() {
+        document.getElementById('recipesFilter').value = '';
         filter_recipes()
     });
 });

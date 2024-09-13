@@ -30,8 +30,8 @@
             </div>
             <div class="header">
                 <div class="recipe_elements">
-                    <input class="menu_buttons" type="search" id="recipeFilter" onkeyup="filter_recipes()" placeholder="Finde Rezept ...">
-                    <button class="menu_buttons" type="reset" id="recipeFilterResetButton" value="X">
+                    <input class="menu_buttons" type="search" id="recipesFilter" onkeyup="filter_recipes()" placeholder="Finde Rezept ...">
+                    <button class="menu_buttons" type="reset" id="recipesFilterResetButton" value="X">
                         <i class="fa-solid fa-delete-left"></i>
                     </button>
                     <button type="button" class="menu_buttons" id="showAddRecipeScreen"
@@ -47,16 +47,27 @@
                     <input type="submit" value="Berechne" id="calc_button">
                 </div>
             </div>
-            <table class="recipes">
+            <table class="recipesTable">
+                <thead>
                     <tr class="week_header">
                         <th colspan="3">
                             Woche
                         </th>
+                        <th></th>
                     </tr>
                     <tr class="week_header">
                         <th>1</th>
                         <th>2</th>
                         <th>3</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="recipesTableBody">
+                    <tr id="placeholder" style="visibility: hidden">
+                        <td class="checkbox"></td>
+                        <td class="checkbox"></td>
+                        <td class="checkbox"></td>
+                        <td></td>
                     </tr>
                     {% for recipe in recipes %}
                     <tr class="recipe_selection">
@@ -107,6 +118,7 @@
                         </td>
                     </tr>
                     {% endfor %}
+                </tbody>
             </table>
 
         </div>

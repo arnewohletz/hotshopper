@@ -192,12 +192,21 @@ div#edit_locations, div#edit_sections {
                 grid-row-start: 2;
                 grid-template-areas:
                     "recipe_elements control_buttons";
-                justify-self: start;
+                /*justify-self: start;*/
                 margin-top: 10px;
                 z-index: 10;
 
                 & .recipe_elements {
                     align-content: start;
+
+                    & #recipesFilter.menu_buttons {
+                        margin-left: 50px;
+                    }
+
+                    & #recipesFilterResetButton {
+                        margin-right: 50px;
+                        margin-left: -6px;
+                    }
                 }
 
                 & .control_buttons {
@@ -209,12 +218,16 @@ div#edit_locations, div#edit_sections {
                 }
             }
 
-            & table.recipes {
+            & table.recipesTable {
                 border-spacing: 0;
                 border-radius: 15px;
                 grid-column: 1 / 3;
                 grid-row: 2 / 2;
                 margin: 0 10px 10px;
+
+               & tr#placeholder .checkbox {
+                   width: 25px;
+               }
 
                 & tr.recipe_selection td.recipe_name {
                     padding-left: 10px;
@@ -431,10 +444,6 @@ input.menu_buttons,
     border-radius: 5px;
 }
 
-#recipeFilter.menu_buttons {
-    margin-left: 50px;
-}
-
 button[type="submit"],
 input[type="submit"] {
     background-color: #aae0ff;
@@ -471,11 +480,6 @@ input#recipe_name {
 #recipeTableHeader.header tr th.header_text,
 #recipeTableBody.recipes tr td.checkbox {
     width: 21px;
-}
-
-#recipeFilterResetButton {
-    margin-right: 50px;
-    margin-left: -6px;
 }
 
 #showAddRecipeScreen,
