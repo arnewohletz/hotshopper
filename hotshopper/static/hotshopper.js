@@ -11,8 +11,12 @@ function init() {
     document.getElementById("recipesFilter").value = "";
 
     // define recipe row background color
-    let even_row_elem = document.getElementsByClassName("recipe_selection").item(0)
-    let odd_row_elem = document.getElementsByClassName("recipe_selection").item(1)
+    let even_row_elem = document.getElementsByClassName("recipe_selection_AAA").item(1)
+    let odd_row_elem = document.getElementsByClassName("recipe_selection").item(0)
+    if (even_row_elem === null) {
+        // fallback if less than two recipes are defined
+        even_row_elem = odd_row_elem = document.getElementById("food_plan")
+    }
     EVEN_ROW_BACKGROUND = getComputedStyle(even_row_elem).getPropertyValue("background")
     ODD_ROW_BACKGROUND = getComputedStyle(odd_row_elem).getPropertyValue("background")
 
