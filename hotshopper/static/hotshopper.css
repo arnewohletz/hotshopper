@@ -77,7 +77,7 @@ div#edit_locations, div#edit_sections {
     padding: 10px;
     position: fixed;
     top: 15%;
-    z-index: 10;
+    z-index: 100;
 
     div.scroll {
         max-height: 60vh;
@@ -98,6 +98,7 @@ div#edit_locations, div#edit_sections {
     position: fixed;
     right: 0;
     top: 0;
+    z-index: 20;
 }
 
 #base {
@@ -201,7 +202,6 @@ div#edit_locations, div#edit_sections {
                 grid-row-start: 2;
                 grid-template-areas:
                     "recipe_elements control_buttons";
-                /*justify-self: start;*/
                 margin-top: 10px;
                 z-index: 10;
 
