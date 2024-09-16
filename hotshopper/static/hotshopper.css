@@ -322,12 +322,6 @@ div#edit_locations, div#edit_sections {
     margin: 10px;
 
     h2.header {
-        align-items: center;
-        /*display: grid;*/
-        /*grid-area: main_screen_header;*/
-        /*grid-template-areas:*/
-        /*    "header_text header_buttons"*/
-        /*;*/
         margin-top: 0;
         padding-right: 20px;
         height: 30px;

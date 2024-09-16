@@ -16,6 +16,9 @@
         <button type="button" class="menu_buttons" onclick="back_to_main_screen()">
             Zurück zur Hauptseite
         </button>
+        <button type="submit" class="menu_buttons" id="print_shopping_lists" onclick="window.print()">
+            Drucken
+        </button>
     </h3>
 
     {% for shopping_list in food_plan.shopping_lists %}
