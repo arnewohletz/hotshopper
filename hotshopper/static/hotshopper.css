@@ -18,16 +18,15 @@ h2 {
     color: #DEFFE4;
 }
 
-h3#print_instruction {
-    margin-top: 0;
-}
-
 /* Print special rules */
 
 @media print {
-    h2, h3#print_instruction {
+
+    h2.header,
+    h3#print_instruction {
         display: none;
     }
+
     div.shopping_list_table {
         break-inside: avoid;
         page-break-after: auto;
@@ -158,6 +157,7 @@ div#edit_locations, div#edit_sections {
         & .text {
             grid-area: header_text;
             justify-content: start;
+            height: 30px;
         }
 
         & .buttons {
@@ -315,6 +315,22 @@ div#edit_locations, div#edit_sections {
     td.section_header {
         font-size: 14pt;
         font-weight: bold;
+    }
+}
+
+#print_preview_screen {
+    margin: 10px;
+
+    h2.header {
+        align-items: center;
+        /*display: grid;*/
+        /*grid-area: main_screen_header;*/
+        /*grid-template-areas:*/
+        /*    "header_text header_buttons"*/
+        /*;*/
+        margin-top: 0;
+        padding-right: 20px;
+        height: 30px;
     }
 }
 

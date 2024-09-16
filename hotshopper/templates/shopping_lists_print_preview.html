@@ -5,16 +5,18 @@
     food_plan = "{{ food_plan }}"
 </script>
 <script
-    src="{{ url_for('static', filename='print_shopping_list.js') }}"></script>
-<h2>Hotshopper</h2>
-<h3 id="print_instruction">
-    DRUCKVORSCHAU:
-    Drucke diese Seite im A4 Hochformat, 100 % Größe, ohne Hintergrund<br>
-    <br>
-    <button type="button" class="menu_buttons" onclick="back_to_main_screen()">
-        Zurück zur Hauptseite
-    </button>
-</h3>
+    src="{{ url_for('static', filename='print_shopping_list.js') }}">
+</script>
+<div id="print_preview_screen">
+    <h2 class="header">Hotshopper</h2>
+    <h3 id="print_instruction">
+        DRUCKVORSCHAU:
+        Drucke diese Seite im A4 Hochformat, 100 % Größe, ohne Hintergrund<br>
+        <br>
+        <button type="button" class="menu_buttons" onclick="back_to_main_screen()">
+            Zurück zur Hauptseite
+        </button>
+    </h3>
 
     {% for shopping_list in food_plan.shopping_lists %}
     <div class="shopping_list_table" id="{{ shopping_list.name }}">
@@ -73,5 +75,6 @@
         </div>
     </div>
     {% endfor %}
+</div>
 
 {% endblock %}
