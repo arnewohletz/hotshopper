@@ -393,7 +393,8 @@ def main() -> None:
         return render_template("add_recipe_screen.html",
                                recipes=recipes,
                                ingredients=ingredients,
-                               unit=Unit)
+                               unit=Unit,
+                               edit=False)
 
     @app.route("/edit_recipe/<int:recipe_id>")
     def show_edit_recipe_screen(recipe_id) -> str:
@@ -412,7 +413,8 @@ def main() -> None:
                                recipe=recipe,
                                recipe_ingredients=recipe_ingredients,
                                ingredients=ingredients,
-                               unit=Unit
+                               unit=Unit,
+                               edit=True
                                )
 
     @app.route("/shopping_lists_print_preview", methods=["POST"])

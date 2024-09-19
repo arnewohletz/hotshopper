@@ -5,7 +5,6 @@ function init(edit) {
 
     if (edit === "True") {
         document.getElementById("ingredient_screen_headline").innerText="Zutat bearbeiten";
-        document.getElementById("ingredient_name").innerText=`${ingredient.name}`;
     } else {
         document.getElementById("ingredient_screen_headline").innerText="Neue Zutat";
     }

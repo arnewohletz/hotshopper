@@ -1,94 +1,9 @@
-{% extends 'main_screen.html' %}
+{% extends 'recipe_screen.html' %}
 
-{% block scripts %}
-
-{% endblock %}
 
 {% block edit_recipe_screen %}
 <script type="text/javascript">
     recipe_ingredients = "{{ recipe_ingredients }}"
     recipe = "{{ recipe }}"
-    ingredients = "{{ ingredients }}"
-    unit = "{{ unit }}"
 </script>
-<script src="{{ url_for('static', filename='edit_recipe_screen.js') }}"></script>
-
-<div id="edit_recipe_screen" class="ontop_screen">
-    <form method="POST" id="edit_recipe_form" action="placeholder">
-        <h2 id="edit_recipe_screen_title">Rezept bearbeiten</h2>
-        <div>
-        <table id="recipe_table">
-            <tr>
-                <td>Name:</td>
-                <td colspan="3">
-                    <input style="width: 100%" type="text" id="recipe_name" name="recipe_name" value="{{ recipe.name }} " required>
-                </td>
-            </tr>
-            {% for ri in recipe_ingredients %}
-            <tr id="recipe_ingredient_{{ loop.index0 }}" class="recipe_ingredient">
-                {% if loop.index0 < 1 %}
-                <td id="label_ingredients" style="vertical-align: top">Zutaten:</td>
-                {% else %}
-                <td></td>
-                {% endif %}
-                <td>
-                    <input type="number" step="1.0" size=3 id="quantity_{{ loop.index0 }}" name="quantity_{{ loop.index0 }}" class="quantity" value="{{ ri.quantity_per_person }}" min="0.0" max="10000" required>
-                </td>
-                <td>
-                    <select id="unit_{{ loop.index0 }}" name="unit_{{ loop.index0 }}" required>
-                        {% if ri.unit == unit.GRAM %}
-                            <option name="{{ unit.GRAM }}" selected>{{ unit.GRAM }}</option>
-                            <option name="{{ unit.PIECE }}">{{ unit.PIECE }}</option>
-                        {% elif ri.unit == unit.PIECE %}
-                            <option name="{{ unit.GRAM }}">{{ unit.GRAM }}</option>
-                            <option name="{{ unit.PIECE }}" selected>{{ unit.PIECE }}</option>
-                        {% endif %}
-                    </select>
-                </td>
-                <td>
-                    <select id="ingredient_{{ loop.index0 }}" name="ingredient_{{ loop.index0 }}" required>
-                        <option id="no_ingredient">-- Bitte Zutat auswählen --</option>
-                        {% for ingredient in ingredients %}
-                            {% if ingredient.id == ri.ingredient_id %}
-                                <option selected>{{ ingredient.name }}</option>
-                            {% else %}
-                                <option>{{ ingredient.name }}</option>
-                            {% endif %}
-                        {% endfor %}
-                    </select>
-                </td>
-                <td>
-                    {% if loop.index > 1 %}
-                    <button type="button" class="delete_ingredient" data-i-index="{{ loop.index }}" onclick="delete_recipe_ingredient(this.dataset.iIndex - 1)">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-        </div>
-        <div id="add_ingredient_button">
-            <button type="button"
-                    class="add_ingredient"
-                    onclick="add_recipe_ingredient('{{ ingredients }}')">
-                <i class="fa-solid fa-plus"></i>
-            </button>
-        </div>
-        <div id="recipe_screen_close_buttons">
-            <button type="button"
-                    id="cancel_recipe"
-                    class="menu_buttons"
-                    onclick="cancel_close_recipe_screen()">
-                Abbrechen
-            </button>
-            <input type="submit" id="EDIT_RECIPE_confirm_recipe"
-                   class="menu_buttons"
-                   name="confirm_new_recipe"
-                   onclick="confirm_close_recipe_screen(edit=true)"
-                   value="OK">
-        </div>
-    </form>
-</div>
-
 {% endblock %}

@@ -71,21 +71,33 @@ div#edit_locations, div#edit_sections {
     background-color: #FFF;
     border: solid 1px #000;
     border-radius: 10px;
-    display: none;
+    display: grid;
+    grid-template-areas:
+        "header"
+        "body"
+    ;
     justify-content: center;
     left: 30%;
-    padding: 10px;
+    padding: 10px 20px 10px 20px;
     position: fixed;
     top: 15%;
     z-index: 100;
 
-    div.scroll {
+    & div.scroll {
         max-height: 60vh;
         padding-bottom: 10px;
         overflow-x: hidden;
         overflow-y: auto;
         width: 100%;
         white-space: nowrap;
+    }
+
+    & h2 {
+        grid-area: header;
+    }
+
+    & div.body {
+        grid-area: body
     }
 }
 
@@ -295,6 +307,134 @@ div#edit_locations, div#edit_sections {
             width: 210mm;
         }
     }
+
+#recipe_screen {
+
+    form#recipe_form {
+        align-items: center;
+        column-gap: 5px;
+        display: grid;
+        grid-area: body;
+        grid-template-areas:
+            "recipe_name_label                  recipe_name_value               recipe_name_value"
+            "recipe_ingredients_label           recipe_ingredients              recipe_ingredient_button"
+            "recipe_screen_control_elements     recipe_screen_control_elements  recipe_screen_control_elements"
+        ;
+        row-gap: 15px;
+        max-width: 600px;
+
+        #recipe_name_label {
+            grid-area: recipe_name_label;
+        }
+
+        #recipe_name_value {
+            grid-area: recipe_name_value;
+            margin-left: 2px;
+
+            & input {
+                width: 100%;
+            }
+        }
+
+        #recipe_ingredients_label {
+            display: grid;
+            grid-area: recipe_ingredients_label;
+            align-self: start;
+        }
+
+
+        & #recipe_ingredients {
+            grid-area: recipe_ingredients;
+            align-content: start;
+            text-align: end;
+            margin-left: 2px;
+
+            & .recipe_ingredient {
+                grid-template-areas:
+                    "recipe_ingredient_amount   recipe_ingredient_unit   recipe_ingredient_name   recipe_ingredient_delete_button"
+                ;
+                column-gap: 5px;
+                display: inline-grid;
+                grid-auto-rows: auto;
+
+                justify-content: start;
+                margin-bottom: 5px;
+
+                & .add_ingredient_button {
+                    grid-template-areas:
+                    ".  .  .  recipe_ingredient_delete_button";
+                }
+
+
+                & .recipe_ingredient_amount {
+                grid-area: recipe_ingredient_amount;
+                }
+
+                & .recipe_ingredient_unit {
+                    grid-area: recipe_ingredient_unit;
+                }
+
+                & .recipe_ingredient_name {
+                    grid-area: recipe_ingredient_name;
+                    max-width: 400px;
+                }
+
+                & .recipe_ingredient_delete_button {
+                    grid-area: recipe_ingredient_delete_button;
+                }
+            }
+
+            & #recipe_ingredients_add_button {
+                justify-items: end;
+                display: grid;
+                grid-area: recipe_ingredients_add_button;
+            }
+        }
+
+        .recipe_ingredient_delete_button,
+        #recipe_ingredient_add_button {
+            grid-area: recipe_ingredient_button;
+        }
+
+        & div#recipe_screen_control_elements {
+            grid-area: recipe_screen_control_elements;
+            text-align: center;
+        }
+
+        #name_table_name_column,
+        #ingredients_table_name_column {
+            width: 6em;
+        }
+
+        #name_table_data_colum {
+            width: 100%;
+        }
+
+
+        & div#recipe_screen_ingredients_table {
+            grid-area: recipe_screen_ingredients_table;
+
+            table {
+                width: 100%;
+
+                .ingredients_table_name_column {
+                    width: 6em;
+                }
+            }
+        }
+
+        & div#recipe_screen_add_ingredient_button {
+            display: grid;
+            grid-area: recipe_screen_add_ingredient_button;
+            justify-items: right;
+        }
+
+        & div#recipe_screen_control_elements {
+            grid-area: recipe_screen_control_elements;
+            text-align: center;
+        }
+    }
+}
 
 #shopping_list_screen {
     color: #1e1e1e;

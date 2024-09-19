@@ -2,11 +2,6 @@ let EVEN_ROW_BACKGROUND;
 let ODD_ROW_BACKGROUND;
 
 function init() {
-    // document.getElementById("add_recipe_screen").style.display = "none";
-    // document.getElementById("EDIT_RECIPE_screen").style.display = "none";
-    // document.getElementById("cover").style.display = "none";
-    // document.getElementById('add_recipe_form').reset();
-
     // reset recipe filter input field
     document.getElementById("recipesFilter").value = "";
 
@@ -109,41 +104,6 @@ function recipe_field_contains_valid_value(field) {
     }
 }
 
-function confirm_close_recipe_screen(edit = false) {
-    // TODO: Find a better solution for having two recipe screens - maybe merge into one?
-    let element = document.getElementById("edit_recipe_screen");
-    if (!element) {
-        element = document.getElementById("recipe_table");
-    }
-    if (!formcheck(element)) {
-        return false;
-    }
-    let current_scroll_height = document.documentElement.scrollTop || document.body.scrollTop;
-    let current_recipe_amount_ingredients = document.getElementsByClassName("recipe_ingredient").length;
-    document.getElementById("cover").style.display = "none";
-    let current_recipe_id = window.location.href.substring(window.location.href.lastIndexOf('/') + 1);
-    const template_add = new_ingredient_index => `/confirm_new_recipe/${new_ingredient_index}_${current_scroll_height}`
-    const template_edit = new_ingredient_index => `/confirm_edit_recipe/${current_recipe_id}_${new_ingredient_index}_${current_scroll_height}`
-
-    if (edit) {
-        document.getElementById("edit_recipe_screen").style.display = "none";
-        document.getElementById("edit_recipe_form").addEventListener(
-            "submit", function (s) {
-                s.preventDefault();
-                this.action = template_edit(current_recipe_amount_ingredients);
-                this.submit();
-            });
-    } else {
-        document.getElementById("add_recipe_screen").style.display = "none";
-        document.getElementById("add_recipe_form").addEventListener(
-            "submit", function (s) {
-                s.preventDefault();
-                this.action = template_add(current_recipe_amount_ingredients);
-                this.submit();
-            });
-    }
-}
-
 function delete_recipe(recipe) {
     let scroll_height = document.documentElement.scrollTop || document.body.scrollTop;
     Swal.fire({
@@ -164,13 +124,13 @@ function edit_recipe(recipe) {
 }
 
 function delete_recipe_ingredient(index) {
-    let recipe_ingredients = document.getElementById("recipe_table").getElementsByClassName("recipe_ingredient")
+    let recipe_ingredients = document.getElementById("recipe_ingredients").getElementsByClassName("recipe_ingredient");
     amount_ingredients = recipe_ingredients.length;
     document.getElementById(`recipe_ingredient_${index}`).remove();
 
     // loop through all recipe_ingredient elements from deleted ingredient_id until end
-    // and decrease index by 1
-    for (var i = index; i < amount_ingredients - 1; i++) {
+    // and decrease index by 2 (as 'add' button is part of the recipe_ingredients div)
+    for (var i = index; i < amount_ingredients - 2; i++) {
         // update recipe_ingredient element id
         let ri = recipe_ingredients[i];
         ri.id = `recipe_ingredient_${i}`;
@@ -193,41 +153,35 @@ function delete_recipe_ingredient(index) {
 }
 
 function add_recipe_ingredient() {
+
     // get new ingredient index
-    let recipe_ingredients = document.getElementById("recipe_table").getElementsByClassName("recipe_ingredient")
-    let last_recipe_ingredient = recipe_ingredients[recipe_ingredients.length - 1]
-    let parts = last_recipe_ingredient.id.split('_')
+    let recipe_ingredients = document.getElementById("recipe_ingredients").getElementsByClassName("recipe_ingredient");
+    let last_recipe_ingredient = recipe_ingredients[recipe_ingredients.length - 1];
+    let parts = last_recipe_ingredient.id.split('_');
     let new_recipe_ingredient_index = (parseInt(parts[parts.length - 1]) + 1).toString();
 
     // add new recipe ingredients nodes
-    let NewRecipeTable = document.getElementById("recipe_table");
-    let NewRecipeIngredientRow = document.createElement("tr");
+    let NewRecipeIngredientsGrid = document.getElementById("recipe_ingredients");
+    let NewRecipeIngredientRow = document.createElement("div");
     NewRecipeIngredientRow.setAttribute("class", "recipe_ingredient");
     NewRecipeIngredientRow.setAttribute("id", `recipe_ingredient_${new_recipe_ingredient_index}`);
-    let InputQuantityCell = document.createElement("td");
-    let UnitCell = document.createElement("td");
-    let IngredientCell = document.createElement("td");
-    let DeleteButtonCell = document.createElement("td");
+    let QuantityDiv = document.createElement("div");
+    let UnitDiv = document.createElement("div");
+    let IngredientNameDiv = document.createElement("div")
+    let DeleteButtonDiv = document.createElement("div")
 
     // create quantity node
-    let InputQuantity = document.createElement("input");
-    InputQuantity.setAttribute('type', "number");
-    InputQuantity.setAttribute('size', "3");
-    InputQuantity.setAttribute('id', `quantity_${new_recipe_ingredient_index}`);
-    InputQuantity.setAttribute('name', `quantity_${new_recipe_ingredient_index}`);
-    InputQuantity.setAttribute('class', 'quantity');
-    InputQuantity.setAttribute('min', '0.0');
-    InputQuantity.setAttribute('max', '10000.0');
-    InputQuantity.setAttribute('required', "");
-
-    // get empty cell ("Zutaten:") real width
-    let IngredientLabelElement = document.getElementById("label_ingredients");
-    let style = window.getComputedStyle(IngredientLabelElement);
-    let EmptyCellWidth = document.getElementById("label_ingredients").clientWidth - parseFloat(style.paddingLeft) -parseFloat(style.paddingRight);
+    let Quantity = document.createElement("input");
+    Quantity.setAttribute('type', "number");
+    Quantity.setAttribute('size', "3");
+    Quantity.setAttribute('id', `quantity_${new_recipe_ingredient_index}`);
+    Quantity.setAttribute('name', `quantity_${new_recipe_ingredient_index}`);
+    Quantity.setAttribute('class', 'quantity');
+    Quantity.setAttribute('min', '0.0');
+    Quantity.setAttribute('max', '10000.0');
+    Quantity.setAttribute('required', "");
 
     // create unit node
-    let EmptyCell = document.createElement("td");
-    EmptyCell.setAttribute("style", `width: ${EmptyCellWidth}px`);
     let SelectUnit = document.createElement("select");
     SelectUnit.setAttribute("id", `unit_${new_recipe_ingredient_index}`);
     SelectUnit.setAttribute("name", `unit_${new_recipe_ingredient_index}`);
@@ -256,29 +210,29 @@ function add_recipe_ingredient() {
     DeleteIcon.setAttribute("class", "fa-solid fa-trash-can");
 
     // add row node
-    NewRecipeTable.appendChild(NewRecipeIngredientRow)
+    let AddRecipeIngredientButtonRow = document.getElementById("recipe_ingredient_add_button");
+    NewRecipeIngredientsGrid.insertBefore(NewRecipeIngredientRow, AddRecipeIngredientButtonRow)
 
     // add cell nodes
-    NewRecipeIngredientRow.appendChild(EmptyCell);
-    NewRecipeIngredientRow.appendChild(InputQuantityCell);
-    NewRecipeIngredientRow.appendChild(UnitCell);
-    NewRecipeIngredientRow.appendChild(IngredientCell);
-    NewRecipeIngredientRow.appendChild(DeleteButtonCell);
+    NewRecipeIngredientRow.appendChild(QuantityDiv);
+    NewRecipeIngredientRow.appendChild(UnitDiv);
+    NewRecipeIngredientRow.appendChild(IngredientNameDiv);
+    NewRecipeIngredientRow.appendChild(DeleteButtonDiv);
 
-    // fill InputQuantityCell
-    InputQuantityCell.appendChild(InputQuantity);
+    // fill QuantityDiv
+    QuantityDiv.appendChild(Quantity);
 
-    // fill UnitCell
+    // fill UnitDiv
     SelectUnit.appendChild(SelectGram);
     SelectUnit.appendChild(SelectPiece);
-    UnitCell.appendChild(SelectUnit);
+    UnitDiv.appendChild(SelectUnit);
 
-    // add IngredientCell
-    IngredientCell.appendChild(SelectIngredient);
+    // add IngredientName
+    IngredientNameDiv.appendChild(SelectIngredient);
 
-    // fill DeleteButtonCell
+    // add DeleteButtonDiv
     DeleteButton.appendChild(DeleteIcon);
-    DeleteButtonCell.appendChild(DeleteButton);
+    DeleteButtonDiv.appendChild(DeleteButton);
 }
 
 document.addEventListener("DOMContentLoaded", function () {

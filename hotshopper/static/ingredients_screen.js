@@ -1,6 +1,6 @@
 function init() {
-    document.getElementById("cover").style.display = "block";
-    document.getElementById("ingredients_screen").style.display = "block";
+    document.getElementById("cover").style.display = "grid";
+    document.getElementById("ingredients_screen").style.display = "grid";
     let scroll_height_ingredients = sessionStorage.getItem("scroll_height_ingredients");
     if (scroll_height_ingredients !== null) {
         scroll_height_ingredients = parseInt(scroll_height_ingredients);

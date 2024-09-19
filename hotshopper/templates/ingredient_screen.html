@@ -13,13 +13,11 @@
     locations = "{{ locations }}"
     edit = "{{ edit }}"
 </script>
-<script src="{{ url_for('static', filename='add_edit_ingredient_screen.js') }}"></script>
+<script src="{{ url_for('static', filename='ingredient_screen.js') }}"></script>
 
 <div id="ingredient_screen" class="ontop_screen">
     <form method="POST" id="ingredient_form" action="javascript:void(0)">
-        <h2 id="ingredient_screen_headline">
-            <td></td>
-        </h2>
+        <h2 id="ingredient_screen_headline"></h2>
         <div>
             <table>
                 <tr>
