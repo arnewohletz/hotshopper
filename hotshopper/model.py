@@ -360,7 +360,7 @@ class ShoppingListItem:
 
     def __add__(self, other):
         if self.name is not other.name:
-            raise ValueError(f"Name mismatch: Can't add '{other.name}'"
+            raise ValueError(f"Name mismatch: Can't add '{other.name}' "
                              f"to {self.name}")
         if self.order_id is not other.order_id:
             raise ValueError(f"Order ID mismatch: Existing item has order id "

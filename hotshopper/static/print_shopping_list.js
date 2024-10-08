@@ -34,7 +34,6 @@ function move_overflowing_content_to_new_table(list_element) {
     // list_element.parentNode.insertBefore(whitespace, list_element.nextSibling);
 }
 
-
 function apply_list_overflow_event_listener(element) {
     element.addEventListener('overflow', function () {
         move_overflowing_content_to_new_table(this);
