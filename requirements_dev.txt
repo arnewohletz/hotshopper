@@ -85,7 +85,7 @@ typing-extensions==4.11.0
     #   sqlalchemy
 units==0.7
     # via hotshopper (pyproject.toml)
-werkzeug==3.0.3
+werkzeug==3.0.6
     # via flask
 wheel==0.43.0
     # via hotshopper (pyproject.toml)
