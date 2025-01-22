@@ -19,7 +19,7 @@ function cancel_close_recipe_screen(edit) {
     window.location.href = "/"
 }
 
-function confirm_close_recipe_screen() {
+function confirm_close_recipe_screen(edit) {
     let element = document.getElementById("recipe_screen");
     if (!element) {
         element = document.getElementById("recipe_form");
@@ -35,12 +35,22 @@ function confirm_close_recipe_screen() {
     const template_edit = new_ingredient_index => `/confirm_edit_recipe/${current_recipe_id}_${new_ingredient_index}_${current_scroll_height}`
 
     document.getElementById("recipe_screen").style.display = "none";
-    document.getElementById("recipe_form").addEventListener(
+    if (edit) {
+        document.getElementById("recipe_form").addEventListener(
         "submit", function (s) {
             s.preventDefault();
             this.action = template_edit(current_recipe_amount_ingredients);
             this.submit();
         });
+    } else {
+        document.getElementById("recipe_form").addEventListener(
+        "submit", function (s) {
+            s.preventDefault();
+            this.action = template_add(current_recipe_amount_ingredients);
+            this.submit();
+        });
+    }
+
 }
 
 document.addEventListener("DOMContentLoaded", function () {

@@ -9,11 +9,17 @@ body {
 
 /* Headings */
 
-h2 {
+h2,
+div.screen_header {
     background-color: #315B38;
     border-radius: 15px;
-    padding: 5px 5px 5px 15px;
     color: #DEFFE4;
+    /*margin: 10px 0 10px 0;*/
+    margin-bottom: 15px;
+    font-size: 16pt;
+    font-weight: bold;
+    padding: 5px 5px 5px 15px;
+
 }
 
 /* Print special rules */
@@ -87,7 +93,7 @@ div#edit_locations, div#edit_sections {
     ;
     justify-content: center;
     left: 30%;
-    padding: 10px 20px 10px 20px;
+    padding: 20px 20px 20px 20px;
     position: fixed;
     top: 15%;
     z-index: 100;
@@ -144,7 +150,41 @@ div#edit_locations, div#edit_sections {
 
 #ingredients_screen {
     max-height: 80vh;
+    grid-template-areas:
+        "ingredients_screen_header"
+        "ingredients_screen_content"
+    ;
     top: 10%;
+
+    & #ingredients_screen_header {
+        align-items: center;
+        display: grid;
+        grid-area: ingredients_screen_header;
+        grid-template-areas:
+            "header_text header_buttons"
+        ;
+
+        & .text {
+            grid-area: header_text;
+            justify-self: start;
+        }
+
+        & .buttons {
+            margin-right: 10px;
+            justify-self: end;
+            grid-area: header_buttons;
+        }
+    }
+
+    & #ingredients_table {
+        background: lightgray;
+        border: 1pt solid black;
+        border-radius: 15px;
+        box-sizing: border-box;
+        display: grid;
+        grid-area: ingredients_screen_content;
+        padding: 5px;
+    }
 }
 
 #main_screen {
@@ -463,6 +503,10 @@ div#edit_locations, div#edit_sections {
 }
 
 #print_preview_screen {
+    /*
+    Cannot use CSS grid-display here as this
+    shifts the layout on the printed pages
+    */
     margin: 10px;
 
     h2.header {

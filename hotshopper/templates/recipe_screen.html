@@ -17,7 +17,7 @@
 <script src="{{ url_for('static', filename='recipe_screen.js') }}"></script>
 
 <div id="recipe_screen" class="ontop_screen">
-    <h2 id="recipe_screen_header"></h2>
+    <div id="recipe_screen_header" class="screen_header"></div>
     <div class="body">
         <form method="POST" id="recipe_form" action="javascript:void(0)">
             <div id="recipe_name_label">Name:</div>
@@ -123,11 +123,19 @@
                             onclick="cancel_close_recipe_screen()">
                         Abbrechen
                     </button>
+                    {% if edit %}
                     <input type="submit" id="EDIT_RECIPE_confirm_recipe"
                            class="menu_buttons"
                            name="confirm_new_recipe"
-                           onclick="confirm_close_recipe_screen()"
+                           onclick="confirm_close_recipe_screen(true)"
                            value="OK">
+                    {% else %}
+                    <input type="submit" id="ADD_RECIPE_confirm_recipe"
+                           class="menu_buttons"
+                           name="confirm_new_recipe"
+                           onclick="confirm_close_recipe_screen(false)"
+                           value="OK">
+                    {% endif %}
                 </div>
         </form>
     </div>

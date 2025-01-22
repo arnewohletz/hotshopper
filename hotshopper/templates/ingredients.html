@@ -7,26 +7,42 @@
 <script src="{{ url_for('static', filename='ingredients_screen.js') }}"></script>
 
 <div id="ingredients_screen" class="ontop_screen">
-    <h2>
-        <table>
-            <tr>
-                <td>Zutaten</td>
-                <td class="header_buttons">
-                    <button type="button"
-                            id="show_ingredients_screen"
-                            class="header_button"
-                            onclick="show_add_ingredient_screen()">Neue Zutat ...
-                    </button>
-                    <button type="button"
-                            id="close_ingredients_screen"
-                            class="header_button"
-                            onclick="close_ingredients_screen()">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </td>
-            </tr>
-        </table>
-    </h2>
+    <div id="ingredients_screen_header" class="screen_header">
+        <div class="text">Zutaten</div>
+        <div class="buttons">
+            <button type="button"
+                    id="show_ingredients_screen"
+                    class="header_button"
+                    onclick="show_add_ingredient_screen()">Neue Zutat ...
+            </button>
+            <button type="button"
+                    id="close_ingredients_screen"
+                    class="header_button"
+                    onclick="close_ingredients_screen()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    </div>
+<!--    <h2 id="ingredients_screen_header">-->
+<!--        <table>-->
+<!--            <tr>-->
+<!--                <td>Zutaten</td>-->
+<!--                <td class="header_buttons">-->
+<!--                    <button type="button"-->
+<!--                            id="show_ingredients_screen"-->
+<!--                            class="header_button"-->
+<!--                            onclick="show_add_ingredient_screen()">Neue Zutat ...-->
+<!--                    </button>-->
+<!--                    <button type="button"-->
+<!--                            id="close_ingredients_screen"-->
+<!--                            class="header_button"-->
+<!--                            onclick="close_ingredients_screen()">-->
+<!--                        <i class="fa-solid fa-xmark"></i>-->
+<!--                    </button>-->
+<!--                </td>-->
+<!--            </tr>-->
+<!--        </table>-->
+<!--    </h2>-->
     <div class="scroll" id="ingredients_table">
         <table>
             {% for i in ingredients %}
