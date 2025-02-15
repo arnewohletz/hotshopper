@@ -5,16 +5,16 @@ class Helper:
     """
 
     @staticmethod
-    def bool_string_to_int(bool_str: str) -> int:
+    def checkbox_status_string_to_int(bool_str: str) -> int:
         """
         Returns integer representation of a boolean string.
 
         :param bool_str: Must be 'false' or 'true'.
         :return: Integer representation of bool_str.
         """
-        if bool_str.lower() == "true":
+        if bool_str.lower() == "on":
             return 1
-        elif bool_str.lower() == "false":
+        elif bool_str.lower() == "off":
             return 0
         else:
             var_name = f'{bool_str=}'.split('=')[0]

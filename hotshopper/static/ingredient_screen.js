@@ -47,7 +47,7 @@ function confirm_ingredient(edit) {
     }
     const template = (location_index) => `${url}/${location_index}_${section_index}_${non_food}`;
 
-    const form = document.getElementById("ingredient_form");
+    const form = document.querySelector("#ingredient_form");
     const form_data = new Map(new FormData(form).entries());
 
     form.addEventListener(

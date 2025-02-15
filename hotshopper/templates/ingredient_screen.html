@@ -84,7 +84,7 @@
                     <td>Sektion</td>
                     <td>
                     {% if edit %}
-                    <select id="location_{{ location.id }}_section_selection" class="section_list">
+                    <select id="location_{{ location.id }}_section_selection" name="section" class="section_list">
                         <option>-- Bitte Sektion auswählen --</option>
                         {% for s in location.sections %}
                         {% if s.id > 0 %}
@@ -97,7 +97,7 @@
                         {% endfor %}
                     </select>
                     {% else %}
-                    <select id="location_{{ location.id }}_section_selection" class="section_list" disabled>
+                    <select id="location_{{ location.id }}_section_selection" name="section" class="section_list" disabled>
                         <option>-- Bitte Sektion auswählen --</option>
                         {% for section in location.sections %}
                         {% if section.id > 0 %}
@@ -116,12 +116,14 @@
                     <td id="always_on_shopping_list">
                     {% if edit %}
                         {% if ingredient.always_on_list == 1 %}
-                        <input type="checkbox" name="always_on_list" checked>
+                        <label for="always_on_list"></label>
+                        <input type="checkbox" id="always_on_list" name="always_on_list" checked>
                         {% else %}
-                        <input type="checkbox" name="always_on_list">
+                        <label for="always_on_list"></label>
+                        <input type="checkbox" id="always_on_list" name="always_on_list">
                         {% endif %}
                     {% else %}
-                        <input type="checkbox" name="always_on_list">
+                        <input type="checkbox" id="always_on_list" name="always_on_list">
                     {% endif %}
                     </td>
                 </tr>

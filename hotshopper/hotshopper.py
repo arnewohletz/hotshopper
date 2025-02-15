@@ -589,7 +589,7 @@ def main() -> None:
 
         form = json.loads(str(request.data, "utf-8"))
         name = form["ingredient_name"]
-        always_on_list = Helper.bool_string_to_int(form["always_on_list"])
+        always_on_list = Helper.checkbox_status_string_to_int(form["always_on_list"])
         section_id = controller.get_section_id(location_id,
                                                section_order_id)
         next_available_order_id = controller.get_highest_order_id(
@@ -599,7 +599,7 @@ def main() -> None:
         i = Ingredient(name=name, always_on_list=always_on_list,
                        location_id=location_id,
                        section_id=section_id,
-                       non_food=Helper.bool_string_to_int(non_food),
+                       non_food=Helper.checkbox_status_string_to_int(non_food),
                        order_id=next_available_order_id)
 
         try:
@@ -636,7 +636,15 @@ def main() -> None:
 
         form = json.loads(str(request.data, "utf-8"))
         name = form["ingredient_name"]
-        always_on_list = Helper.bool_string_to_int(form["always_on_list"])
+        try:
+            always_on_list = Helper.checkbox_status_string_to_int(form["always_on_list"])
+        except KeyError:
+            always_on_list = Helper.checkbox_status_string_to_int("off")
+        try:
+            non_food = Helper.checkbox_status_string_to_int(form["non_food"])
+        except KeyError:
+            non_food = Helper.checkbox_status_string_to_int("off")
+
         section_id = controller.get_section_id(location_id,
                                                section_order_id)
         existing_ingredient = db.session.query(Ingredient).filter_by(
@@ -651,7 +659,7 @@ def main() -> None:
             existing_ingredient.order_id = order_id + 1
             existing_ingredient.section_id = section_id
             existing_ingredient.always_on_list = always_on_list
-            existing_ingredient.non_food = Helper.bool_string_to_int(non_food)
+            existing_ingredient.non_food = non_food
 
             controller.db.session.commit()
 
