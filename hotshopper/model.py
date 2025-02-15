@@ -388,14 +388,14 @@ class ShoppingListItem:
             if self.amount_piece > 0:
                 result += f" + {self.amount_piece} St."
 
-        if result == "":
+        if not result:
             return "__"
         else:
             return result
 
     @staticmethod
     def _is_whole_amount(amount):
-        return int(amount % 1) == 0
+        return amount % 1 == 0
 
 
 class ShoppingListLocation(Base):
