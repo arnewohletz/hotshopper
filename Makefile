@@ -99,7 +99,10 @@ install: clean ## install the package to the active Python's site-packages
 	python -m pip install .
 
 install-e: clean ## install the package as editable to the active Python environment
-	python -m pip -e install .
+	python -m pip install -e .
+
+install-e-dev: clean ## install the package as editable including dev-dependencies
+	python -m pip install -e . ".[dev]"
 
 ### Dependencies
 
