@@ -29,7 +29,7 @@ classifiers = [
 ]
 keywords = ['hotshopper', 'shopping', 'recipes']
 license = {file = "LICENSE"}
-urls.homepage = "https://github.com/horsewithnoname1985/hotshopper"
+urls.homepage = "https://github.com/arnewohletz/hotshopper"
 
 dependencies = [
     "flask<3",
@@ -57,6 +57,7 @@ hotshopper = "hotshopper.hotshopper:main"
 
 [tool.setuptools]
 include-package-data = true
+packages.find.where = ["."]
 
 [tool.setuptools_scm]
 
