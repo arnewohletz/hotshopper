@@ -30,7 +30,7 @@ def app():
 
 class TestController:
 
-    def test_get_recipe(self, test_db):
+    def test_get_recipes(self, test_db):
         controller = hotshopper.Controller(test_db)
         r1 = model.Recipe(id=1, name="TestRecipe1")
         r2 = model.Recipe(id=2, name="TestRecipe2")

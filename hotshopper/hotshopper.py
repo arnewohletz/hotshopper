@@ -59,13 +59,40 @@ class Controller:
         Get all recipes from the database, maintaining the state of
         preexisting recipes.
         """
+        # Get latest recipes
         all_recipes = self.db.session.query(Recipe).all()
-        for recipe in all_recipes:
-            if recipe not in self.recipes:
-                self.recipes.append(recipe)
-        for recipe in self.recipes:
-            if recipe not in all_recipes:
-                self.recipes.remove(recipe)
+        # Create recipe dictionary using recipe.id as key
+        all_recipes_by_id = {r.id: r for r in all_recipes}
+
+        if not self.recipes:
+            # Use recipes as is --> done when application is first started
+            self.recipes = all_recipes
+        else:
+            # Update existing recipes
+            updated_recipes = []
+
+            for recipe in self.recipes:
+                if recipe.id not in all_recipes_by_id:
+                    # Skip deleted recipes (will not be returned)
+                    continue
+
+                # Use fresh recipe version from DB
+                fresh = all_recipes_by_id[recipe.id]
+
+                # Restore transient selections
+                fresh.selected = recipe.selected
+                fresh.weeks = recipe.weeks
+
+                updated_recipes.append(fresh)
+
+            # Add any new recipes
+            existing_ids = {r.id for r in updated_recipes}
+            for recipe in all_recipes:
+                if recipe.id not in existing_ids:
+                    updated_recipes.append(recipe)
+
+            self.recipes = updated_recipes
+
         return sorted(self.recipes, key=lambda r: r.name.lower())
 
     def get_shopping_lists(self) -> list:
