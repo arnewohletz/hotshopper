@@ -71,17 +71,17 @@ class Controller:
             # Update existing recipes
             updated_recipes = []
 
-            for recipe in self.recipes:
-                if recipe.id not in all_recipes_by_id:
-                    # Skip deleted recipes (will not be returned)
+            for cached_recipe in self.recipes:
+                if cached_recipe.id not in all_recipes_by_id:
+                    # Skip: Recipe was deleted from DB
                     continue
 
                 # Use fresh recipe version from DB
-                fresh = all_recipes_by_id[recipe.id]
+                fresh = all_recipes_by_id[cached_recipe.id]
 
                 # Restore transient selections
-                fresh.selected = recipe.selected
-                fresh.weeks = recipe.weeks
+                fresh.selected = getattr(cached_recipe, 'selected', False)
+                fresh.weeks = getattr(cached_recipe, 'weeks', [])
 
                 updated_recipes.append(fresh)
 
