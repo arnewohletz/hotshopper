@@ -50,7 +50,7 @@ function confirm_close_recipe_screen(edit) {
             this.submit();
         });
     }
-
+    window.location.href = "/"
 }
 
 document.addEventListener("DOMContentLoaded", function () {
