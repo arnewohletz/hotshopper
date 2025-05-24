@@ -17,7 +17,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 # import to make models visible to create_all() if database is not existing
 # WARNING: creating an empty DB currently makes hotshopper unusable
-from hotshopper.model import *
+from hotshopper.model import Base
 
 
 _app = None

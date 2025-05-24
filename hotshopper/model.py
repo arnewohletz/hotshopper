@@ -96,6 +96,8 @@ class Ingredient(OrderedModel):
     def must_be_on_list(self):
         if self.always_on_list:
             return True
+        else:
+            return False
 
     def has_shopping_list_item(self, week_index):
         return self.shopping_list_items[week_index] is not None

@@ -545,13 +545,13 @@ def main() -> None:
         """
         Display the screen to add a new ingredient.
         """
-        return render_template_with_db_session("add_ingredient_screen.html",
-                               recipes=controller.get_recipes(),
-                               ingredients=controller.get_ingredients(),
-                               locations=controller.get_locations(),
-                               location=None,
-                               edit=False
-                               )
+        return render_template_with_db_session(
+            "add_ingredient_screen.html",
+            recipes=controller.get_recipes(),
+            ingredients=controller.get_ingredients(),
+            locations=controller.get_locations(),
+            location=None,
+            edit=False)
 
     @app.route("/ingredients/edit/<int:ingredient_id>")
     def show_edit_ingredient_screen(ingredient_id: int) -> str:
@@ -616,7 +616,9 @@ def main() -> None:
 
         form = json.loads(str(request.data, "utf-8"))
         name = form["ingredient_name"]
-        always_on_list = Helper.checkbox_status_string_to_int(form["always_on_list"])
+        always_on_list = Helper.checkbox_status_string_to_int(
+            form["always_on_list"]
+        )
         section_id = controller.get_section_id(location_id,
                                                section_order_id)
         next_available_order_id = controller.get_highest_order_id(
@@ -664,7 +666,9 @@ def main() -> None:
         form = json.loads(str(request.data, "utf-8"))
         name = form["ingredient_name"]
         try:
-            always_on_list = Helper.checkbox_status_string_to_int(form["always_on_list"])
+            always_on_list = Helper.checkbox_status_string_to_int(
+                form["always_on_list"]
+            )
         except KeyError:
             always_on_list = Helper.checkbox_status_string_to_int("off")
         try:

@@ -131,8 +131,8 @@ class TestFoodPlan:
         food_plan = FoodPlan(shopping_lists=[self.shopping_list])
 
         self.recipe.select(week=shopping_list_week)
-        i = test_db.session.query(Ingredient).filter_by(
-            location_id=self.location.id).first()
+        # i = test_db.session.query(Ingredient).filter_by(
+        #     location_id=self.location.id).first()
         food_plan.set_shopping_lists(recipes=[self.recipe])
 
         ingredients = test_db.session.query(Ingredient).filter_by(
