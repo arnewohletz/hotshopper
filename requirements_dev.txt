@@ -10,15 +10,15 @@ blinker==1.9.0
     # via flask
 build==1.2.2.post1
     # via hotshopper (pyproject.toml)
-click==8.1.8
+click==8.2.1
     # via
     #   black
     #   flask
-coverage==7.7.0
+coverage==7.8.2
     # via
     #   hotshopper (pyproject.toml)
     #   pytest-cov
-flake8==7.1.2
+flake8==7.2.0
     # via hotshopper (pyproject.toml)
 flask==2.3.3
     # via
@@ -40,11 +40,11 @@ mccabe==0.7.0
     # via flake8
 mypy==1.15.0
     # via hotshopper (pyproject.toml)
-mypy-extensions==1.0.0
+mypy-extensions==1.1.0
     # via
     #   black
     #   mypy
-packaging==24.2
+packaging==25.0
     # via
     #   black
     #   build
@@ -52,13 +52,13 @@ packaging==24.2
     #   setuptools-scm
 pathspec==0.12.1
     # via black
-platformdirs==4.3.7
+platformdirs==4.3.8
     # via black
-pluggy==1.5.0
+pluggy==1.6.0
     # via pytest
-pycodestyle==2.12.1
+pycodestyle==2.13.0
     # via flake8
-pyflakes==3.2.0
+pyflakes==3.3.2
     # via flake8
 pyproject-hooks==1.2.0
     # via build
@@ -67,17 +67,17 @@ pytest==8.3.5
     #   hotshopper (pyproject.toml)
     #   pytest-cov
     #   pytest-env
-pytest-cov==6.0.0
+pytest-cov==6.1.1
     # via hotshopper (pyproject.toml)
 pytest-env==1.1.5
     # via hotshopper (pyproject.toml)
-setuptools-scm==8.2.1
+setuptools-scm==8.3.1
     # via hotshopper (pyproject.toml)
-sqlalchemy==2.0.39
+sqlalchemy==2.0.41
     # via
     #   flask-sqlalchemy
     #   hotshopper (pyproject.toml)
-typing-extensions==4.12.2
+typing-extensions==4.13.2
     # via
     #   mypy
     #   sqlalchemy

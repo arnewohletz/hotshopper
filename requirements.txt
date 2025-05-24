@@ -6,7 +6,7 @@
 #
 blinker==1.9.0
     # via flask
-click==8.1.8
+click==8.2.1
     # via flask
 flask==2.3.3
     # via
@@ -22,11 +22,11 @@ markupsafe==3.0.2
     # via
     #   jinja2
     #   werkzeug
-sqlalchemy==2.0.39
+sqlalchemy==2.0.41
     # via
     #   flask-sqlalchemy
     #   hotshopper (pyproject.toml)
-typing-extensions==4.12.2
+typing-extensions==4.13.2
     # via sqlalchemy
 units==0.7
     # via hotshopper (pyproject.toml)
