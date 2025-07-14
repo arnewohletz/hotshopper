@@ -12,6 +12,7 @@ from pathlib import Path
 # Third-party imports
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from loguru import logger
 
 # Intra-package imports
 
@@ -20,36 +21,47 @@ from flask_sqlalchemy import SQLAlchemy
 from hotshopper.model import Base
 
 
-_app = None
-_db = None
+# _app = None
+# _db = None
+
+_db = SQLAlchemy(model_class=Base,
+                 session_options={"autoflush": False})
 
 
 def create_application():
-    global _app, _db
-    _app = Flask(__name__)
+    # global _app, _db
+    app = Flask(__name__)
     if os.environ.get("TEST_MODE", "False") == "True":
-        _app.config.update({"TESTING": True})
-        _app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
-        _app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
+        logger.info("Create Flask app in test mode")
+        app.config["TESTING"] = True
+        app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
+        app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
     else:
+        logger.info("Create Flask app")
         path = Path(__file__).parent.resolve() / "recipes.db"
-        _app.config["SQLALCHEMY_DATABASE_URI"] = \
+        app.config["SQLALCHEMY_DATABASE_URI"] = \
             f"sqlite:///{path}?check_same_thread=False"
-        _app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
-        _app.secret_key = secrets.token_hex()
+        app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
+        app.secret_key = secrets.token_hex()
 
         # if not path.exists():
         #     _db = _create_database()
         # else:
         #     _db = SQLAlchemy(model_class=Base,
         #                      session_options={"autoflush": False})
-    _db = SQLAlchemy(model_class=Base,
-                     session_options={"autoflush": False})
-    _db.init_app(_app)
-    with _app.app_context():
+    # _db = SQLAlchemy(model_class=Base,
+    #                  session_options={"autoflush": False})
+    _db.init_app(app)
+    with app.app_context():
+        logger.info("Initializing database")
         _db.create_all()
-    _app.app_context().push()
+    app.app_context().push()
 
+    logger.info("Flask app initialized")
+    return app
+
+
+_app = create_application()
 
 # def _create_database():
 #     db = SQLAlchemy(model_class=Base,
@@ -66,4 +78,4 @@ def get_db():
     return _db
 
 
-create_application()
+# create_application()

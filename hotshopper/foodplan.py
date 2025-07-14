@@ -2,13 +2,15 @@
 from typing import List
 
 # Intra-package imports
+from hotshopper import logger
+from hotshopper.errors import IngredientNotFoundError
 from hotshopper.model import Recipe, ShoppingList
 
 
 class FoodPlan:
     def __init__(self, shopping_lists: List[ShoppingList]):
-        self.recipes = []
-        self.shopping_lists = shopping_lists
+        self.recipes: List[Recipe] = []
+        self.shopping_lists: List[ShoppingList] = shopping_lists
 
     def _add_recipe(self, recipe: Recipe):
         self.recipes.append(recipe)
@@ -18,7 +20,12 @@ class FoodPlan:
                 for shopping_list in self.shopping_lists:
                     if (shopping_list.has_location(ri.ingredient.location_id)
                             and shopping_list.has_week(week)):
-                        shopping_list.add(ri)
+                        try:
+                            shopping_list.add(ri)
+                        except IngredientNotFoundError:
+                            logger.error(
+                                f"Ingredient {ri!r} not added to"
+                                f"shopping list '{shopping_list.name}'")
                         break
 
     def set_shopping_lists(self, recipes: List[Recipe]):

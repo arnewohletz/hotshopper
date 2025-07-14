@@ -34,6 +34,7 @@ urls.homepage = "https://github.com/arnewohletz/hotshopper"
 dependencies = [
     "flask<3",
     "Flask-SQLAlchemy",
+    "loguru",
     "sqlalchemy",
     "units"
 ]

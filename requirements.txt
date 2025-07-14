@@ -18,6 +18,8 @@ itsdangerous==2.2.0
     # via flask
 jinja2==3.1.6
     # via flask
+loguru==0.7.3
+    # via hotshopper (pyproject.toml)
 markupsafe==3.0.2
     # via
     #   jinja2
@@ -26,7 +28,7 @@ sqlalchemy==2.0.41
     # via
     #   flask-sqlalchemy
     #   hotshopper (pyproject.toml)
-typing-extensions==4.13.2
+typing-extensions==4.14.1
     # via sqlalchemy
 units==0.7
     # via hotshopper (pyproject.toml)
