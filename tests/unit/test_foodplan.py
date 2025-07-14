@@ -13,6 +13,7 @@ from hotshopper.model import (
     ShoppingList,
     ShoppingListLocation,
     ShoppingListWeek,
+    Unit,
     Week
 )
 from tests.unit.helper import get_random_int
@@ -57,12 +58,15 @@ class TestFoodPlan:
         )
         self.recipe = Recipe(id=get_random_int(3), name="some_name")
         self.ingredient = Ingredient(id=get_random_int(3),
+                                     order_id=get_random_int(3),
                                      name="some_ingredient",
                                      location_id=self.location.id,
                                      section_id=self.section.id)
         self.recipe_ingredient = RecipeIngredient(
             recipe_id=self.recipe.id,
-            ingredient_id=self.ingredient.id)
+            ingredient_id=self.ingredient.id,
+            quantity_per_person=get_random_int(3),
+            unit=Unit.GRAM)
 
         test_db.add_all(
             [self.ingredient,

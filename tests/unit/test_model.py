@@ -51,12 +51,15 @@ class TestIngredient:
     def _minimal_populate_database(self, test_db):
         self.ingredient = model.Ingredient(
             id=get_random_int(3),
+            order_id=get_random_int(3),
             name=get_random_string(10))
         self.recipe = model.Recipe(id=get_random_int(3),
                                    name=get_random_string(10))
         self.recipe_ingredient = model.RecipeIngredient(
             ingredient_id=self.ingredient.id,
-            recipe_id=self.recipe.id)
+            recipe_id=self.recipe.id,
+            quantity_per_person=100,
+            unit=Unit.GRAM)
         self.recipe.add_ingredient(self.recipe_ingredient, test_db.session)
         self.ingredient.add(test_db.session)
         test_db.session.add_all([self.ingredient,
@@ -65,15 +68,15 @@ class TestIngredient:
         test_db.session.commit()
 
     def test_add_new_ingredient(self, test_db):
-        i = model.Ingredient(id=1, name="Ingredient")
+        i = model.Ingredient(id=1, order_id=1, name="SameIngredient")
         i.add(test_db.session)
         existing_i = test_db.session.query(
-            model.Ingredient).filter_by(name="Ingredient").first()
+            model.Ingredient).filter_by(name="SameIngredient").first()
         assert existing_i is not None
         assert i.name == existing_i.name
 
     def test_attempt_add_already_existing_ingredient(self, test_db):
-        i_1 = model.Ingredient(id=1, name="some_ingredient")
+        i_1 = model.Ingredient(id=1, order_id=1, name="some_ingredient")
         i_1.add(test_db.session)
         with pytest.raises(DuplicateIngredientError):
             i_1.add(test_db.session)
@@ -106,6 +109,7 @@ class TestIngredient:
 
     def test_ingredient_not_used_by_any_recipe(self, test_db):
         ingredient = model.Ingredient(id=get_random_int(3),
+                                      order_id=get_random_int(3),
                                       name="some_ingredient")
         recipe = model.Recipe(id=get_random_int(3), name="some_recipe")
         test_db.session.add_all([ingredient, recipe])
@@ -150,7 +154,7 @@ class TestLocation:
                              order_id=get_random_int(3))
         test_db.session.add(loc)
 
-        new_order_id = str(get_random_int(10))
+        new_order_id = get_random_int(10)
         loc.update_order_id(new_order_id, test_db.session)
 
         loc_updated = test_db.session.query(Location).filter_by(
@@ -273,9 +277,13 @@ class TestRecipe:
 
     def test_delete_recipe(self, test_db):
         rec = model.Recipe(id=1, name="TestRecipeA")
-        rec_ing = model.RecipeIngredient(recipe_id=rec.id, ingredient_id=1,
+        rec_ing = model.RecipeIngredient(recipe_id=rec.id,
+                                         ingredient_id=1,
+                                         quantity_per_person=100,
                                          unit=Unit.GRAM)
-        rec_ing_2 = model.RecipeIngredient(recipe_id=1000, ingredient_id=1,
+        rec_ing_2 = model.RecipeIngredient(recipe_id=1000,
+                                           ingredient_id=1,
+                                           quantity_per_person=100,
                                            unit=Unit.GRAM)
         test_db.session.add(rec)
         test_db.session.add(rec_ing)
