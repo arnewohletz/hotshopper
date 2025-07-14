@@ -15,14 +15,18 @@ from sqlalchemy import (
 from sqlalchemy.orm import (
     backref,
     DeclarativeBase,
+    Mapped,
+    mapped_column,
     relationship
 )
 
 # Intra-package imports
+from hotshopper import logger
 from hotshopper.errors import (
     DuplicateIngredientError,
     DuplicateRecipeError,
     DuplicateRecipeIngredientError,
+    IngredientNotFoundError,
     RecipeIngredientNotFoundError
 )
 
@@ -33,19 +37,21 @@ class Base(DeclarativeBase):
 
 class OrderedModel(Base):
     __abstract__ = True
-    id = -1
-    order_id = -1
+    id: Mapped[int] = mapped_column("id", Integer, primary_key=True)
+    order_id: Mapped[int] = mapped_column("order_id", Integer)
 
 
 class Ingredient(OrderedModel):
     __tablename__ = "ingredient"
-    id = Column("id", Integer, primary_key=True)
+    # id: Mapped[int] = mapped_column("id", Integer, primary_key=True)
     name = Column("name", String)
-    order_id = Column("order_id", Integer)
+    # order_id = Column("order_id", Integer)
     location_id = Column("location_id", Integer)
-    recipes = relationship("RecipeIngredient",
-                           backref=backref("ingredient", lazy=False),
-                           lazy="subquery")
+    # recipe_ingredients = relationship("RecipeIngredient",
+    #                        backref=backref("ingredient", lazy=False),
+    #                        lazy="subquery")
+    recipe_ingredients = relationship("RecipeIngredient",
+                                      back_populates="ingredient")
     section_id = Column(Integer, ForeignKey("section.id"))
     always_on_list = Column("always_on_list", Integer)
     non_food = Column("non_food", Integer)
@@ -105,9 +111,9 @@ class Ingredient(OrderedModel):
 
 class Location(OrderedModel):
     __tablename__ = "location"
-    id = Column(Integer, primary_key=True)
+    # id = Column(Integer, primary_key=True)
     name = Column(String)
-    order_id = Column(String)
+    # order_id = Column(String)
     sections = relationship("Section", backref="location",
                             order_by="asc(Section.order_id)")
     shopping_lists = relationship("ShoppingList",
@@ -143,9 +149,9 @@ class Recipe(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     ingredients = relationship("RecipeIngredient",
-                               backref=backref("recipe", lazy=False),
+                               backref=backref("recipes", lazy=False),
                                lazy="joined")
-    weeks: list = None
+    weeks: list = []
     selected = False
 
     def __eq__(self, other):
@@ -158,14 +164,14 @@ class Recipe(Base):
             self.weeks = []
         self.selected = True
         self.weeks.append(week)
-        print(f"{self.name} is selected for week {str(week)}")
+        logger.info(f"{self.name} is selected for week {str(week)}")
 
     def unselect(self, week: int):
         self.weeks.remove(week)
         if len(self.weeks) == 0:
             self.selected = False
             self.weeks = []
-        print(f"{self.name} is deselected from week {str(week)}")
+        logger.info(f"{self.name} is deselected from week {str(week)}")
 
     def add_ingredient(self, ingredient: RecipeIngredient, session):
         existing = session.query(RecipeIngredient).filter_by(
@@ -195,7 +201,7 @@ class Recipe(Base):
             session.flush()
             return self.id
 
-    def update(self, session, name: str = None):
+    def set_name(self, session, name):
         self.name = name
         session.commit()
 
@@ -206,16 +212,22 @@ class Recipe(Base):
 
 class RecipeIngredient(Base):
     __tablename__ = "recipe_ingredient"
-    recipe_id = Column(ForeignKey("recipe.id"), primary_key=True)
-    ingredient_id = Column(ForeignKey("ingredient.id"), primary_key=True)
-    quantity_per_person = Column(Float)
-    unit = Column(String)
-    amount_piece = 0
-    amount = 0
+    recipe_id: Mapped[int] = mapped_column(ForeignKey("recipe.id"),
+                                           primary_key=True)
+    ingredient_id: Mapped[int] = mapped_column(ForeignKey("ingredient.id"),
+                                               primary_key=True)
+    quantity_per_person: Mapped[float] = mapped_column(Float)
+    unit: Mapped[str] = mapped_column(String)
+    amount_piece = 0.0
+    amount = 0.0
+    ingredient: Mapped["Ingredient"] = relationship(
+        "Ingredient",
+        back_populates="recipe_ingredients")
 
-    def update(self, session, quantity_per_person: Union[float, int] = None,
-               unit: str = None,
-               ingredient_id: int = None):
+    def update(self,
+               session, quantity_per_person: Union[float, int] = 0.0,
+               unit: str | None = None,
+               ingredient_id: int | None = None,):
         if quantity_per_person is not None:
             if (not isinstance(quantity_per_person, (int, float))
                     or not 1.0 <= quantity_per_person <= 10000):
@@ -252,12 +264,13 @@ class RecipeIngredient(Base):
             f"as it is not found in recipe")
 
 
-class Section(Base):
+class Section(OrderedModel):
     __tablename__ = "section"
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    order_id = Column(Integer)
-    location_id = Column(Integer, ForeignKey("location.id"))
+    # id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String)
+    # order_id: Mapped[int] = mapped_column(Integer)
+    location_id: Mapped[int] = mapped_column(Integer,
+                                             ForeignKey("location.id"))
     ingredients = relationship("Ingredient", backref="section")
 
     def __init__(self, name, order_id, **kw):
@@ -320,12 +333,13 @@ class ShoppingList(Base):
 
     def add(self, recipe_ingredient: RecipeIngredient):
         list_item = ShoppingListItem(recipe_ingredient)
+        week_index = self.weeks[0].number - 1
+        target_id = recipe_ingredient.ingredient_id
 
         for location in self.locations:
             for section in location.sections:
                 for ingredient in section.ingredients:
-                    if ingredient.id == recipe_ingredient.ingredient_id:
-                        week_index = self.weeks[0].number - 1
+                    if ingredient.id == target_id:
                         if ingredient.has_shopping_list_item(
                                 week_index=week_index):
                             ingredient.shopping_list_items[
@@ -334,8 +348,10 @@ class ShoppingList(Base):
                             ingredient.shopping_list_items[
                                 week_index] = list_item
                         return True
-        raise KeyError(f"Cannot find ingredient entry for "
-                       f"'{recipe_ingredient.ingredient.name}'")
+        raise IngredientNotFoundError(
+            f"No ingredient with ID={target_id} found. Cannot add ingredient "
+            f"{recipe_ingredient!r} to shopping list."
+        )
 
     def sort_ingredients(self):
         self.ingredients.sort(key=lambda ri: ri.order_id)
@@ -351,7 +367,7 @@ class ShoppingListItem:
         self.ingredient_id = recipe_ingredient.ingredient_id
         self.section_id = recipe_ingredient.ingredient.section_id
         self.location_id = recipe_ingredient.ingredient.location_id
-        self.amount_piece = self.amount = 0
+        self.amount_piece = self.amount = 0.0
         if recipe_ingredient.unit == Unit.GRAM:
             self.amount = recipe_ingredient.quantity_per_person
         if recipe_ingredient.unit == Unit.PIECE:

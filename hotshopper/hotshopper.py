@@ -5,6 +5,7 @@
 import json
 from typing import (
     List,
+    Sequence,
     Type
 )
 
@@ -23,7 +24,8 @@ from werkzeug.wrappers import Response as BaseResponse
 # Intra-package imports
 from hotshopper import (
     get_app,
-    get_db
+    get_db,
+    logger
 )
 from hotshopper.errors import (
     DuplicateIndexError,
@@ -32,7 +34,6 @@ from hotshopper.errors import (
 from hotshopper.helper import Helper
 from hotshopper.foodplan import FoodPlan
 from hotshopper.model import (
-    Base,
     Ingredient,
     Location,
     OrderedModel,
@@ -199,13 +200,14 @@ class Controller:
             location_id=location_id, order_id=order_id).first()
         return result.id
 
-    def set_new_order(self, items: List[Base],
+    def set_new_order(self, items: Sequence[OrderedModel],
                       new_id_order: List[str]) -> None:
         """
         Set the list index of :param:`new_id_order` to the item within
         :param items: which matches the `ìd`.
 
-        :param items: The model elements which are subject to reorder.
+        :param items: The model elements of type `OrderedModel` which are
+        subject to reorder.
         :param new_id_order: The new order of the  model elements `ìd`s.
         """
         try:
@@ -359,7 +361,8 @@ def main() -> None:
             if r.id == int(recipe_id):
                 r.select(week)
                 session["scroll_height"] = scroll_height
-                return redirect("/")
+                break
+        return redirect("/")
 
     @app.route("/uncheck_recipe/<recipe_id>_<int:week>_<int:scroll_height>")
     def uncheck_recipe(recipe_id: int,
@@ -470,7 +473,7 @@ def main() -> None:
 
         r_name = request.form["recipe_name"]
         recipe = db.session.query(Recipe).filter_by(id=recipe_id).first()
-        recipe.update(db.session, r_name)
+        recipe.set_name(db.session, r_name)
 
         all_ingredients = db.session.query(RecipeIngredient).filter_by(
             recipe_id=recipe_id).all()
@@ -636,7 +639,7 @@ def main() -> None:
         except DuplicateIngredientError:
             response = make_response()
             response.status = 409
-            response.header = "Duplicate Ingredient Error"
+            response.headers[""] = "Duplicate Ingredient Error"
             return response
 
         return redirect("/ingredients")
@@ -644,12 +647,11 @@ def main() -> None:
     @app.route("/confirm_edit_ingredient/"
                "<int:ingredient_id>/"
                "<int:location_id>_"
-               "<signed_int:section_order_id>_"
-               "<string:non_food>", methods=["POST", "GET"])
+               "<signed_int:section_order_id>",
+               methods=["POST", "GET"])
     def confirm_edit_ingredient(ingredient_id: int,
                                 location_id: int,
-                                section_order_id: int,
-                                non_food: str) -> BaseResponse:
+                                section_order_id: int) -> BaseResponse:
         """
         Apply edited changes to ingredient.
 
@@ -657,9 +659,7 @@ def main() -> None:
         :param location_id:
             The primary key of the edited ingredient's location.
         :param section_order_id:
-            The primary key of the edited ingredient's section
-        :param non_food: A boolean string ("true"/"false") which defines
-            if ingredient is food or not.
+            The order_id number of the edited ingredient's section
         :return: Navigate back to the ingredients list page.
         """
 
@@ -694,10 +694,12 @@ def main() -> None:
 
             controller.db.session.commit()
 
+        # TODO: Add correct handling
+        #  (see https://flask.palletsprojects.com/en/stable/errorhandling/)
         except DuplicateIngredientError:
+            logger.error("Duplicate Ingredient Error")
             response = make_response()
             response.status = 409
-            response.header = "Duplicate Ingredient Error"
             return response
 
         return redirect("/ingredients")
@@ -720,12 +722,12 @@ def main() -> None:
             current scroll height.
         :return: Navigate back to the ingredients list page.
         """
-        new_ingredient_id_order = new_ingredient_id_order.split("_")
+        new_ingredient_id_order_list = new_ingredient_id_order.split("_")
         section = db.session.query(Section).filter_by(
             location_id=location_id, id=section_id).first()
         ingredients = section.get_ingredients()
 
-        controller.set_new_order(ingredients, new_ingredient_id_order)
+        controller.set_new_order(ingredients, new_ingredient_id_order_list)
 
         return redirect(f"/shopping_list/{scroll_height}")
 
@@ -736,10 +738,10 @@ def main() -> None:
 
         :param new_loc_id_order: The location primary keys in their new order.
         """
-        new_loc_id_order = new_loc_id_order.split("_")
+        new_loc_id_order_list = new_loc_id_order.split("_")
         locations = controller.get_locations()
 
-        controller.set_new_order(locations, new_loc_id_order)
+        controller.set_new_order(locations, new_loc_id_order_list)
 
         return redirect("/shopping_list/edit")
 
@@ -753,10 +755,10 @@ def main() -> None:
         :param location_id: The location primary key.
         :param new_sec_id_order: The location primary keys in their new order.
         """
-        new_sec_id_order = new_sec_id_order.split("_")
+        new_sec_id_order_list = new_sec_id_order.split("_")
         sections = controller.get_sections(location_id)
 
-        controller.set_new_order(sections, new_sec_id_order)
+        controller.set_new_order(sections, new_sec_id_order_list)
 
         return redirect(f"/shopping_list/edit/{location_id}")
 
