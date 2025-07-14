@@ -30,13 +30,13 @@ function confirm_ingredient(edit) {
 
     let location_selection = document.getElementById("location")
     const location_index = location_selection.options[location_selection.selectedIndex].getAttribute("location_id");
-    let section_index = document.getElementById(`location_${location_index}_section_selection`).selectedIndex;
-    if (section_index === 0) {
-        section_index = -1;
+    let section_order_id_index = document.getElementById(`location_${location_index}_section_selection`).selectedIndex;
+    if (section_order_id_index === 0) {
+        section_order_id_index = -1;
     }
 
-    let elem_non_food = document.getElementById("non_food");
-    let non_food = !!elem_non_food.checked;
+    // let elem_non_food = document.getElementById("non_food");
+    // let non_food = !!elem_non_food.checked;
 
     let url;
     if (edit === "True") {
@@ -45,7 +45,7 @@ function confirm_ingredient(edit) {
     } else {
         url = "/confirm_add_ingredient"
     }
-    const template = (location_index) => `${url}/${location_index}_${section_index}_${non_food}`;
+    const template = (location_index) => `${url}/${location_index}_${section_order_id_index}`;
 
     const form = document.querySelector("#ingredient_form");
     const form_data = new Map(new FormData(form).entries());
